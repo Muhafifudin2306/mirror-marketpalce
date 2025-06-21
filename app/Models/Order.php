@@ -27,7 +27,9 @@ class Order extends Model
         'express',
         'pickup_status',
         'delivery_method',
+        'delivery_cost',
         'needs_proofing',
+        'proof_qty',
         'notes',
     ];
 

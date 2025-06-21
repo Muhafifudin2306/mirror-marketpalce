@@ -29,8 +29,10 @@ return new class extends Migration
             $table->date('deadline_date')->nullable();
             $table->time('deadline_time')->nullable();
             $table->tinyInteger('express')->nullable()->default(0);  // 0 = normal, 1 = express
-            $table->tinyInteger('delivery_method')->nullable();    // e.g. Kurir, Ekspedisi
+            $table->string('delivery_method')->nullable();    // e.g. Kurir, Ekspedisi
+            $table->integer('delivery_cost')->nullable();
             $table->tinyInteger('needs_proofing')->nullable();   // 0 = tidak perlu, 1 = perlu
+            $table->integer('proof_qty')->nullable();
             $table->tinyInteger('pickup_status')->nullable()->default(0);  // 0 = Diambil, 1 = Dikirim
             $table->text('notes')->nullable();
             // $table->tinyInteger('pickup_type')->nullable();     // e.g. Ambil Sendiri, Diantar

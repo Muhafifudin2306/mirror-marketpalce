@@ -6,15 +6,16 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>BookPedia Admin</title>
+        <title>Sinau Print | Admin</title>
 
         <!-- Favicon -->
-        <link href="{{ asset('landingpage/img/bp.png') }}" rel="icon">
+        <link href="{{ asset('landingpage/img/favicon/fav_icon.jpg') }}" rel="icon">
 
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/bootstrap-icons.min.css" rel="stylesheet">
         <link href="{{ asset('adminpage/css/styles.css') }}" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        @yield('style')
     </head>
     <body class="sb-nav-fixed">
         <div id="layoutSidenav">
@@ -43,5 +44,7 @@
         <script src="{{ asset('adminpage/assets/demo/chart-bar-demo.js') }}"></script>
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
         <script src="{{ asset('adminpage/js/datatables-simple-demo.js') }}"></script>
+
+        @yield('script')
     </body>
 </html>

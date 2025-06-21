@@ -220,23 +220,10 @@
             else {
               $isset = true;
             }
-
-            $currentFinishingId = optional(
-              $product->label->finishings
-                      ->firstWhere('finishing_name', $orderProduct->finishing_type)
-            )->id;
-
-            $isEdit = isset($orderProduct);
-            $order = $orderProduct->order;
           @endphp
-          <form id="orderForm" method="POST" action="{{ $isEdit ? route('order-product.update', $orderProduct) : route('orders.store') }}" enctype="multipart/form-data">
+          <form id="orderForm" method="POST" action="{{ route('orders.store') }}" enctype="multipart/form-data">
             @csrf
 
-            @if($isEdit)
-              @method('PUT')
-            @endif
-
-            
             {{-- Global alert error --}}
             @if($errors->any())
               <div class="alert alert-danger">
@@ -247,6 +234,7 @@
                 </ul>
               </div>
             @endif
+
             <input type="hidden" id="basePrice"    value="{{ $finalBase }}">
             <input type="hidden" id="unit"         value="{{ $product->additional_unit }}">
             <input type="hidden" name="order_status" value="0">
@@ -288,7 +276,8 @@
                     <option 
                       value="{{ $fin->id }}" 
                       data-price="{{ $fin->finishing_price }}"
-                      {{ old('finishing_id', $currentFinishingId) == $fin->id ? 'selected':'' }} data-price="{{ $fin->finishing_price }}">
+                      {{ old('finishing_id')==$fin->id?'selected':'' }}
+                    >
                       {{ $fin->finishing_name }} (Rp {{ number_format($fin->finishing_price,0,',','.') }})
                     </option>
                   @endforeach
@@ -307,9 +296,10 @@
                   id="needExpress" 
                   name="express" 
                   class="form-select @error('express') is-invalid @enderror"
-                  style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;">
-                  <option value="0" {{ old('express', $order->express) == '0' ? 'selected':'' }}>Tidak</option>
-                  <option value="1" {{ old('express', $order->express) == '1' ? 'selected':'' }}>Ya</option>
+                  style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;"
+                >
+                  <option value="0" {{ old('express','0')=='0'?'selected':'' }}>Tidak</option>
+                  <option value="1" {{ old('express')=='1'?'selected':'' }}>Ya</option>
                 </select>
                 @error('express')
                   <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
@@ -317,17 +307,15 @@
               </div>
               <div class="col">
                 <label class="form-label"><b>DEADLINE JAM</b></label>
-                <input
-  type="time"
-  id="deadlineTime"
-  name="deadline_time"
-  class="form-control @error('deadline_time') is-invalid @enderror"
-  style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;"
-  {{ old('express', $order->express)=='1' ? '' : 'disabled' }}
-  value="{{ old('deadline_time', substr($order->deadline_time, 0, 5)) }}"
-
->
-
+                <input 
+                  type="time" 
+                  id="deadlineTime" 
+                  name="deadline_time" 
+                  class="form-control @error('deadline_time') is-invalid @enderror" 
+                  style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;"
+                  {{ old('express','0')=='1'? '':'disabled' }}
+                  value="{{ old('deadline_time') }}"
+                >
                 @error('deadline_time')
                   <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
                 @enderror
@@ -342,9 +330,10 @@
                   id="needProofing" 
                   name="needs_proofing" 
                   class="form-select @error('needs_proofing') is-invalid @enderror"
-                  style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;">
-                  <option value="0" {{ old('needs_proofing', $order->needs_proofing)=='0'?'selected':'' }}>Tidak</option>
-                  <option value="1" {{ old('needs_proofing', $order->needs_proofing)=='1'?'selected':'' }}>Ya</option>
+                  style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;"
+                >
+                  <option value="0" {{ old('needs_proofing','0')=='0'?'selected':'' }}>Tidak</option>
+                  <option value="1" {{ old('needs_proofing')=='1'?'selected':'' }}>Ya</option>
                 </select>
                 @error('needs_proofing')
                   <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
@@ -352,16 +341,15 @@
               </div>
               <div class="col">
                 <label class="form-label"><b>QTY PROOFING</b></label>
-                <input
-  type="number"
-  id="proofQty"
-  name="proof_qty"
-  class="form-control @error('proof_qty') is-invalid @enderror"
-  style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;"
-  value="{{ old('proof_qty', $order->proof_qty) }}"
-  {{ old('needs_proofing', $order->needs_proofing)=='1' ? '' : 'disabled' }}
->
-
+                <input 
+                  type="number" 
+                  id="proofQty" 
+                  name="proof_qty" 
+                  class="form-control @error('proof_qty') is-invalid @enderror" 
+                  style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;"
+                  {{ old('needs_proofing','0')=='1'? '':'disabled' }}
+                  value="{{ old('proof_qty') }}"
+                >
                 @error('proof_qty')
                   <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
                 @enderror
@@ -414,8 +402,9 @@
                       id="panjang"
                       class="form-control @error('length') is-invalid @enderror"
                       placeholder="Panjang"
-                      value="{{ old('length', $orderProduct->length ?? ($product->additional_unit === 'm' ? 1 : 100)) }}"
-                      style="height:50px; border-radius:70px 0 0 70px; font-size:0.875rem; padding:0 2rem;">
+                      value="{{ old('length', $product->additional_unit==='m'?1:100) }}"
+                      style="height:50px; border-radius:70px 0 0 70px; font-size:0.875rem; padding:0 2rem;"
+                    >
                     <span class="input-group-text" style="border-radius:0 70px 70px 0; font-size:0.875rem; padding:0 1rem;">
                       {{ $product->additional_unit }}
                     </span>
@@ -433,8 +422,9 @@
                       id="lebar"
                       class="form-control @error('width') is-invalid @enderror"
                       placeholder="Lebar"
-                      value="{{ old('width', $orderProduct->width ?? ($product->additional_unit === 'm' ? 1 : 100)) }}"
-                      style="height:50px; border-radius:70px 0 0 70px; font-size:0.875rem; padding:0 2rem;">
+                      value="{{ old('width', $product->additional_unit==='m'?1:100) }}"
+                      style="height:50px; border-radius:70px 0 0 70px; font-size:0.875rem; padding:0 2rem;"
+                    >
                     <span class="input-group-text" style="border-radius:0 70px 70px 0; font-size:0.875rem; padding:0 1rem;">
                       {{ $product->additional_unit }}
                     </span>
@@ -453,10 +443,45 @@
                 name="notes"
                 class="form-control @error('notes') is-invalid @enderror"
                 style="font-family:'Poppins'; width:100%; height:100px; border-radius:10px; font-size:0.875rem; padding:15px 20px; resize:vertical;"
-                placeholder="Masukkan catatan tambahan jika ada">{{ old('notes', $order->notes) }}</textarea>
+                placeholder="Masukkan catatan tambahan jika ada"
+              >{{ old('notes') }}</textarea>
               @error('notes')
                 <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
               @enderror
+            </div>
+
+            {{-- METODE PENGIRIMAN --}}
+            <div class="mb-3">
+              <label class="form-label"><b>METODE PENGIRIMAN</b></label>
+              @if (!$isset)
+              <select 
+                id="deliveryMethod" 
+                name="delivery_method" 
+                class="form-select @error('delivery_method') is-invalid @enderror"
+                style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;" 
+                disabled
+              >
+                <option value="0" {{ old('delivery_method','0')=='0'?'selected':'' }}>
+                  LENGKAPI DATA ALAMAT ANDA DI MENU PROFIL!!!
+                </option> 
+            @else
+              <select 
+                id="deliveryMethod" 
+                name="delivery_method" 
+                class="form-select @error('delivery_method') is-invalid @enderror"
+                style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;" 
+              >
+                <option value="0" {{ old('delivery_method','0')=='0'?'selected':'' }}>
+                  Memuat data ongkir...
+                </option> 
+            @endif
+            </select>
+
+            @error('delivery_method')
+              <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+              </span>
+            @enderror
             </div>
 
             {{-- QTY & SUBMIT --}}
@@ -467,7 +492,7 @@
                   type="number"
                   name="qty"
                   id="qty"
-                  value="{{ old('qty', $orderProduct->qty ?? 1) }}"
+                  value="{{ old('qty',1) }}"
                   class="form-control @error('qty') is-invalid @enderror"
                   placeholder="1"
                   style="width:150px; height:50px; border-radius:70px; font-size:0.875rem; padding:0 60px;"
@@ -478,7 +503,7 @@
               </div>
               <div class="col-auto d-flex align-items-end">
                 <button type="submit" class="btn btn-primary" style="border-radius:50px; width:310px; height:50px; font-weight:600; font-family:'Poppins', sans-serif;">
-                  {{ $isEdit ? 'UBAH ORDER' : 'BELI PRODUK' }}
+                  BELI PRODUK
                 </button>
               </div>
             </div>
@@ -677,6 +702,9 @@
     const lebarInput      = document.getElementById('lebar');
     const qtyInput        = document.getElementById('qty');
     const totalEl         = document.getElementById('totalHarga');
+    const deliveryMethod  = document.getElementById('deliveryMethod');
+
+    let ongkirCost = 0;
 
     function computeTotal() {
       // 1) Hitung HPL (Harga per Luas)
@@ -710,8 +738,10 @@
         total += total * 0.5;
       }
 
+      total += ongkirCost;
       totalEl.innerText = Math.round(total).toLocaleString();
     }
+
 
     if (finishingSelect) finishingSelect.addEventListener('change', computeTotal);
     needExpress.addEventListener('change', computeTotal);
@@ -719,8 +749,63 @@
     if (lebarInput) lebarInput.addEventListener('input', computeTotal);
     qtyInput.addEventListener('input', computeTotal);
 
+    deliveryMethod.addEventListener('change', function () {
+      const selectedOption = this.options[this.selectedIndex];
+      const rawCost = selectedOption.getAttribute('data-cost');
+
+      ongkirCost = parseInt(rawCost) || 0;
+
+      computeTotal();
+    });
+
     computeTotal();
   });
 </script>
 
+
+@if ($isset)
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const deliveryMethod = document.getElementById('deliveryMethod');
+
+    fetch('/hitung-ongkir', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+      },
+      body: JSON.stringify({})
+    })
+    .then(response => response.json())
+    .then(data => {
+      deliveryMethod.innerHTML = ''; // kosongkan select
+
+      if (data.details && data.details.length > 0) {
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '0';
+        defaultOption.textContent = 'Pilih Metode Pengiriman';
+        deliveryMethod.appendChild(defaultOption);
+
+        data.details.forEach(item => {
+          const option = document.createElement('option');
+          option.value = `${item.code}:${item.service}`;
+          option.textContent = `${item.name} - ${item.service} (Rp ${parseInt(item.cost).toLocaleString()})`;
+          option.setAttribute('data-cost', item.cost);
+          deliveryMethod.appendChild(option);
+        });
+      } else {
+        const option = document.createElement('option');
+        option.value = '0';
+        option.textContent = 'Tidak ada layanan pengiriman';
+        deliveryMethod.appendChild(option);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      deliveryMethod.innerHTML = '<option value="0">Gagal memuat ongkir</option>';
+    });
+  });
+</script>
+
+@endif
 @endsection

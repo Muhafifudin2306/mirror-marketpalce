@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pelanggan; //panggil model
-use App\Models\Pesanan;
-use App\Models\User;
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB; //query builder
-use App\Exports\PelangganExport;
-use App\Models\Buku;
-use Illuminate\Support\Facades\Auth;
-use Maatwebsite\Excel\Facades\Excel;
-use Midtrans\Config;
 use Midtrans\Snap;
+use App\Models\Buku;
+use App\Models\User;
+use Midtrans\Config;
+use App\Models\Pesanan;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use App\Exports\PelangganExport;
 use Midtrans\Error\ApiException;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Models\Pelanggan; //panggil model
+use Illuminate\Support\Facades\DB; //query builder
 
 class UserController extends Controller
 {
@@ -202,17 +204,9 @@ class UserController extends Controller
      */
     public function create()
     {
-        $enumValues = DB::table('information_schema.columns')
-                        ->select('column_type')
-                        ->where('table_name', '=', 'users')
-                        ->where('column_name', '=', 'role')
-                        ->first()
-                        ->column_type;
+        $enumOptions = ['Admin', 'Staff', 'Customer'];
 
-        preg_match("/^enum\(\'(.*)\'\)$/", $enumValues, $matches);
-        $enumOptions = explode("','", $matches[1]);
-
-        return view('user.form', ['enumOptions' => $enumOptions]);
+        return view('user.form', compact('enumOptions'));
     }
 
     /**
@@ -220,63 +214,29 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //proses input produk dari form
-        $request->validate([
-            'name' => 'required|max:45',
-            'email' => 'required|max:45',
-            'password' => 'required|max:45',
-            'role' => 'required',
-            'hp' => 'required|regex:/^[0-9]+(\.[0-9][0-9]?)?$/',
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png,svg|min:2|max:500', //KB
-        ],
-        //custom pesan errornya
-        [
-            'name.required'=>'Nama Wajib Diisi',
-            'name.max'=>'Nama Maksimal 45 karakter',
-            'email.required'=>'Email Wajib Diisi',
-            'email.max'=>'Email Maksimal 45 karakter',
-            'password.required'=>'Password Wajib Diisi',
-            'password.max'=>'Password Maksimal 45 karakter',
-            'role.required'=>'Role Wajib Diisi',
-            'hp.required'=>'Nomor HP Wajib Diisi',
-            'hp.regex'=>'Nomor HP harus berupa angka',
-            'foto.min'=>'Ukuran file kurang 2 KB',
-            'foto.max'=>'Ukuran file melebihi 500 KB',
-            'foto.image'=>'File foto bukan gambar',
-            'foto.mimes'=>'Extension file selain jpg,jpeg,png,svg',
-        ]
-        );
+        // Validasi input
+        $validatedData = $request->validate([
+            'name'         => 'required|string|max:255',
+            'email'        => 'required|email|unique:users,email',
+            'password'     => 'required|string|min:6',
+            'role'         => 'required|in:Admin,Staff,Customer',
+            'phone'        => 'required|string|max:20',
+            'province'     => 'nullable|string|max:100',
+            'city'         => 'nullable|string|max:100',
+            'address'      => 'nullable|string|max:255',
+            'postal_code'  => 'nullable|numeric|digits_between:4,6',
+        ]);
 
-        //------------apakah user ingin upload foto--------- --
-        if(!empty($request->foto)){
-            $fileName = 'user_'.$request->name.'.'.$request->foto->extension();
-            $request->foto->move(public_path('landingpage/img'),$fileName);
-        }
-        else{
-            $fileName = '';
-        }
+        // Enkripsi password
+        $validatedData['password'] = Hash::make($validatedData['password']);
 
-        //lakukan insert data dari request form
-        try{
-        DB::table('users')->insert(
-            [
-                'name'=>$request->name,
-                'email'=>$request->email,
-                'password' => bcrypt($request['password']),
-                'role'=>$request->role,
-                'hp'=>$request->hp,
-                'foto'=>$fileName,
-            ]);
-       
-        return redirect()->route('user.index')
-                        ->with('success','Data User Baru Berhasil Disimpan');
+        // Buat user baru
+        User::create($validatedData);
+
+        // Redirect dengan notifikasi
+        return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan.');
     }
-        catch (\Exception $e){
-                //return redirect()->back()
-                return redirect()->route('user.index')
-                    ->with('error', 'Terjadi Kesalahan Saat Input Data!'); 
-        }
-    }
+
 
     /**
      * Display the specified resource.
@@ -290,23 +250,46 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        $enumValues = DB::table('information_schema.columns')
-                        ->select('column_type')
-                        ->where('table_name', '=', 'users')
-                        ->where('column_name', '=', 'role')
-                        ->first()
-                        ->column_type;
-
-        preg_match("/^enum\(\'(.*)\'\)$/", $enumValues, $matches);
-        $enumOptions = explode("','", $matches[1]);
-
-        // Tampilkan data lama di form
-        $row = User::find($id);
-
+        $row = User::findOrFail($id);
+        $enumOptions = ['Admin', 'Staff', 'Customer'];
         return view('user.form_edit', compact('row', 'enumOptions'));
     }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name'        => 'required|string|max:255',
+            'email'       => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($id),
+            ],
+            'role'        => 'required|in:Admin,Staff,Customer',
+            'phone'       => 'required|string|max:20',
+            'province'    => 'nullable|string|max:100',
+            'city'        => 'nullable|string|max:100',
+            'address'     => 'nullable|string|max:255',
+            'postal_code' => 'nullable|numeric|digits_between:4,6',
+        ]);
+
+        $user = User::findOrFail($id);
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->role = $request->role;
+        $user->phone = $request->phone;
+        $user->province = $request->province;
+        $user->city = $request->city;
+        $user->address = $request->address;
+        $user->postal_code = $request->postal_code;
+
+        $user->save();
+
+        return redirect()->route('user.index')->with('success', 'Data user berhasil diperbarui.');
+    }
+
 
     public function ubahProfil(string $id, Request $request)
     {
@@ -330,75 +313,6 @@ class UserController extends Controller
         $buku_terpilih = $buku_terpilih->get();
 
         return view('landingpage.profile_edit', compact('row', 'search'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //proses input produk dari form
-        $request->validate([
-            'name' => 'required|max:45',
-            'email' => 'required|max:45',
-            'password' => 'required',
-            'role' => 'required',
-            'hp' => 'regex:/^[0-9]+(\.[0-9][0-9]?)?$/',
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png,svg|min:2|max:500', //KB
-        ],
-        //custom pesan errornya
-        [
-            'name.required'=>'Nama Wajib Diisi',
-            'name.max'=>'Nama Maksimal 45 karakter',
-            'email.required'=>'Email Wajib Diisi',
-            'email.max'=>'Email Maksimal 45 karakter',
-            'password.required'=>'Password Wajib Diisi',
-            'role.required'=>'Role Wajib Diisi',
-            'hp.regex'=>'Nomor HP harus berupa angka',
-            'foto.min'=>'Ukuran file kurang 2 KB',
-            'foto.max'=>'Ukuran file melebihi 500 KB',
-            'foto.image'=>'File foto bukan gambar',
-            'foto.mimes'=>'Extension file selain jpg,jpeg,png,svg',
-        ]
-        );
-
-        //------------ambil foto lama apabila user ingin ganti foto-----------
-        $foto = DB::table('users')->select('foto')->where('id',$id)->get();
-        foreach($foto as $f){
-            $namaFileFotoLama = $f->foto;
-        }
-        //------------apakah user  ingin ubah upload foto baru--------- --
-        if(!empty($request->foto)){
-            //jika ada foto lama, hapus foto lamanya terlebih dahulu
-            if(!empty($namaFileFotoLama)) unlink('landingpage/img/'.$namaFileFotoLama);
-
-            //lalukan proses ubah foto lama menjadi foto baru
-            $fileName = 'user_'.$request->name.'.'.$request->foto->extension();
-            $request->foto->move(public_path('landingpage/img'),$fileName);
-        }
-        else{
-            $fileName = $namaFileFotoLama;
-        }
-
-        //lakukan insert data dari request form
-        DB::table('users')->where('id',$id)->update(
-            [
-                'name'=>$request->name,
-                'email'=>$request->email,
-                'password' => bcrypt($request['password']),
-                'role'=>$request->role,
-                'hp'=>$request->hp,
-                'foto'=>$fileName,
-            ]);
-       
-        $previousUrl = url()->previous();
-        if (strpos($previousUrl, '/user'.'/'.$id.'/edit') !== false) {
-            // Jika pada halaman admin
-            return redirect('/user'.'/'.$id)->with('success','Data User Berhasil Diubah');
-        } else {
-            // Jika pada halaman landingpage
-            return redirect('/profile')->with('success', 'Profil Berhasil Diubah');
-        }
     }
 
     /**

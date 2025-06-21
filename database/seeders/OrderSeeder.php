@@ -67,7 +67,7 @@ class OrderSeeder extends Seeder
                 'deadline_date'      => $date->toDateString(),
                 'deadline_time'      => $time,
                 'express'            => rand(0, 1),
-                'delivery_method'    => rand(0, 2),
+                'delivery_method'    => 'JNE',
                 'needs_proofing'     => rand(0, 1),
                 'pickup_status'      => rand(0, 1),
                 'notes'              => 'Tolong kasih nama ' . $user->name . ' yang besar di tengah ya',

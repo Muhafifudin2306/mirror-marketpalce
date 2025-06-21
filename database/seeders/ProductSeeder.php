@@ -18,7 +18,7 @@ class ProductSeeder extends Seeder
                 'uuid' => Str::uuid(),
                 'name' => $productName, // Produk A, B, ...
                 'label_id' => $label_id,
-                'price' => rand(10000, 50000),
+                'price' => rand(10, 50) * 1000,
                 'additional_size' => rand(70, 500),
                 'additional_unit' => 'gr',
                 'long_product' => rand(10, 50),

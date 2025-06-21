@@ -1,9 +1,11 @@
 <?php
 
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\PesananController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PesananController;
+use App\Http\Controllers\ChatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,9 +21,15 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::post('/send-message', [ChatController::class, 'sendMessage']);
+
 
 //-------- Midtrans ----------
-Route::post('/midtrans-callback', [PesananController::class, 'callback'])->name('midtrans_callback');
+//Route::post('/midtrans-callback', [PesananController::class, 'callback'])->name('midtrans_callback');
+Route::post('/midtrans-callback', [CartController::class, 'paymentCallback'])->name('midtrans_callback');
+
+// handle redirect dari Midtrans
+Route::get('/payment/finish', [CartController::class, 'paymentFinish'])->name('payment.finish');
 
 //-------- REST API ----------
 Route::middleware(["auth:sanctum"])->group(function(){

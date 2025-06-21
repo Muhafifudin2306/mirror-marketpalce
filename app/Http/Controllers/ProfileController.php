@@ -13,21 +13,16 @@ use Illuminate\Support\Facades\Hash;
 class ProfileController extends Controller
 {
     /**
-     * Display the profile SPA page with orders, user info, chat and notifications.
+     * SPA page
      */
     public function index(Request $request)
     {
-        // Ambil user yang sedang login
         $user = Auth::user();
 
-        // Fetch orders milik user, termasuk relasi order_products jika perlu
         $orders = Order::with('orderProducts')
             ->where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->get();
-
-        // Ambil alamat tersimpan, asumsikan one-to-one relasi Address
-        // $address = Address::where('user_id', $user->id)->first();
 
         return view('landingpage.profile', compact('user', 'orders'));
     }

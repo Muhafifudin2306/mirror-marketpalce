@@ -2,51 +2,58 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User; //panggil model
-use App\Models\Pesanan; //panggil model
-use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\OrderProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Models\User; //panggil model
+use App\Models\Pesanan; //panggil model
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // Menghitung total income (counter)
-        $totalIncome = Pesanan::join('buku', 'pesanan.buku_id', '=', 'buku.id')
-                            ->where('pesanan.ket', 'Done')
-                            ->sum('buku.harga');
+        // 1) Total pendapatan: jumlahkan subtotal order yang sudah "Done"
+        $totalIncome = Order::where('order_status', 2)
+                            ->sum('subtotal');
 
-        // Menghitung jumlah buku terjual (dari jumlah pesanan)
-        $totalBukuTerjual = Pesanan::where('ket', 'Done')->count();
+        // 2) Total produk terjual: jumlahkan qty di order_products
+        $totalProdukTerjual = OrderProduct::join('orders', 'order_products.order_id', '=', 'orders.id')
+                            ->where('orders.order_status', 2)
+                            ->sum('order_products.qty');
 
-        // Menghitung jumlah pelanggan
-        $totalPelanggan = User::where('role', '=', 'Pelanggan')
-                            ->count();
+        // 3) Total pelanggan: hitung user dengan role "Customer"
+        $totalPelanggan = User::where('role', 'Customer')->count();
 
-        // Grafik income bulanan (bar chart)
-        $bulanIncome = Pesanan::selectRaw('SUM(buku.harga) as income')
-                ->join('buku', 'pesanan.buku_id', '=', 'buku.id')
-                ->where('pesanan.ket', 'Done')
-                ->groupByRaw('MONTH(pesanan.tgl)')
-                ->orderByRaw('MONTH(pesanan.tgl)')
-                ->limit(6)
-                ->get();
+        // 4) Grafik pendapatan per bulan (6 bulan terakhir)
+        $bulanIncome = Order::selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, SUM(subtotal) as income")
+                            ->where('order_status', 2)
+                            ->groupBy('month')
+                            ->orderBy('month', 'desc')
+                            ->limit(6)
+                            ->get()
+                            ->reverse() // agar dari bulan tertua ke terbaru
+                            ->values();
 
-        // Grafik buku terjual setiap bulan (Bar Chart)
-        $bulanTerjual = Pesanan::selectRaw('COUNT(*) as terjual')
-                ->where('pesanan.ket', 'Done')
-                ->groupByRaw('MONTH(pesanan.tgl)')
-                ->orderByRaw('MONTH(pesanan.tgl)')
-                ->limit(6)
-                ->get();
+        // 5) Grafik produk terjual per bulan (6 bulan terakhir)
+        $bulanTerjual = OrderProduct::selectRaw("DATE_FORMAT(orders.created_at, '%Y-%m') as month, SUM(order_products.qty) as terjual")
+                            ->join('orders', 'order_products.order_id', '=', 'orders.id')
+                            ->where('orders.order_status', 2)
+                            ->groupBy('month')
+                            ->orderBy('month', 'desc')
+                            ->limit(6)
+                            ->get()
+                            ->reverse()
+                            ->values();
 
-        return view('adminpage.home', [
-            'totalIncome' => $totalIncome,
-            'totalBukuTerjual' => $totalBukuTerjual,
-            'totalPelanggan' => $totalPelanggan,
-            'bulanIncome' => $bulanIncome,
-            'bulanTerjual' => $bulanTerjual,
-        ]);
+        return view('adminpage.home', compact(
+            'totalIncome',
+            'totalProdukTerjual',
+            'totalPelanggan',
+            'bulanIncome',
+            'bulanTerjual'
+        ));
     }
+
 }

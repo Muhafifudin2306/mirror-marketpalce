@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             FinishingSeeder::class,
             OrderSeeder::class,
             NotificationSeeder::class,
+            FaqSeeder::class,
         ]);
     }
 }
