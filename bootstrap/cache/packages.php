@@ -1,4 +1,16 @@
 <?php return array (
+  'barryvdh/laravel-dompdf' => 
+  array (
+    'aliases' => 
+    array (
+      'PDF' => 'Barryvdh\\DomPDF\\Facade\\Pdf',
+      'Pdf' => 'Barryvdh\\DomPDF\\Facade\\Pdf',
+    ),
+    'providers' => 
+    array (
+      0 => 'Barryvdh\\DomPDF\\ServiceProvider',
+    ),
+  ),
   'laravel/sail' => 
   array (
     'providers' => 
@@ -59,17 +71,6 @@
       0 => 'Termwind\\Laravel\\TermwindServiceProvider',
     ),
   ),
-  'realrashid/sweet-alert' => 
-  array (
-    'aliases' => 
-    array (
-      'Alert' => 'RealRashid\\SweetAlert\\Facades\\Alert',
-    ),
-    'providers' => 
-    array (
-      0 => 'RealRashid\\SweetAlert\\SweetAlertServiceProvider',
-    ),
-  ),
   'spatie/laravel-ignition' => 
   array (
     'aliases' => 
@@ -79,6 +80,13 @@
     'providers' => 
     array (
       0 => 'Spatie\\LaravelIgnition\\IgnitionServiceProvider',
+    ),
+  ),
+  'spatie/laravel-permission' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Spatie\\Permission\\PermissionServiceProvider',
     ),
   ),
 );

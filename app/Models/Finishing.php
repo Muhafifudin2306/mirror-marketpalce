@@ -3,18 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Finishing extends Model
 {
-    use HasFactory;
-
-    protected $table = 'finishings';
+    protected $tables = 'finishings';
 
     protected $fillable = [
         'label_id',
-        'finishing_name',
         'finishing_price',
+        'finishing_name'
     ];
 
     public function label()

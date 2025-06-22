@@ -2,51 +2,45 @@
 
 namespace App\Models;
 
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
-        'name', 'phone', 'province', 'city', 'address', 'postal_code', 'role', 'email', 'password',
+        'name',
+        'email',
+        'password',
     ];
 
-    protected $appends = ['first_name', 'last_name'];
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
-    public function getFirstNameAttribute(): string
-    {
-        return explode(' ', $this->name)[0];
-    }
-
-    public function getLastNameAttribute(): string
-    {
-        $parts = explode(' ', $this->name);
-        array_shift($parts);
-        return implode(' ', $parts);
-    }
-
-    public function setFirstNameAttribute($value): void
-    {
-        $last = $this->last_name;
-        $this->attributes['name'] = trim($value . ' ' . $last);
-    }
-
-    public function setLastNameAttribute($value): void
-    {
-        $first = $this->first_name;
-        $this->attributes['name'] = trim($first . ' ' . $value);
-    }
-
-    public function orders()
-    {
-        return $this->hasMany(Order::class);
-    }
-
-    public function notifications()
-    {
-        return $this->hasMany(Notification::class);
-    }
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
 }

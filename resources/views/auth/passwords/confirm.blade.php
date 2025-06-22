@@ -1,4 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.auth')
+
+@section('title_page', 'Forget Password | POS Sinau Print')
 
 @section('content')
 <div class="container">

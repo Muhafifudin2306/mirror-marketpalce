@@ -2,339 +2,131 @@
 
 namespace App\Http\Controllers;
 
-use Midtrans\Snap;
-use App\Models\Buku;
 use App\Models\User;
-use Midtrans\Config;
-use App\Models\Pesanan;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use App\Exports\PelangganExport;
-use Midtrans\Error\ApiException;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Masjid;
+use Illuminate\View\View;
+use App\Models\Notification;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Models\Pelanggan; //panggil model
-use Illuminate\Support\Facades\DB; //query builder
+use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 
 class UserController extends Controller
 {
     /**
+     * Instantiate a new UserController instance.
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): View
     {
-        $ar_user = DB::table('users')
-                ->select('users.*')
-                ->orderBy('users.role', 'desc')
-                ->get();
-        return view('user.index', compact('ar_user'));
+        $this->authorize('user-management'); 
+
+        $users = User::latest('id')->get();
+    
+        return view('users.index', compact('users'));
     }
 
-    public function dataUser(Request $request)
-    {
-        $user = auth()->user();
-
-        $search = $request->search;
-        $buku_terpilih = Buku::query();
-
-        // Filter search
-        if ($search) {
-            $buku_terpilih->where(function ($query) use ($search) {
-                $query->where('judul', 'like', '%'.$search.'%')
-                      ->orWhere('pengarang', 'like', '%'.$search.'%')
-                      ->orWhere('harga', 'like', '%'.$search.'%')
-                      ->orWhere('isbn', 'like', '%'.$search.'%')
-                      ->orWhere('sinopsis', 'like', '%'.$search.'%')
-                      ->orWhere('jumlah_halaman', 'like', '%'.$search.'%');
-            });
-        }
-
-        $buku_terpilih = $buku_terpilih->get();
-
-        return view('landingpage.profile', compact('user', 'search'));
-    }
-
-    public function keranjang(Request $request)
-    {
-        $user = Auth::user();
-    
-        $keranjang = DB::table('pesanan')
-                    ->join('buku', 'buku.id', '=', 'pesanan.buku_id')
-                    ->select('pesanan.*', 'buku.judul as buku_judul', 'buku.harga as buku_harga', 'buku.foto as buku_foto', 'buku.diskon as buku_diskon')
-                    ->where('pesanan.user_id', $user->id)
-                    ->where('pesanan.ket', 'Pending')
-                    ->get();
-                    
-                    $selectedItems = [];
-    
-        foreach ($keranjang as $detail) {
-            $subtotal = $detail->buku_harga - ($detail->buku_harga * $detail->buku_diskon / 100);
-            $formattedHarga = number_format($detail->buku_harga, 0, ',', '.');
-            $formattedSubtotal = number_format($subtotal, 0, ',', '.');
-    
-            if ($detail->buku_diskon > 0) {
-                $selectedItems[] = [
-                    'pesanan_id' => $detail->id,
-                    'harga' => $subtotal
-                ];
-            }
-            
-            $detail->buku_harga_formatted = $formattedHarga;
-            $detail->subtotal_formatted = $formattedSubtotal;
-        }
-
-        $search = $request->search;
-        $buku_terpilih = Buku::query();
-
-        // Filter search
-        if ($search) {
-            $buku_terpilih->where(function ($query) use ($search) {
-                $query->where('judul', 'like', '%'.$search.'%')
-                      ->orWhere('pengarang', 'like', '%'.$search.'%')
-                      ->orWhere('harga', 'like', '%'.$search.'%')
-                      ->orWhere('isbn', 'like', '%'.$search.'%')
-                      ->orWhere('sinopsis', 'like', '%'.$search.'%')
-                      ->orWhere('jumlah_halaman', 'like', '%'.$search.'%');
-            });
-        }
-
-        $buku_terpilih = $buku_terpilih->get();
-        
-        return view('landingpage.keranjang', compact('keranjang', 'selectedItems', 'search'));
-    }
-    
-
-    public function checkout(Request $request)
-    {
-        // dd($request->all());
-        $selectedData = $request->pesanan;
-        $pesan = Pesanan::findOrFail($selectedData);
-        // dd($pesan);
-        $harga = $pesan->buku->harga;
-        $diskon = $pesan->buku->diskon;
-        if($diskon == null || $diskon == 0){
-            $after_diskon = $harga;
-        }
-        else{
-            $after_diskon = $harga - (($diskon/100) * $harga);
-        }
-
-        $pesananIds = $pesan;
-        $grossAmounts = $after_diskon;
-        // dd($grossAmounts);
-
-         // Server Key
-        Config::$serverKey = config('midtrans.server_key');
-        // dd(config('midtrans.server_key'));
-        // $server = \Midtrans\Config::$serverKey;
-        Config::$isProduction = config('midtrans.is_production');
-        // Set sanitization
-        Config::$isSanitized = true;
-        // Set 3DS transaction untuk credit card
-        Config::$is3ds = true;
-
-        
-        if (Auth::check()) {
-            $user = Auth::user();
-            $namaUser = $user->name;
-            $emailUser = $user->email;
-            $phoneUser = $user->hp;
-
-            $params = array(
-                'transaction_details' => array(
-                    'order_id' => $pesan->id,
-                    'gross_amount' => $grossAmounts,
-                ),
-                'customer_details' => array(
-                    'first_name' => $namaUser,
-                    // 'last_name' => 'pratama',
-                    'email' => $emailUser,
-                    'phone' => $phoneUser,
-                ),
-            );
-        }
-
-        $snapToken = Snap::getSnapToken($params);
-        // dd($snapToken);
-        return view('landingpage.pay', compact('pesan', 'snapToken', 'grossAmounts', 'namaUser'));
-    }
-
-    public function pustaka(Request $request)
-    {
-        $user = Auth::user();
-        $buku_terpilih = Buku::query();
-
-        $urutan = $request->urutan;
-        $search = $request->search;
-    
-        $buku_terpilih = DB::table('pesanan')
-                    ->join('buku', 'buku.id', '=', 'pesanan.buku_id')
-                    ->select('pesanan.*', 'buku.judul as buku_judul', 'buku.foto as buku_foto')
-                    ->where('pesanan.user_id', $user->id)
-                    ->where('pesanan.ket', 'Done');
-    
-        // Filter search
-        if ($search) {
-            $buku_terpilih->where(function ($query) use ($search) {
-                $query->where('buku.judul', 'like', '%'.$search.'%')
-                    ->orWhere('buku.pengarang', 'like', '%'.$search.'%')
-                    ->orWhere('buku.harga', 'like', '%'.$search.'%')
-                    ->orWhere('buku.isbn', 'like', '%'.$search.'%')
-                    ->orWhere('buku.sinopsis', 'like', '%'.$search.'%')
-                    ->orWhere('buku.jumlah_halaman', 'like', '%'.$search.'%');
-            });
-        }
-    
-        // Urut berdasarkan
-        if ($urutan == 'terbaru') {
-            $buku_terpilih->orderBy('pesanan.id', 'desc');
-        } elseif ($urutan == 'terlama') {
-            $buku_terpilih->orderBy('pesanan.id', 'asc');
-        }
-    
-        $buku_terpilih = $buku_terpilih->get();
-        
-        return view('landingpage.pustaka', compact('buku_terpilih', 'urutan', 'search'));
-    }
-    
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): View
     {
-        $enumOptions = ['Admin', 'Staff', 'Customer'];
+        $this->authorize('user-manipulation'); 
 
-        return view('user.form', compact('enumOptions'));
+        $roles = Role::pluck('name')->all();
+    
+        return view('users.create', compact('roles'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request): RedirectResponse
     {
-        // Validasi input
-        $validatedData = $request->validate([
-            'name'         => 'required|string|max:255',
-            'email'        => 'required|email|unique:users,email',
-            'password'     => 'required|string|min:6',
-            'role'         => 'required|in:Admin,Staff,Customer',
-            'phone'        => 'required|string|max:20',
-            'province'     => 'nullable|string|max:100',
-            'city'         => 'nullable|string|max:100',
-            'address'      => 'nullable|string|max:255',
-            'postal_code'  => 'nullable|numeric|digits_between:4,6',
-        ]);
+        $this->authorize('user-manipulation'); 
 
-        // Enkripsi password
-        $validatedData['password'] = Hash::make($validatedData['password']);
+        $input = $request->all();
+        $input['password'] = Hash::make($request->password);
 
-        // Buat user baru
-        User::create($validatedData);
+        $user = User::create($input);
+        $user->assignRole($request->roles);
 
-        // Redirect dengan notifikasi
-        return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan.');
+        return redirect()->route('users.index')
+                ->withSuccess('User berhasil ditambahkan!');
     }
-
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(User $user): RedirectResponse
     {
-        $rs = User::find($id);
-        return view('user.detail', compact('rs'));
+        $this->authorize('user-manipulation'); 
+
+        return redirect()->route('users.index');
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(User $user): View
     {
-        $row = User::findOrFail($id);
-        $enumOptions = ['Admin', 'Staff', 'Customer'];
-        return view('user.form_edit', compact('row', 'enumOptions'));
-    }
+        $this->authorize('user-manipulation'); 
 
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'name'        => 'required|string|max:255',
-            'email'       => [
-                'required',
-                'email',
-                Rule::unique('users', 'email')->ignore($id),
-            ],
-            'role'        => 'required|in:Admin,Staff,Customer',
-            'phone'       => 'required|string|max:20',
-            'province'    => 'nullable|string|max:100',
-            'city'        => 'nullable|string|max:100',
-            'address'     => 'nullable|string|max:255',
-            'postal_code' => 'nullable|numeric|digits_between:4,6',
-        ]);
-
-        $user = User::findOrFail($id);
-
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->role = $request->role;
-        $user->phone = $request->phone;
-        $user->province = $request->province;
-        $user->city = $request->city;
-        $user->address = $request->address;
-        $user->postal_code = $request->postal_code;
-
-        $user->save();
-
-        return redirect()->route('user.index')->with('success', 'Data user berhasil diperbarui.');
-    }
-
-
-    public function ubahProfil(string $id, Request $request)
-    {
-        $row = User::find($id);
-
-        $search = $request->search;
-        $buku_terpilih = Buku::query();
-
-        // Filter search
-        if ($search) {
-            $buku_terpilih->where(function ($query) use ($search) {
-                $query->where('judul', 'like', '%'.$search.'%')
-                      ->orWhere('pengarang', 'like', '%'.$search.'%')
-                      ->orWhere('harga', 'like', '%'.$search.'%')
-                      ->orWhere('isbn', 'like', '%'.$search.'%')
-                      ->orWhere('sinopsis', 'like', '%'.$search.'%')
-                      ->orWhere('jumlah_halaman', 'like', '%'.$search.'%');
-            });
+        // Check Only Super Admin can update his own Profile
+        if ($user->hasRole('Super Admin')){
+            if($user->id != auth()->user()->id){
+                abort(403, 'USER DOES NOT HAVE THE RIGHT PERMISSIONS');
+            }
         }
 
-        $buku_terpilih = $buku_terpilih->get();
+        return view('users.edit', [
+            'user' => $user,
+            'roles' => Role::pluck('name')->all(),
+            'userRoles' => $user->roles->pluck('name')->all(),
+        ]);
+    }
 
-        return view('landingpage.profile_edit', compact('row', 'search'));
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateUserRequest $request, User $user): RedirectResponse
+    {
+        $this->authorize('user-manipulation'); 
+
+        $input = $request->all();
+ 
+        if(!empty($request->password)){
+            $input['password'] = Hash::make($request->password);
+        }else{
+            $input = $request->except('password');
+        }
+        
+        $user->update($input);
+
+        $user->syncRoles($request->roles);
+
+        return redirect()->route('users.index')
+                ->withSuccess('User ' . $request->email . ' berhasil diubah!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $user): RedirectResponse
     {
-        $user = User::find($id);
-        if (!empty($user->foto)) {
-            $fotoPath = public_path('landingpage/img/'.$user->foto);
-            if (file_exists($fotoPath)) {
-                unlink($fotoPath);
-            }
-        }
+        $this->authorize('user-manipulation'); 
 
+        $user->syncRoles([]);
         $user->delete();
-        return redirect()->route('user.index')
-                        ->with('success', 'Data User Berhasil Dihapus');
-    }
-
-    public function pay()
-    {
-        return view('landingpage.pay');
+        return redirect()->route('users.index')
+                ->withSuccess('User berhasil dihapus!');
     }
 }
