@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
@@ -28,6 +29,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
+    //protected $redirectTo = RouteServiceProvider::HOME;
     protected $redirectTo = '/';
 
     /**
@@ -49,9 +51,13 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name'  => ['required', 'string', 'max:255'],
+            'hp'         => ['required', 'regex:/^08[0-9]{8,11}$/'],
+            'email'      => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password'   => ['required', 'string', 'min:8', 'confirmed'],
+        ], [
+            'hp.regex' => 'Nomor telepon harus dimulai dengan 08 dan terdiri dari 10-13 digit angka.',
         ]);
     }
 
@@ -64,8 +70,9 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
+            'name'     => trim($data['first_name'].' '.$data['last_name']),
+            'hp'       => $data['hp'],
+            'email'    => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
     }

@@ -10,48 +10,36 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'tanggal',
-        'waktu',
+        'user_id',
         'spk',
-        'nama_pelanggan',
-        'kontak_pelanggan',
-        'email_pelanggan',
-        'jenis_transaksi',
-        'tipe_pengambilan',
-        'metode_pengiriman',
-        'kebutuhan_proofing',
-        'express',
-        'deadline',
-        'dp',
-        'full_payment',
-        'waktu_deadline',
-        'proses_proofing',
-        'proses_produksi',
-        'proses_finishing',
-        'quality_control',
-        'status_pengerjaan',
-        'status_pembayaran',
-        'subtotal',
-        'id_validator',
-        'metode_transaksi',
-        'termin',
-        'status_pengambilan',
-        'diskon_persen',
-        'potongan_rp',
-        'ongkir',
-        'kurir',
-        'alamat',
-        'provinsi',
-        'kota',
-        'kecamatan',
-        'kode_pos',
-        'berat',
-        'cancel_reason',
-        'payment_at',
+        'transaction_type',
+        'transaction_method',
+        'order_design',
+        'preview_design',
+        'paid_at',
         'payment_status',
-        'pickup',
-        'bukti_bayar',
-        'bukti_lunas',
-        'paid_at'
+        'order_status',
+        'subtotal',
+        'discount_percent',
+        'discount_fix',
+        'deadline_date',
+        'deadline_time',
+        'express',
+        'pickup_status',
+        'delivery_method',
+        'delivery_cost',
+        'needs_proofing',
+        'proof_qty',
+        'notes',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function orderProducts()
+    {
+        return $this->hasMany(OrderProduct::class);
+    }
 }

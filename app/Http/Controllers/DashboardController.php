@@ -2,152 +2,58 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\OrderProduct;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Models\User; //panggil model
+use App\Models\Pesanan; //panggil model
 
 class DashboardController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
     public function index()
     {
-       
-        $query2 = Order::query();
-        $yesterday = Carbon::now()->subDay()->toDateString();
-       
-        $query2->where('tanggal', $yesterday);
-        $query2->where('status_pengerjaan', '!=', 'cancel');
+        // 1) Total pendapatan: jumlahkan subtotal order yang sudah "Done"
+        $totalIncome = Order::where('order_status', 2)
+                            ->sum('subtotal');
 
-        $sumSubTotalOrderYesterday = $query2->sum('subtotal');
-        $countOrderYesterday = $query2->count();
+        // 2) Total produk terjual: jumlahkan qty di order_products
+        $totalProdukTerjual = OrderProduct::join('orders', 'order_products.order_id', '=', 'orders.id')
+                            ->where('orders.order_status', 2)
+                            ->sum('order_products.qty');
 
-        $sumCashOrderYesterday = $query2->where('metode_transaksi', '0')->sum('subtotal');
-        $sumTFOrderYesterday = $query2->where('metode_transaksi', '1')->sum('subtotal');
-        $sumQRISOrderYesterday = $query2->where('metode_transaksi', '2')->sum('subtotal');
+        // 3) Total pelanggan: hitung user dengan role "Customer"
+        $totalPelanggan = User::where('role', 'Customer')->count();
 
-        $countCashOrderYesterday = $query2->where('metode_transaksi', '0')->count();
-        $countTFOrderYesterday = $query2->where('metode_transaksi', '1')->count();
-        $countQRISOrderYesterday = $query2->where('metode_transaksi', '2')->count();
+        // 4) Grafik pendapatan per bulan (6 bulan terakhir)
+        $bulanIncome = Order::selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, SUM(subtotal) as income")
+                            ->where('order_status', 2)
+                            ->groupBy('month')
+                            ->orderBy('month', 'desc')
+                            ->limit(6)
+                            ->get()
+                            ->reverse() // agar dari bulan tertua ke terbaru
+                            ->values();
 
-        $query = Order::query();
-        $today = Carbon::now()->toDateString();
-        $query->where('tanggal', $today);
-        $query->where('status_pengerjaan', '!=', 'cancel');
+        // 5) Grafik produk terjual per bulan (6 bulan terakhir)
+        $bulanTerjual = OrderProduct::selectRaw("DATE_FORMAT(orders.created_at, '%Y-%m') as month, SUM(order_products.qty) as terjual")
+                            ->join('orders', 'order_products.order_id', '=', 'orders.id')
+                            ->where('orders.order_status', 2)
+                            ->groupBy('month')
+                            ->orderBy('month', 'desc')
+                            ->limit(6)
+                            ->get()
+                            ->reverse()
+                            ->values();
 
-        $sumSubTotalOrderToday = (clone $query)->sum('subtotal');
-        $countOrderToday = (clone $query)->count();
-
-        $sumCashOrderToday = (clone $query)->where('metode_transaksi', '0')->sum('subtotal');
-        $sumTFOrderToday = (clone $query)->where('metode_transaksi', '1')->sum('subtotal');
-        $sumQRISOrderToday = (clone $query)->where('metode_transaksi', '2')->sum('subtotal');
-
-        $countCashOrderToday = (clone $query)->where('metode_transaksi', '0')->count();
-        $countTFOrderToday = (clone $query)->where('metode_transaksi', '1')->count();
-        $countQRISOrderToday = (clone $query)->where('metode_transaksi', '2')->count();
-
-        $orders = (clone $query)->orderBy('deadline', 'desc')->limit(5)->get();
-
-        return view('dashboard.index', compact(
-            'sumSubTotalOrderToday', 'countOrderToday', 'orders', 'sumCashOrderToday', 'sumTFOrderToday', 'sumQRISOrderToday', 'countCashOrderToday', 'countTFOrderToday', 'countQRISOrderToday',
-            'sumSubTotalOrderYesterday', 'countOrderYesterday', 'sumCashOrderYesterday', 'sumTFOrderYesterday', 'sumQRISOrderYesterday', 'countCashOrderYesterday', 'countTFOrderYesterday', 'countQRISOrderYesterday'
+        return view('adminpage.home', compact(
+            'totalIncome',
+            'totalProdukTerjual',
+            'totalPelanggan',
+            'bulanIncome',
+            'bulanTerjual'
         ));
     }
 
-    public function indexJson(Request $request)
-    {
-        if (!empty($request->period)) {
-            $period = Carbon::createFromFormat('Y-m', $request->period);
-            $startOfMonth = $period->copy()->startOfMonth();
-            $endOfMonth = $period->copy()->endOfMonth();
-
-            $weeklyData = [];
-            $start = $startOfMonth->copy();
-            $minggu = 1;
-
-            while ($start->lte($endOfMonth)) {
-                $end = $start->copy()->addDays(6);
-                if ($end->gt($endOfMonth)) {
-                    $end = $endOfMonth->copy();
-                }
-
-                $sum = Order::where('tanggal', '>=', $start->toDateString())->where('tanggal', '<=', $end->toDateString())->sum('subtotal');
-
-                $weeklyData[] = [
-                    'minggu' => "Minggu $minggu",
-                    'start' => $start->toDateString(),
-                    'end' => $end->toDateString(),
-                    'total' => $sum,
-                ];
-
-                $start = $end->copy()->addDay();
-                $minggu++;
-            }
-
-            $totalPerMonth = Order::where('tanggal', '>=', $startOfMonth->toDateString())->where('tanggal', '<=', $endOfMonth->toDateString())->sum('subtotal');
-
-            return response()->json([
-                'weekly' => $weeklyData,
-                'total_per_month' => $totalPerMonth
-            ]);
-        }
-
-        return response()->json([]);
-    }
-
-    public function getPerMonthPerCategory(Request $request)
-    {
-        $query = DB::table('orders as o');
-        $query->select(
-            'p.name',
-            'p.additional_size',
-            'p.additional_unit',
-            'p.long_product', 
-            'p.width_product', 
-            'l.name AS label_name',
-            DB::raw("SUM(op.subtotal) AS op_sub_total"),
-            DB::raw("DATE_FORMAT(o.tanggal, '%Y-%m') AS bulan_tahun"),
-            DB::raw("COUNT(o.id) AS total_order")
-        );
-
-        $query->join('order_products as op', 'o.spk', '=', 'op.order_id');
-        $query->join('products as p', 'p.id', '=', 'op.jenis_bahan');
-        $query->join('labels as l', 'l.id', '=', 'p.label_id');
-        if (!empty($request->period_in_category)) {
-            $period = Carbon::createFromFormat('Y-m', $request->period_in_category);
-            $startOfMonth = $period->copy()->startOfMonth()->toDateString();
-            $endOfMonth = $period->copy()->endOfMonth()->toDateString();
-            $query->whereBetween('o.tanggal', [$startOfMonth, $endOfMonth]); 
-        }
-
-        $query->groupBy(
-            'p.name',
-            'p.additional_size',
-            'l.name',
-            'p.additional_unit',
-            'p.long_product',
-            'p.width_product',
-            DB::raw("DATE_FORMAT(o.tanggal, '%Y-%m')")
-        );
-        
-        $query->orderByDesc('total_order'); 
-
-        $results = $query->get();
-
-        return response()->json($results);
-    }
 }

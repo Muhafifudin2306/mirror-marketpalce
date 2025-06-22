@@ -3,9 +3,6 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -29,21 +26,5 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
-    }
-
-    public function render($request, Throwable $e): Response
-    {
-        // Cek jika exception adalah AuthorizationException
-        if ($e instanceof AuthorizationException) {
-            // // Jika request adalah AJAX atau mengharapkan JSON, kembalikan JSON response
-            // if ($request->expectsJson()) {
-            //     return response()->json(['message' => 'Anda tidak memiliki izin untuk melakukan tindakan ini.'], 403);
-            // }
-
-            // Jika bukan AJAX, tampilkan view custom
-            return response()->view('errors.403', [], 403);
-        }
-
-        return parent::render($request, $e);
     }
 }
