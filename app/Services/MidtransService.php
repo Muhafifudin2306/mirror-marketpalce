@@ -15,7 +15,7 @@ class MidtransService
         Config::$is3ds = config('midtrans.is_3ds');
     }
 
-    public function createSnapToken($order, $user, $deliveryMethod = null, $deliveryCost = 0)
+    public function createSnapToken($order, $user, $deliveryMethod = null, $deliveryCost = 0, $promoCode = '', $promoDiscount = 0)
     {
         $subtotal = $order->orderProducts->sum('subtotal');
 
@@ -27,7 +27,7 @@ class MidtransService
             $baseSubtotal  = $subtotal;
         }
 
-        $grossAmount = $baseSubtotal + $expressFee + $deliveryCost;
+        $grossAmount = $baseSubtotal + $expressFee + $deliveryCost - $promoDiscount;
 
         $itemDetails = [
             [
@@ -53,6 +53,15 @@ class MidtransService
                 'price'    => (int) $deliveryCost,
                 'quantity' => 1,
                 'name'     => 'Biaya Pengiriman - ' . ($deliveryMethod ?? 'Kurir')
+            ];
+        }
+
+        if ($promoDiscount > 0) {
+            $itemDetails[] = [
+                'id'       => 'promo_discount',
+                'price'    => -(int) $promoDiscount,
+                'quantity' => 1,
+                'name'     => 'Diskon Promo: ' . $promoCode
             ];
         }
 

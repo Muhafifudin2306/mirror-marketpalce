@@ -26,6 +26,7 @@ return new class extends Migration
             $table->integer('subtotal')->default(0);
             $table->decimal('discount_percent', 5, 2)->nullable();
             $table->decimal('discount_fix', 12, 2)->nullable();
+            $table->decimal('promocode_deduct', 12, 2)->nullable();
             $table->date('deadline_date')->nullable();
             $table->time('deadline_time')->nullable();
             $table->tinyInteger('express')->nullable()->default(0);  // 0 = normal, 1 = express

@@ -162,7 +162,7 @@ class PesananController extends Controller
         $pesanan->delete();
 
         $previousUrl = url()->previous();
-        if (strpos($previousUrl, '/keranjang') !== false) {
+        if (strpos($previousUrl, '/keranjang') != false) {
             // Jika pada halaman admin
             return redirect()->route('keranjang')
                         ->with('success','Buku Berhasil Dihapus Dari Keranjang');

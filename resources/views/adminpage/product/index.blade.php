@@ -12,6 +12,93 @@
         #pricing-form {
             display: none;
         }
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .image-preview {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .remove-image {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-gallery {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .gallery-thumb {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+        
+        .gallery-thumb:hover {
+            border-color: #007bff;
+        }
+        
+        /* Modal styles */
+        .modal-gallery {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+        }
+        
+        .modal-content-gallery {
+            margin: 5% auto;
+            display: block;
+            max-width: 80%;
+            max-height: 80%;
+            border-radius: 8px;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
     </style>
     <!-- Content -->
     <div class="container flex-grow-1 container-p-y">
@@ -86,7 +173,7 @@
                 <div class="card-body">
                     @php
                         $isEditing = isset($editingLabel);
-                        $action = $isEditing ? route('adminProduct.update', $editingLabel->id) : route('adminProduct.store');
+                        $action = $isEditing ? route('admin.product.update', $editingLabel->id) : route('admin.product.store');
                     @endphp
                     <form action="{{ $action }}" method="POST">
                         @csrf
@@ -207,6 +294,22 @@
                                                     </div>
                                                     <div class="col-md-12">
                                                         <div class="mb-2">
+                                                            <label>Upload Gambar Produk (Max 4)</label>
+                                                            <input type="file" name="product_images[{{ $i }}][]" 
+                                                                   class="form-control image-input" 
+                                                                   multiple accept="image/*" 
+                                                                   data-index="{{ $i }}">
+                                                            <div class="image-preview-container" data-index="{{ $i }}">
+                                                                @foreach($prod->images as $image)
+                                                                    <div class="image-preview">
+                                                                        <img src="{{ asset('storage/' . $image->image_product) }}" alt="Product Image">
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="mb-2">
                                                             <button type="button"
                                                                 class="btn btn-outline-danger remove-row w-100">
                                                                 <i class="bx bx-trash-alt fs-6"></i>
@@ -252,6 +355,16 @@
                                                 <div class="col-md-3">
                                                     <div class="mb-2"><input type="number" name="price[]"
                                                             class="form-control" placeholder="Harga*" required></div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="mb-2">
+                                                        <label>Upload Gambar Produk (Max 4)</label>
+                                                        <input type="file" name="product_images[0][]" 
+                                                               class="form-control image-input" 
+                                                               multiple accept="image/*" 
+                                                               data-index="0">
+                                                        <div class="image-preview-container" data-index="0"></div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         @endif
@@ -393,12 +506,12 @@
                                         @endif
                                     </h5>
                                     <div class="header-actions">
-                                        <a href="{{ route('adminProduct.index', ['edit' => $label->id]) }}"
+                                        <a href="{{ route('admin.product.index', ['edit' => $label->id]) }}"
                                             class="text-primary cursor-pointer">
                                             <i class="bx bx-edit fs-3" title="Edit Data Produk"></i>
                                         </a>
                                         <span class="text-danger btn-delete cursor-pointer"
-                                            data-url="{{ route('adminProduct.destroy', $label->id) }}">
+                                            data-url="{{ route('admin.product.destroy', $label->id) }}">
                                             <i class="bx bx-trash-alt fs-3"></i>
                                         </span>
                                     </div>
@@ -653,7 +766,7 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-            const baseUrl = '{{ route('adminProduct.index') }}';
+            const baseUrl = '{{ route('admin.product.index') }}';
             const closeStandar = document.getElementById("close-standar-form");
 
             function clearEditState() {
@@ -664,10 +777,10 @@
                 const m = form.querySelector('input[name="_method"]');
                 if (m) m.remove();
 
-                form.action = '{{ route('adminProduct.store') }}';
+                form.action = '{{ route('admin.product.store') }}';
 
                 form.querySelectorAll('input, textarea').forEach(el => {
-                    if (el.type !== 'hidden') el.value = '';
+                    if (el.type != 'hidden') el.value = '';
                 });
             }
 

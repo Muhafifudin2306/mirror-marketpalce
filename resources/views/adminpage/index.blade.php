@@ -8,6 +8,10 @@
         <meta name="author" content="" />
         <title>Sinau Print | Admin</title>
 
+        @php
+            $version = date('YmdHis');
+        @endphp
+
         <!-- Favicon -->
         <link href="{{ asset('landingpage/img/favicon/fav_icon.jpg') }}" rel="icon">
 
@@ -15,6 +19,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/bootstrap-icons.min.css" rel="stylesheet">
         <link href="{{ asset('adminpage/css/styles.css') }}" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="{{ asset('adminpage/assets/vendor/fonts/boxicons.css') }}?v={{ $version }}" />
         @yield('style')
     </head>
     <body class="sb-nav-fixed">

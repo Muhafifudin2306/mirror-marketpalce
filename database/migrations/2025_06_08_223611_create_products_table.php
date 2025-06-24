@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->uuid('uuid')->unique()->default(Str::uuid());
+            $table->uuid('uuid')->unique();
             $table->string('name', 255)->nullable();
             $table->unsignedBigInteger('label_id');
             $table->decimal('price', 12, 2)->nullable();
@@ -24,11 +24,7 @@ return new class extends Migration
             $table->decimal('width_product', 8, 2)->nullable();
             $table->integer('min_qty')->nullable();
             $table->integer('max_qty')->nullable();
-            $table->decimal('discount_percent', 5, 2)->nullable();
-            $table->decimal('discount_fix', 12, 2)->nullable();
-            $table->dateTime('start_discount')->nullable();
-            $table->dateTime('end_discount')->nullable();
-            $table->string('slug')->unique();
+            $table->string('slug')->nullable()->unique();
             $table->text('production_time')->nullable();
             $table->text('spesification_desc')->nullable();
             $table->text('description')->nullable();

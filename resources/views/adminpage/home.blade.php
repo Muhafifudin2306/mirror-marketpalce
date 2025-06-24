@@ -117,7 +117,8 @@
                                             beginAtZero: true,
                                             ticks: {
                                                 stepSize: 1,
-                                                precision: 0
+                                                precision: 0,
+                                                callback: function(v) { return Number.isInteger(v) ? v : ''; }
                                             }
                                         }
                                     }

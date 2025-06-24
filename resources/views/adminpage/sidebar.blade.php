@@ -15,17 +15,19 @@
                 </a>
                 <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
-                        <a class="nav-link {{ request()->is('products') ? 'active' : '' }}" href="{{ url('/buku') }}">Produk</a>
-                        <a class="nav-link {{ request()->is('promo') ? 'active' : '' }}" href="{{ url('/penerbit') }}">Promo</a>
-                        <a class="nav-link {{ request()->is('kupon') ? 'active' : '' }}" href="{{ url('/penerbit') }}">Kupon</a>
-                        <a class="nav-link {{ request()->is('artikel') ? 'active' : '' }}" href="{{ url('/kategori') }}">Artikel</a>
-                        <a class="nav-link {{ request()->is('faq') ? 'active' : '' }}" href="{{ url('/pelanggan') }}">FAQ</a>
-                        {{-- <a class="nav-link {{ request()->is('pesanan') ? 'active' : '' }}" href="{{ url('/pesanan') }}">Pesanan</a> --}}
+                        <a class="nav-link {{ request()->is('admin/product') ? 'active' : '' }}" href="{{ url('/admin/product') }}">Produk</a>
+                        <a class="nav-link {{ request()->is('admin/discount') ? 'active' : '' }}" href="{{ url('/admin/discount') }}">Diskon</a>
+                        <a class="nav-link {{ request()->is('admin/promocode') ? 'active' : '' }}" href="{{ url('/admin/promocode') }}">Kode Promo</a>
+                        <a class="nav-link {{ request()->is('admin/newsletter') ? 'active' : '' }}" href="{{ url('/admin/newsletter') }}">Newsletter</a>
+                        <a class="nav-link {{ request()->is('admin/article') ? 'active' : '' }}" href="{{ url('/admin/article') }}">Artikel</a>
+                        <a class="nav-link {{ request()->is('admin/faq') ? 'active' : '' }}" href="{{ url('/admin/faq') }}">FAQ</a>
+                        <a class="nav-link {{ request()->is('admin/customer') ? 'active' : '' }}" href="{{ url('/admin/customer') }}">Customer</a>
+                        <a class="nav-link {{ request()->is('admin/order') ? 'active' : '' }}" href="{{ url('/admin/order') }}">Pesanan</a>
                     </nav>
                 </div>
                 @if(Auth::user()->role == 'Admin')
                     <div class="sb-sidenav-menu-heading">Akun</div>
-                    <a class="nav-link {{ request()->is('user') ? 'active' : '' }}" href="{{ url('/user') }}">
+                    <a class="nav-link {{ request()->is('admin/user') ? 'active' : '' }}" href="{{ url('/admin/user') }}">
                         <div class="sb-nav-link-icon"><i class='fas fa-user-edit'></i></div>
                         Kelola User
                     </a>

@@ -332,14 +332,13 @@ class ProductController extends Controller
 
 
     // ---- Adminpage (CMS)
-
+    
     public function adminIndex(Request $request)
     {
-        $labels = Label::with('products')->latest()->get();
-        // dd($labels);
+        $labels = Label::with('products.images', 'finishings')->latest()->get();
         $editingLabel = null;
         if ($request->has('edit')) {
-            $editingLabel = Label::with('products')->find($request->edit);
+            $editingLabel = Label::with('products.images', 'finishings')->find($request->edit);
         }
         return view('adminpage.product.index', compact('labels', 'editingLabel'));
     }
@@ -353,6 +352,7 @@ class ProductController extends Controller
             'desc' => 'nullable|string',
             'name.*' => 'required|string',
             'price.*' => 'nullable|string',
+            'product_images.*.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048' 
         ]);
 
         $label = Label::create([
@@ -363,30 +363,45 @@ class ProductController extends Controller
             'type' => 'standart'
         ]);
 
-        foreach ($request->name as $index => $productName) {
-            Product::create([
-                'label_id' => $label->id,
-                'name' => $productName,
-                'long_product' => $request->long_product[$index] ?? null,
-                'width_product' => $request->width_product[$index] ?? null,
-                'additional_size' => $request->additional_size[$index] ?? null,
-                'additional_unit' => $request->additional_unit[$index] ?? null,
-                'price' => $request->price[$index] ?? null,
-                'min_qty' => $request->min_qty[$index] ?? null,
-                'max_qty' => $request->max_qty[$index] ?? null,
-                'slug' => Str::slug($productName),
-                'production_time' => $request->production_time[$index] ?? null,
-                'description' => $request->description[$index] ?? null,
-                'spesification_desc' => $request->spesification_desc[$index] ?? null,
-            ]);
-        }
+        if ($request->has('name')) {
+            foreach ($request->name as $index => $productName) {
+                $product = Product::create([
+                    'label_id' => $label->id,
+                    'name' => $productName,
+                    'long_product' => $request->long_product[$index] ?? null,
+                    'width_product' => $request->width_product[$index] ?? null,
+                    'additional_size' => $request->additional_size[$index] ?? null,
+                    'additional_unit' => $request->additional_unit[$index] ?? null,
+                    'price' => $request->price[$index] ?? null,
+                    'min_qty' => $request->min_qty[$index] ?? null,
+                    'max_qty' => $request->max_qty[$index] ?? null,
+                    'production_time' => $request->production_time[$index] ?? null,
+                    'description' => $request->description[$index] ?? null,
+                    'spesification_desc' => $request->spesification_desc[$index] ?? null,
+                ]);
+                $product->slug = Str::slug($productName) . '-' . $product->id;
+                $product->save();
 
-        foreach ($request->finishing_name as $index => $finishingName) {
-            Finishing::create([
-                'label_id' => $label->id,
-                'finishing_name' => $finishingName,
-                'finishing_price' => $request->finishing_price[$index] ?? null,
-            ]);
+                if ($request->hasFile("product_images.{$index}")) {
+                    foreach ($request->file("product_images.{$index}") as $imagefile) {
+                        $path = $imagefile->store('product_images', 'public');
+                        $product->images()->create(['image_product' => $path]);
+                    }
+                }
+            }
+        }
+        
+        // Handle Finishings
+        if ($request->has('finishing_name')) {
+            foreach ($request->finishing_name as $index => $finishingName) {
+                if($finishingName) {
+                    Finishing::create([
+                        'label_id' => $label->id,
+                        'finishing_name' => $finishingName,
+                        'finishing_price' => $request->finishing_price[$index] ?? null,
+                    ]);
+                }
+            }
         }
 
         return redirect()->back()->with('success', 'Data Produk berhasil ditambahkan.');
@@ -395,71 +410,112 @@ class ProductController extends Controller
     public function adminUpdate(Request $request, Label $label)
     {
         $validated = $request->validate([
-            'name_label'        => 'required|string',
-            'size'              => 'nullable|string',
-            'unit'              => 'nullable|string',
-            'desc'              => 'nullable|string',
-            'name'              => 'required|array|min:1',
-            'name.*'            => 'required|string',
-            'additional_size.*' => 'nullable|string',
-            'additional_unit.*' => 'nullable|string',
-            'price.*'           => 'nullable|numeric',
-        ], [
-            'name.required' => 'Minimal 1 produk/jenis bahan diisikan.',
+            'name_label' => 'required|string',
+            'size' => 'nullable|string',
+            'unit' => 'nullable|string',
+            'desc' => 'nullable|string',
+            'name' => 'required|array|min:1',
+            'name.*' => 'required|string',
+            'price.*' => 'nullable|numeric',
+            'product_images.*.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'existing_images.*.*' => 'nullable|string',
         ]);
-
-        // Update label
+        
         $label->update([
             'name' => $validated['name_label'],
             'size' => $validated['size'],
             'unit' => $request->input('unit'),
             'desc' => $validated['desc'],
-            'desc' => $validated['desc'],
         ]);
 
-        // Hapus produk lama, lalu recreate
-        $label->products()->delete();
+        $existingProductIds = $label->products()->pluck('id')->toArray();
+        $submittedProductIds = [];
+
         foreach ($validated['name'] as $i => $nm) {
-            $label->products()->create([
-                'name'            => $nm,
-                'additional_size' => $validated['additional_size'][$i] ?? null,
-                'additional_unit' => $validated['additional_unit'][$i] ?? null,
-                'long_product'    => $request->input('long_product')[$i] ?? null,
-                'width_product'   => $request->input('width_product')[$i] ?? null,
-                'price'           => $validated['price'][$i] ?? null,
-                'min_qty'         => $request->input('min_qty')[$i] ?? null,
-                'max_qty'         => $request->input('max_qty')[$i] ?? null,
-                'slug'            => Str::slug($nm),
+            $productId = $request->product_id[$i] ?? null;
+            $productData = [
+                'name' => $nm,
+                'long_product' => $request->input('long_product')[$i] ?? null,
+                'width_product' => $request->input('width_product')[$i] ?? null,
+                'additional_size' => $request->additional_size[$i] ?? null,
+                'additional_unit' => $request->additional_unit[$i] ?? null,
+                'price' => $validated['price'][$i] ?? null,
+                'min_qty' => $request->input('min_qty')[$i] ?? null,
+                'max_qty' => $request->input('max_qty')[$i] ?? null,
                 'production_time' => $request->production_time[$i] ?? null,
-                'description'     => $request->description[$i] ?? null,
+                'description' => $request->description[$i] ?? null,
                 'spesification_desc' => $request->spesification_desc[$i] ?? null,
-            ]);
+                'slug' => Str::slug($nm)
+            ];
+
+            $product = $label->products()->updateOrCreate(['id' => $productId], $productData);
+
+            if (!$product->slug || !Str::endsWith($product->slug, "-{$product->id}")) {
+                $product->slug = Str::slug($nm) . '-' . $product->id;
+                $product->save();
+            }
+            
+            $submittedProductIds[] = $product->id;
+
+            $existingImages = $product->images;
+            $keptImages = $request->input("existing_images.{$i}", []);
+            foreach ($existingImages as $image) {
+                if (!in_array($image->id, $keptImages)) {
+                    Storage::disk('public')->delete($image->image_product);
+                    $image->delete();
+                }
+            }
+
+            if ($request->hasFile("product_images.{$i}")) {
+                foreach ($request->file("product_images.{$i}") as $imagefile) {
+                    $path = $imagefile->store('product_images', 'public');
+                    $product->images()->create(['image_product' => $path]);
+                }
+            }
+        }
+        
+        $productsToDelete = array_diff($existingProductIds, $submittedProductIds);
+        if (!empty($productsToDelete)) {
+            $products = Product::whereIn('id', $productsToDelete)->with('images')->get();
+            foreach ($products as $product) {
+                foreach ($product->images as $image) {
+                    Storage::disk('public')->delete($image->image_product);
+                }
+            }
+            Product::destroy($productsToDelete);
         }
 
         $label->finishings()->delete();
-
-        foreach ($request->input('finishing_name') as $i => $nm) {
-            $label->finishings()->create([
-                'finishing_name'            => $nm,
-                'finishing_price'           => $request->input('finishing_price')[$i] ?? null,
-            ]);
+        if ($request->has('finishing_name')) {
+            foreach ($request->input('finishing_name') as $i => $nm) {
+                if ($nm) {
+                    $label->finishings()->create([
+                        'finishing_name' => $nm,
+                        'finishing_price' => $request->input('finishing_price')[$i] ?? null,
+                    ]);
+                }
+            }
         }
-
-        return redirect()->route('adminProduct.index')->with('success', 'Data berhasil di-update.');
+        
+        return redirect()->route('admin.product.index')->with('success', 'Data berhasil di-update.');
     }
+
 
     public function adminDestroy(Label $label)
     {
+        $products = Product::where('label_id', $label->id)->with('images')->get();
+        foreach($products as $product) {
+            foreach($product->images as $image) {
+                Storage::disk('public')->delete($image->image_product);
+            }
+        }
+
         $label->delete();
+
         Product::where('label_id', $label->id)->delete();
         Finishing::where('label_id', $label->id)->delete();
 
-        return redirect()->route('adminProduct.index')->with('success', 'Data berhasil dihapus.');
-    }
-
-    public function bukuExcel()
-    {
-        return Excel::download(new BukuExport, 'data_buku_'.date('d-m-Y').'.xlsx');
+        return redirect()->route('admin.product.index')->with('success', 'Data berhasil dihapus.');
     }
     
 }

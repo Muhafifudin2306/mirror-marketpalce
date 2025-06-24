@@ -238,7 +238,11 @@
         .checkout-page .card h5 {
             margin-bottom: 1rem;
         }
-
+        #promoCodeInput::placeholder {
+            color: #999;
+            font-size: 0.8rem;
+            font-family: 'Poppins', sans-serif;
+        }
     </style>
 
     <!-- Loading Overlay -->
@@ -452,50 +456,55 @@
 
                     {{-- Billing Information Sidebar --}}
                     <div class="col-lg-3">
-                        <div class="card p-4 sticky-top" style="border-radius:15px; width: 300px;">
+                        <div class="card p-4" style="border-radius:15px; width: 300px;">
                             <h5 class="mb-0" style="text-align:center; font-family:'Poppins'; font-size:1.2rem; font-weight:600;">Billing Information</h5>
                             <hr>
                             {{-- Produk Detail --}}
+                            <div class="mb-3">
+                                <span style="font-family:'Poppins'; font-size:0.875rem; font-weight:600;">Produk</span>
+                            </div>
                             <div class="mb-0">
-                                <span style="font-family:'Poppins'; font-size:0.875rem; font-weight:600;">Produk</span><br>
-                                <small style="font-family:'Poppins';">{{ $item->product->label->name }} – {{ $item->product->name }}</small>
+                                <small style="font-family:'Poppins'; font-size:0.875rem; font-weight:500;">{{ $item->product->label->name }} – {{ $item->product->name }}</small>
                             </div>
                             <hr>
                             {{-- Detail Produk --}}
-                            <div class="mb-3">
-                                <span class="form-label">Bahan:</span><br>
-                                <small>{{ $item->product->name ?? '-' }}</small><br>
-                                <span class="form-label">Ukuran:</span><br>
-                                <small>{{ intval($item->length) }} x {{ intval($item->width) }} {{ $item->product->additional_unit }}</small><br>
-                                <span class="form-label">File Desain:</span><br>
-                                @if($order->order_design)
-                                    <a href="{{ asset('landingpage/img/design/'.$order->order_design) }}" target="_blank" style="font-family:'Poppins'; font-size:0.875rem; font-weight:600; color:#0258d3">{{ $order->order_design }}</a>
-                                @else
-                                    <small>-</small>
-                                @endif
+                            <div class="mb-0">
+                                <small style="font-family:'Poppins'; font-size:0.875rem; font-weight:500; color:#888888">Detail</small>
                             </div>
+                            <div class="mb-0" style="font-family:'Poppins'; font-size:0.8rem; font-weight:550; color:#c3c3c3">
+                                <small>Bahan: {{ $item->product->name ?? '-' }}</small><br>
+                                <small>Ukuran: {{ intval($item->length) }} x {{ intval($item->width) }} {{ $item->product->additional_unit }}</small><br>
+                                <small>File Desain: 
+                                    @if($order->order_design) 
+                                        <a href="{{ asset('landingpage/img/design/'.$order->order_design) }}" target="_blank" style="font-family:'Poppins'; font-size:0.875rem; font-weight:600; color:#0258d3">{{ $order->order_design }}</a>
+                                    @else
+                                        -
+                                    @endif
+                                </small><br>
+                                <small>Catatan: {{ $order->notes ?? '-' }}</small><br>
+                            </div><br>
                             {{-- Biaya Ongkir --}}
-                            <div class="d-flex justify-content-between mb-2">
-                                <span style="font-family:'Poppins';">Biaya Ongkir</span>
-                                <span id="shippingCost" style="font-family:'Poppins';">Rp 0</span>
+                            <div class="d-flex justify-content-between mb-2" style="font-family:'Poppins'; font-size:0.9rem !important; font-weight:550 !important; color:#000 !important;">
+                                <span>Biaya Ongkir</span>
+                                <span id="shippingCost">Rp 0</span>
                             </div>
                             {{-- Subtotal --}}
-                            <div class="d-flex justify-content-between mb-2">
-                                <span style="font-family:'Poppins';">Subtotal</span>
-                                <span style="font-family:'Poppins';">Rp {{ number_format($item->subtotal,0,',','.') }}</span>
+                            <div class="d-flex justify-content-between mb-2" style="font-family:'Poppins'; font-size:0.9rem !important; font-weight:550 !important; color:#000 !important;">
+                                <span>Subtotal</span>
+                                <span>Rp {{ number_format($item->subtotal,0,',','.') }}</span>
                             </div>
                             {{-- Potongan Promo --}}
-                            {{-- <div id="discountLine" class="d-flex justify-content-between mb-2" style="display:none; color:#fc2865; font-weight:600;">
-                                <span style="font-family:'Poppins';">Potongan Promo</span>
-                                <span id="discountAmount" style="font-family:'Poppins';">-Rp 0</span>
-                            </div> --}}
+                            <div id="discountLine" class="d-flex justify-content-between mb-2" style="font-family:'Poppins'; font-size:0.9rem !important; font-weight:550 !important; color:#fc2865 !important;">
+                                <span>Potongan Promo</span>
+                                <span id="discountAmount">-Rp 0</span>
+                            </div>
                             <hr>
-                            <div class="d-flex justify-content-between mb-4">
-                                <strong style="font-family:'Poppins';">Total</strong>
-                                <strong id="totalAmount" style="font-family:'Poppins';">Rp {{ number_format($item->subtotal,0,',','.') }}</strong>
+                            <div class="d-flex justify-content-between mb-4" style="font-family:'Poppins'; font-size:1rem !important; font-weight:550 !important; color:#000 !important;">
+                                <strong>Total</strong>
+                                <strong id="totalAmount">Rp {{ number_format($item->subtotal,0,',','.') }}</strong>
                             </div>
                             <button id="btnOrder" type="button" class="btn-order">Order Sekarang</button>
-                            <br>
+                            <br><br>
                             {{-- Kode Promo --}}
                             <div class="mb-3">
                                 <span class="form-label">Kode Promo</span>
@@ -528,12 +537,8 @@
                                 </div>
                                 <small id="promoMessage" class="form-text text-danger"></small>
                             </div>
-
-
-
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -552,172 +557,48 @@
             const promoInput     = document.getElementById('promoCodeInput');
             const applyPromoBtn  = document.getElementById('applyPromoBtn');
             const promoMessage   = document.getElementById('promoMessage');
-            const hiddenPromo    = document.createElement('input');
-            hiddenPromo.type     = 'hidden';
-            hiddenPromo.name     = 'promo_code';
-            hiddenPromo.id       = 'hiddenPromoCode';
-            document.getElementById('btnOrder').closest('.card').appendChild(hiddenPromo);
-
-            let ongkirCost    = 0;
-            let promoDiscount = 0;
-
-            // Format ke Rupiah
-            function formatRp(x) {
-                return 'Rp ' + Math.round(x).toLocaleString('id-ID');
-            }
-
-            // Hitung ulang total
-            function computeTotal() {
-                let total = baseSubtotal + ongkirCost - promoDiscount;
-                if (total < 0) total = 0;
-                shippingEl.innerText = formatRp(ongkirCost);
-                totalEl.innerText    = formatRp(total);
-            }
-
-            // 1) Listener untuk pilihan ongkir
-            deliverySelect.addEventListener('change', () => {
-                ongkirCost = parseInt(deliverySelect.selectedOptions[0].dataset.cost) || 0;
-                computeTotal();
-            });
-
-            // 2) Handler Apply Promo
-            applyPromoBtn.addEventListener('click', () => {
-                const code = promoInput.value.trim();
-                if (!code) {
-                promoMessage.innerText = 'Masukkan kode promo dulu.';
-                promoMessage.classList.add('text-danger');
-                return;
-                }
-
-                fetch(`{{ route('promo.check') }}?code=${encodeURIComponent(code)}&subtotal=${baseSubtotal}`)
-                .then(res => res.json())
-                .then(json => {
-                    if (!json.valid) {
-                    promoDiscount = 0;
-                    hiddenPromo.value = '';
-                    promoMessage.innerText = json.message;
-                    promoMessage.classList.remove('text-success');
-                    promoMessage.classList.add('text-danger');
-                    } else {
-                    promoDiscount = json.diskon;
-                    hiddenPromo.value = code;
-                    promoMessage.innerText = json.message;
-                    promoMessage.classList.remove('text-danger');
-                    promoMessage.classList.add('text-success');
-                    }
-                    computeTotal();
-                })
-                .catch(() => {
-                    promoMessage.innerText = 'Gagal cek promo. Coba lagi.';
-                    promoMessage.classList.add('text-danger');
-                });
-            });
-
-            // 3) Handler tombol Order
-            document.getElementById('btnOrder').addEventListener('click', () => {
-                if (deliverySelect.value === '0') {
-                alert('Silakan pilih metode pengiriman terlebih dahulu!');
-                return;
-                }
-
-                const payload = {
-                delivery_method: deliverySelect.value,
-                delivery_cost: ongkirCost,
-                notes: document.getElementById('notesInput').value,
-                promo_code: hiddenPromo.value
-                };
-
-                const overlay = document.getElementById('loading-overlay');
-                overlay.style.display = 'flex';
-                const btn = document.getElementById('btnOrder');
-                btn.disabled = true;
-
-                fetch(`/checkout/pay/${document.getElementById('orderId').value}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify(payload)
-                })
-                .then(r => r.json())
-                .then(data => {
-                overlay.style.display = 'none';
-                btn.disabled = false;
-
-                if (!data.success) {
-                    alert('Error: ' + data.message);
-                    return;
-                }
-
-                // Snap Midtrans
-                // window.snap.setRedirectMode("false"); //disini fif
-                snap.pay(data.snap_token, {
-                    onSuccess: res => {
-                    // update status payment lalu redirect
-                    fetch(`/checkout/payment-success/${document.getElementById('orderId').value}`, {
-                        method: 'POST',
-                        headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify({
-                        transaction_id: res.transaction_id,
-                        notes: payload.notes,
-                        delivery_method: payload.delivery_method,
-                        delivery_cost: payload.delivery_cost
-                        })
-                    })
-                    .then(r => r.json())
-                    .then(ok => {
-                        if (ok.success) {
-                        window.location.href = '/keranjang';
-                        } else {
-                        alert('Gagal update order: '+ ok.message);
-                        }
-                    });
-                    },
-                    onPending: () => window.location.href = '/keranjang',
-                    onError: err => alert('Pembayaran gagal: ' + err.status_message),
-                    onClose: () => alert('Anda menutup popup tanpa membayar')
-                });
-                })
-                .catch(err => {
-                overlay.style.display = 'none';
-                btn.disabled = false;
-                console.error(err);
-                alert('Kesalahan jaringan, coba ulang.');
-                });
-            });
-
-            // Inisialisasi awal
-            computeTotal();
-        });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Elemen-elemen utama
-            const baseSubtotal   = parseFloat(document.getElementById('subtotal').value) || 0;
-            const deliverySelect = document.getElementById('deliveryMethod');
-            const shippingEl     = document.getElementById('shippingCost');
-            const totalEl        = document.getElementById('totalAmount');
-            const subtotalEl     = document.querySelector('.d-flex.justify-content-between.mb-2 span:last-child');
-            const discountLine   = document.getElementById('discountLine');
-            const discountAmtEl  = document.getElementById('discountAmount');
-            const promoInput     = document.getElementById('promoCodeInput');
-            const applyPromoBtn  = document.getElementById('applyPromoBtn');
-            const promoMessage   = document.getElementById('promoMessage');
             const orderId        = document.getElementById('orderId').value;
             const btnOrder       = document.getElementById('btnOrder');
             const loadingOverlay = document.getElementById('loading-overlay');
 
-            // hidden field untuk kirim promo ke controller
             const hiddenPromo    = document.createElement('input');
             hiddenPromo.type     = 'hidden';
             hiddenPromo.name     = 'promo_code';
             hiddenPromo.id       = 'hiddenPromoCode';
             btnOrder.closest('.card').appendChild(hiddenPromo);
+
+            const hiddenPromoDiscount = document.createElement('input');
+            hiddenPromoDiscount.type = 'hidden';
+            hiddenPromoDiscount.name = 'promo_discount';
+            hiddenPromoDiscount.id = 'hiddenPromoDiscount';
+            btnOrder.closest('.card').appendChild(hiddenPromoDiscount);
+
+            let discountLine = document.getElementById('discountLine');
+            let discountAmtEl = document.getElementById('discountAmount');
+            
+            if (!discountLine) {
+                discountLine = document.createElement('div');
+                discountLine.id = 'discountLine';
+                discountLine.className = 'd-flex justify-content-between mb-2';
+                discountLine.style.color = '#fc2865';
+                discountLine.style.fontWeight = '600';
+                discountLine.style.display = 'none';
+                
+                const discountLabel = document.createElement('span');
+                discountLabel.style.fontFamily = "'Poppins'";
+                discountLabel.textContent = 'Potongan Promo';
+                
+                discountAmtEl = document.createElement('span');
+                discountAmtEl.id = 'discountAmount';
+                discountAmtEl.style.fontFamily = "'Poppins'";
+                
+                discountLine.appendChild(discountLabel);
+                discountLine.appendChild(discountAmtEl);
+                
+                const totalDiv = totalEl.closest('.d-flex');
+                const hrBefore = totalDiv.previousElementSibling;
+                hrBefore.parentNode.insertBefore(discountLine, hrBefore);
+            }
 
             let ongkirCost    = 0;
             let promoDiscount = 0;
@@ -729,110 +610,138 @@
             function computeTotal() {
                 const afterDiscount = baseSubtotal - promoDiscount;
                 if (afterDiscount < 0) promoDiscount = baseSubtotal;
-                // update potongan line
+                
                 if (promoDiscount > 0) {
-                discountLine.style.display = 'flex';
-                discountAmtEl.innerText = '-' + formatRp(promoDiscount).replace(/^Rp\s/, '');
+                    discountLine.style.display = 'flex';
+                    discountAmtEl.innerText = '-' + formatRp(promoDiscount);
                 } else {
-                discountLine.style.display = 'none';
+                    discountLine.style.display = 'none';
                 }
 
                 const total = afterDiscount + ongkirCost;
                 shippingEl.innerText = formatRp(ongkirCost);
                 totalEl.innerText    = formatRp(total);
+                
+                hiddenPromoDiscount.value = promoDiscount;
             }
 
-            // 1) Ongkir
+            // 1) Listener ongkir
             deliverySelect.addEventListener('change', () => {
                 ongkirCost = parseInt(deliverySelect.selectedOptions[0].dataset.cost) || 0;
                 computeTotal();
             });
 
-            // 2) Apply Promo
+            // 2) Handler Apply Promo
             applyPromoBtn.addEventListener('click', () => {
                 const code = promoInput.value.trim();
                 if (!code) {
-                promoMessage.innerText = 'Masukkan kode promo dulu.';
-                promoMessage.classList.add('text-danger');
-                return;
+                    promoMessage.innerText = 'Masukkan kode promo dulu.';
+                    promoMessage.classList.remove('text-success');
+                    promoMessage.classList.add('text-danger');
+                    return;
                 }
 
-                fetch(`{{ route('promo.check') }}?code=${encodeURIComponent(code)}&subtotal=${baseSubtotal}`)
-                .then(r => r.json())
+                fetch(`/promo/check?code=${encodeURIComponent(code)}&subtotal=${baseSubtotal}`)
+                .then(res => res.json())
                 .then(json => {
                     if (!json.valid) {
-                    promoDiscount    = 0;
-                    hiddenPromo.value= '';
-                    promoMessage.innerText = json.message;
-                    promoMessage.classList.replace('text-success','text-danger');
+                        promoDiscount = 0;
+                        hiddenPromo.value = '';
+                        promoMessage.innerText = json.message;
+                        promoMessage.classList.remove('text-success');
+                        promoMessage.classList.add('text-danger');
                     } else {
-                    promoDiscount     = json.diskon;
-                    hiddenPromo.value = code;
-                    promoMessage.innerText = json.message;
-                    promoMessage.classList.replace('text-danger','text-success');
+                        promoDiscount = json.diskon;
+                        hiddenPromo.value = code;
+                        promoMessage.innerText = json.message;
+                        promoMessage.classList.remove('text-danger');
+                        promoMessage.classList.add('text-success');
                     }
                     computeTotal();
                 })
                 .catch(() => {
-                    promoMessage.innerText = 'Gagal cek promo.';
+                    promoMessage.innerText = 'Gagal cek promo. Coba lagi.';
                     promoMessage.classList.add('text-danger');
                 });
             });
 
-            // 3) Order Now
+            // 3) Handler tombol Order
             btnOrder.addEventListener('click', () => {
                 if (deliverySelect.value === '0') {
-                alert('Silakan pilih metode pengiriman terlebih dahulu!');
-                return;
+                    alert('Silakan pilih metode pengiriman terlebih dahulu!');
+                    return;
                 }
 
                 const payload = {
-                delivery_method: deliverySelect.value,
-                delivery_cost: ongkirCost,
-                notes: document.getElementById('notesInput').value,
-                promo_code: hiddenPromo.value
+                    delivery_method: deliverySelect.value,
+                    delivery_cost: ongkirCost,
+                    notes: document.getElementById('notesInput').value,
+                    promo_code: hiddenPromo.value,
+                    promo_discount: promoDiscount
                 };
 
                 loadingOverlay.style.display = 'flex';
                 btnOrder.disabled = true;
 
                 fetch(`/checkout/pay/${orderId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type':'application/json',
-                    'X-CSRF-TOKEN':'{{ csrf_token() }}'
-                },
-                body: JSON.stringify(payload)
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify(payload)
                 })
                 .then(r => r.json())
                 .then(data => {
-                loadingOverlay.style.display = 'none';
-                btnOrder.disabled = false;
+                    loadingOverlay.style.display = 'none';
+                    btnOrder.disabled = false;
 
-                if (!data.success) {
-                    alert('Error: ' + data.message);
-                    return;
-                }
+                    if (!data.success) {
+                        alert('Error: ' + data.message);
+                        return;
+                    }
 
-                // Sertakan discount juga sebagai item negatif
-                snap.pay(data.snap_token, {
-                    onSuccess: res => {
-                    // … sama seperti sebelumnya …
-                    },
-                    …
-                });
+                    // Snap Midtrans
+                    snap.pay(data.snap_token, {
+                        onSuccess: res => {
+                            fetch(`/checkout/payment-success/${orderId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                },
+                                body: JSON.stringify({
+                                    transaction_id: res.transaction_id,
+                                    notes: payload.notes,
+                                    delivery_method: payload.delivery_method,
+                                    delivery_cost: payload.delivery_cost,
+                                    promo_discount: payload.promo_discount
+                                })
+                            })
+                            .then(r => {
+                                if (r.ok) {
+                                    window.location.href = '/keranjang';
+                                } else {
+                                    alert('Gagal update order');
+                                }
+                            });
+                        },
+                        onPending: () => window.location.href = '/keranjang',
+                        onError: err => alert('Pembayaran gagal: ' + err.status_message),
+                        onClose: () => alert('Anda menutup popup tanpa membayar')
+                    });
                 })
-                .catch(() => {
-                loadingOverlay.style.display = 'none';
-                btnOrder.disabled = false;
-                alert('Kesalahan jaringan, coba lagi.');
+                .catch(err => {
+                    loadingOverlay.style.display = 'none';
+                    btnOrder.disabled = false;
+                    console.error(err);
+                    alert('Kesalahan jaringan, coba ulang.');
                 });
             });
 
             computeTotal();
-            });
+        });
     </script>
-
     @if ($isset)
     <script>
         document.addEventListener('DOMContentLoaded', function () {

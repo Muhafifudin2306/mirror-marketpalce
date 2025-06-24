@@ -112,7 +112,7 @@ class ProfileController extends Controller
                 return back()->withErrors(['new_password' => 'Sandi baru minimal 8 karakter.'])->withInput();
             }
 
-            if ($request->new_password !== $request->new_password_confirmation) {
+            if ($request->new_password != $request->new_password_confirmation) {
                 return back()->withErrors(['new_password_confirmation' => 'Konfirmasi sandi baru tidak sesuai.'])->withInput();
             }
 

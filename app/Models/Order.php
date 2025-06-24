@@ -22,6 +22,7 @@ class Order extends Model
         'subtotal',
         'discount_percent',
         'discount_fix',
+        'promocode_deduct',
         'deadline_date',
         'deadline_time',
         'express',

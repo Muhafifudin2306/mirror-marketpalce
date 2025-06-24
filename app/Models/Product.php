@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
 {
@@ -22,10 +23,6 @@ class Product extends Model
         'width_product',
         'min_qty',
         'max_qty',
-        'discount_percent',
-        'discount_fix',
-        'start_discount',
-        'end_discount',
         'slug',
         'production_time',
         'description',
@@ -36,11 +33,16 @@ class Product extends Model
         'price'            => 'decimal:2',
         'long_product'     => 'decimal:2',
         'width_product'    => 'decimal:2',
-        'discount_percent' => 'decimal:2',
-        'discount_fix'     => 'decimal:2',
-        'start_discount'   => 'datetime',
-        'end_discount'     => 'datetime',
     ];
+
+    protected static function booted()
+    {
+        static::creating(function ($model) {
+            if (empty($model->uuid)) {
+                $model->uuid = (string) Str::uuid();
+            }
+        });
+    }
 
     public function label()
     {

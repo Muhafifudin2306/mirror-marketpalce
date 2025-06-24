@@ -6,16 +6,22 @@ use App\Http\Controllers\{
     CartController,
     ChatController,
     UserController,
+    CustomerController,
     PesananController,
     ProductController,
     ProfileController,
     KategoriController,
     PenerbitController,
     DashboardController,
+    DiscountController,
+    FaqController,
     HomeController,
+    NewsletterController,
     PelangganController,
     NotificationController,
-    OngkirController
+    OngkirController,
+    OrderController,
+    PromoCodeController
 };
 
 // ----------------------------------
@@ -59,10 +65,9 @@ Route::middleware('auth')->group(function () {
     // Checkout
     Route::post('/checkout/item/{item}', [CartController::class, 'checkoutItem'])->name('checkout.item');
     Route::get('/promo/check', [CartController::class, 'check'])->name('promo.check');
+    Route::get('/checkout/order/{order}', [CartController::class, 'checkoutOrder'])->name('checkout.order');
     Route::post('/checkout/pay/{order}', [CartController::class, 'processPayment'])->name('checkout.pay');
     Route::post('/checkout/payment-success/{order}', [CartController::class, 'paymentSuccess'])->name('checkout.payment-success');
-    Route::get('/checkout/order/{order}', [CartController::class, 'checkoutOrder'])->name('checkout.order');
-    Route::get('/promo/check', [CartController::class, 'check'])->name('promo.check');
     
     // User Profile & Notifications
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
@@ -100,6 +105,20 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     });
     // CMS Users
     Route::resource('user', UserController::class);
+
+    Route::resource('customer', CustomerController::class);
+
+    Route::resource('order', OrderController::class);
+    
+    Route::resource('newsletter', NewsletterController::class);
+
+    Route::resource('promocode', PromoCodeController::class);
+
+    Route::resource('faq', FaqController::class);
+
+    Route::resource('discount', DiscountController::class);
+
+    Route::get('discount/products/{label}', [DiscountController::class,'productsByLabel'])->name('discount.products');
 });
 
 // ----------------------------------

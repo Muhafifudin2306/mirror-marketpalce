@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Chat;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 
 class ChatController extends Controller
 {
@@ -24,7 +25,7 @@ class ChatController extends Controller
             ->where('id', '!=', Auth::id()) 
             ->get();
 
-        $initialMessages = [];
+        $initialMessages = new Collection(); // Or use collect() helper: collect([])
         $initialChatUser = null;
 
         if ($usersWithChats->isNotEmpty()) {

@@ -26,85 +26,12 @@ class UserController extends Controller
     public function index()
     {
         $ar_user = DB::table('users')
+                ->where('users.role', '!=', 'Customer')
                 ->select('users.*')
                 ->orderBy('users.role', 'desc')
                 ->get();
-        return view('user.index', compact('ar_user'));
+        return view('adminpage.user.index', compact('ar_user'));
     }
-
-    public function dataUser(Request $request)
-    {
-        $user = auth()->user();
-
-        $search = $request->search;
-        $buku_terpilih = Buku::query();
-
-        // Filter search
-        if ($search) {
-            $buku_terpilih->where(function ($query) use ($search) {
-                $query->where('judul', 'like', '%'.$search.'%')
-                      ->orWhere('pengarang', 'like', '%'.$search.'%')
-                      ->orWhere('harga', 'like', '%'.$search.'%')
-                      ->orWhere('isbn', 'like', '%'.$search.'%')
-                      ->orWhere('sinopsis', 'like', '%'.$search.'%')
-                      ->orWhere('jumlah_halaman', 'like', '%'.$search.'%');
-            });
-        }
-
-        $buku_terpilih = $buku_terpilih->get();
-
-        return view('landingpage.profile', compact('user', 'search'));
-    }
-
-    public function keranjang(Request $request)
-    {
-        $user = Auth::user();
-    
-        $keranjang = DB::table('pesanan')
-                    ->join('buku', 'buku.id', '=', 'pesanan.buku_id')
-                    ->select('pesanan.*', 'buku.judul as buku_judul', 'buku.harga as buku_harga', 'buku.foto as buku_foto', 'buku.diskon as buku_diskon')
-                    ->where('pesanan.user_id', $user->id)
-                    ->where('pesanan.ket', 'Pending')
-                    ->get();
-                    
-                    $selectedItems = [];
-    
-        foreach ($keranjang as $detail) {
-            $subtotal = $detail->buku_harga - ($detail->buku_harga * $detail->buku_diskon / 100);
-            $formattedHarga = number_format($detail->buku_harga, 0, ',', '.');
-            $formattedSubtotal = number_format($subtotal, 0, ',', '.');
-    
-            if ($detail->buku_diskon > 0) {
-                $selectedItems[] = [
-                    'pesanan_id' => $detail->id,
-                    'harga' => $subtotal
-                ];
-            }
-            
-            $detail->buku_harga_formatted = $formattedHarga;
-            $detail->subtotal_formatted = $formattedSubtotal;
-        }
-
-        $search = $request->search;
-        $buku_terpilih = Buku::query();
-
-        // Filter search
-        if ($search) {
-            $buku_terpilih->where(function ($query) use ($search) {
-                $query->where('judul', 'like', '%'.$search.'%')
-                      ->orWhere('pengarang', 'like', '%'.$search.'%')
-                      ->orWhere('harga', 'like', '%'.$search.'%')
-                      ->orWhere('isbn', 'like', '%'.$search.'%')
-                      ->orWhere('sinopsis', 'like', '%'.$search.'%')
-                      ->orWhere('jumlah_halaman', 'like', '%'.$search.'%');
-            });
-        }
-
-        $buku_terpilih = $buku_terpilih->get();
-        
-        return view('landingpage.keranjang', compact('keranjang', 'selectedItems', 'search'));
-    }
-    
 
     public function checkout(Request $request)
     {
@@ -149,7 +76,7 @@ class UserController extends Controller
                 ),
                 'customer_details' => array(
                     'first_name' => $namaUser,
-                    // 'last_name' => 'pratama',
+                    // 'last_name' => 'hanips',
                     'email' => $emailUser,
                     'phone' => $phoneUser,
                 ),
@@ -160,45 +87,6 @@ class UserController extends Controller
         // dd($snapToken);
         return view('landingpage.pay', compact('pesan', 'snapToken', 'grossAmounts', 'namaUser'));
     }
-
-    public function pustaka(Request $request)
-    {
-        $user = Auth::user();
-        $buku_terpilih = Buku::query();
-
-        $urutan = $request->urutan;
-        $search = $request->search;
-    
-        $buku_terpilih = DB::table('pesanan')
-                    ->join('buku', 'buku.id', '=', 'pesanan.buku_id')
-                    ->select('pesanan.*', 'buku.judul as buku_judul', 'buku.foto as buku_foto')
-                    ->where('pesanan.user_id', $user->id)
-                    ->where('pesanan.ket', 'Done');
-    
-        // Filter search
-        if ($search) {
-            $buku_terpilih->where(function ($query) use ($search) {
-                $query->where('buku.judul', 'like', '%'.$search.'%')
-                    ->orWhere('buku.pengarang', 'like', '%'.$search.'%')
-                    ->orWhere('buku.harga', 'like', '%'.$search.'%')
-                    ->orWhere('buku.isbn', 'like', '%'.$search.'%')
-                    ->orWhere('buku.sinopsis', 'like', '%'.$search.'%')
-                    ->orWhere('buku.jumlah_halaman', 'like', '%'.$search.'%');
-            });
-        }
-    
-        // Urut berdasarkan
-        if ($urutan == 'terbaru') {
-            $buku_terpilih->orderBy('pesanan.id', 'desc');
-        } elseif ($urutan == 'terlama') {
-            $buku_terpilih->orderBy('pesanan.id', 'asc');
-        }
-    
-        $buku_terpilih = $buku_terpilih->get();
-        
-        return view('landingpage.pustaka', compact('buku_terpilih', 'urutan', 'search'));
-    }
-    
     /**
      * Show the form for creating a new resource.
      */
@@ -206,7 +94,7 @@ class UserController extends Controller
     {
         $enumOptions = ['Admin', 'Staff', 'Customer'];
 
-        return view('user.form', compact('enumOptions'));
+        return view('adminpage.user.form', compact('enumOptions'));
     }
 
     /**
@@ -244,7 +132,7 @@ class UserController extends Controller
     public function show(string $id)
     {
         $rs = User::find($id);
-        return view('user.detail', compact('rs'));
+        return view('adminpage.user.detail', compact('rs'));
     }
 
     /**
@@ -254,7 +142,7 @@ class UserController extends Controller
     {
         $row = User::findOrFail($id);
         $enumOptions = ['Admin', 'Staff', 'Customer'];
-        return view('user.form_edit', compact('row', 'enumOptions'));
+        return view('adminpage.user.form_edit', compact('row', 'enumOptions'));
     }
 
     public function update(Request $request, $id)
@@ -290,43 +178,12 @@ class UserController extends Controller
         return redirect()->route('user.index')->with('success', 'Data user berhasil diperbarui.');
     }
 
-
-    public function ubahProfil(string $id, Request $request)
-    {
-        $row = User::find($id);
-
-        $search = $request->search;
-        $buku_terpilih = Buku::query();
-
-        // Filter search
-        if ($search) {
-            $buku_terpilih->where(function ($query) use ($search) {
-                $query->where('judul', 'like', '%'.$search.'%')
-                      ->orWhere('pengarang', 'like', '%'.$search.'%')
-                      ->orWhere('harga', 'like', '%'.$search.'%')
-                      ->orWhere('isbn', 'like', '%'.$search.'%')
-                      ->orWhere('sinopsis', 'like', '%'.$search.'%')
-                      ->orWhere('jumlah_halaman', 'like', '%'.$search.'%');
-            });
-        }
-
-        $buku_terpilih = $buku_terpilih->get();
-
-        return view('landingpage.profile_edit', compact('row', 'search'));
-    }
-
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
         $user = User::find($id);
-        if (!empty($user->foto)) {
-            $fotoPath = public_path('landingpage/img/'.$user->foto);
-            if (file_exists($fotoPath)) {
-                unlink($fotoPath);
-            }
-        }
 
         $user->delete();
         return redirect()->route('user.index')

@@ -223,13 +223,6 @@
 
             $user = auth()->user();
 
-            if (!$user->province || !$user->city || !$user->address || !$user->postal_code) {
-              $isset = false;
-            }
-            else {
-              $isset = true;
-            }
-
             $currentFinishingId = optional(
               $product->label->finishings
                       ->firstWhere('finishing_name', optional($orderProduct)->finishing_type)
