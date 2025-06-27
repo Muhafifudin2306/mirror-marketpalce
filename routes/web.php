@@ -21,7 +21,8 @@ use App\Http\Controllers\{
     NotificationController,
     OngkirController,
     OrderController,
-    PromoCodeController
+    PromoCodeController,
+    BlogController
 };
 
 // ----------------------------------
@@ -31,9 +32,7 @@ Route::get('/', [ProductController::class, 'home'])->name('landingpage.home');
 Route::get('/about', function () {
     return view('landingpage.about');
 })->name('landingpage.about');
-Route::get('/faq', function () {
-    return view('landingpage.faq');
-})->name('landingpage.faq');
+Route::get('/faq', [FaqController::class, 'landingpage'])->name('landingpage.faq');
 Route::get('/order-guide', function () {
     return view('landingpage.order_guide');
 })->name('landingpage.order_guide');
@@ -119,6 +118,15 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('discount', DiscountController::class);
 
     Route::get('discount/products/{label}', [DiscountController::class,'productsByLabel'])->name('discount.products');
+
+    Route::prefix('article')->group(function () {
+        Route::get('/',               [BlogController::class,'index'])->name('blog.index');
+        Route::get('/add',            [BlogController::class,'create'])->name('blog.create');
+        Route::post('/store',         [BlogController::class,'store'])->name('blog.store');
+        Route::get('/edit/{item}',  [BlogController::class,'edit'])->name('blog.edit');
+        Route::post('update/{item}',  [BlogController::class,'update'])->name('blog.update');
+        Route::delete('remove/{item}',[BlogController::class,'destroy'])->name('blog.destroy');
+    });
 });
 
 // ----------------------------------

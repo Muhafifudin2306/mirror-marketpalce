@@ -82,4 +82,25 @@ class FaqController extends Controller
         return redirect()->route('admin.faq.index')
             ->with('success', 'FAQ berhasil dihapus.');
     }
+
+    public function landingpage()
+    {
+        $faqs = DB::table('faqs')
+            ->where('is_active', true)
+            ->orderBy('type')
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->groupBy('type');
+        
+        $types = DB::table('faqs')
+            ->where('is_active', true)
+            ->select('type')
+            ->distinct()
+            ->orderBy('type')
+            ->pluck('type');
+        
+        $activeType = request('type', $types->first());
+        
+        return view('landingpage.faq', compact('faqs', 'types', 'activeType'));
+    }
 }

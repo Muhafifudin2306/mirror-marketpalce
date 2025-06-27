@@ -476,7 +476,7 @@
                                 <small>Ukuran: {{ intval($item->length) }} x {{ intval($item->width) }} {{ $item->product->additional_unit }}</small><br>
                                 <small>File Desain: 
                                     @if($order->order_design) 
-                                        <a href="{{ asset('landingpage/img/design/'.$order->order_design) }}" target="_blank" style="font-family:'Poppins'; font-size:0.875rem; font-weight:600; color:#0258d3">{{ $order->order_design }}</a>
+                                        <a href="{{ asset('landingpage/img/design/'.$order->order_design) }}" target="_blank" style="font-family:'Poppins'; font-size:0.7rem !important; font-weight:550; color:#c3c3c3">{{ $order->order_design }}</a>
                                     @else
                                         -
                                     @endif
