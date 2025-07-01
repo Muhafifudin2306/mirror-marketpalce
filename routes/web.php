@@ -22,7 +22,10 @@ use App\Http\Controllers\{
     OngkirController,
     OrderController,
     PromoCodeController,
-    BlogController
+    TestimonialController,
+    BannerController,
+    BlogController,
+    Auth\PasswordResetController,
 };
 
 // ----------------------------------
@@ -60,7 +63,7 @@ Route::middleware('auth')->group(function () {
         Route::get('order-product/{orderProduct}/edit', [CartController::class, 'editOrderProduct'])->name('order-product.edit');
         Route::put('order-product/{orderProduct}',    [CartController::class, 'updateOrderProduct'])->name('order-product.update');
     });
-
+    
     // Checkout
     Route::post('/checkout/item/{item}', [CartController::class, 'checkoutItem'])->name('checkout.item');
     Route::get('/promo/check', [CartController::class, 'check'])->name('promo.check');
@@ -73,7 +76,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
     Route::post('/readnotif/{id}', [ProfileController::class, 'markNotificationAsRead'])->name('profile.readnotif');
     Route::get('/chats', [ChatController::class, 'index'])->name('landingpage.chats');
-
+    Route::get('/order/{order}', [ProfileController::class, 'showOrder'])->name('order.show');
+    Route::delete('/order/{order}/cancel', [ProfileController::class, 'cancelOrder'])->name('order.cancel');
+    
     Route::post('/newsletter/subscribe', [ProductController::class, 'subscribe'])->name('newsletter.subscribe');
 });
 
@@ -107,17 +112,25 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     Route::resource('customer', CustomerController::class);
 
-    Route::resource('order', OrderController::class);
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('orders/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
+    Route::put('orders/{order}', [OrderController::class, 'update'])->name('orders.update');
+    Route::delete('orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
+    Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
     
     Route::resource('newsletter', NewsletterController::class);
 
     Route::resource('promocode', PromoCodeController::class);
 
+    Route::resource('testimonial', TestimonialController::class);
+
+    Route::resource('banner', BannerController::class);
+
     Route::resource('faq', FaqController::class);
 
     Route::resource('discount', DiscountController::class);
 
-    Route::get('discount/products/{label}', [DiscountController::class,'productsByLabel'])->name('discount.products');
+    Route::get('admin/discount/products/{labelId}', [DiscountController::class, 'productsByLabel'])->name('discount.products');
 
     Route::prefix('article')->group(function () {
         Route::get('/',               [BlogController::class,'index'])->name('blog.index');
@@ -128,6 +141,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::delete('remove/{item}',[BlogController::class,'destroy'])->name('blog.destroy');
     });
 });
+
+Route::post('/password/email', [PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/password/reset/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
+Route::post('/password/reset', [PasswordResetController::class, 'reset'])->name('password.update');
 
 // ----------------------------------
 // Deprecated / Unused Routes

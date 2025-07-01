@@ -154,10 +154,14 @@
           @foreach($items as $item)
             <div class="cart-item">
               <div class="flex-shrink-0">
-                <img src="{{ $item->product->images->first()
-                          ? asset('landingpage/img/product/'.$item->product->images->first()->image_product)
-                          : asset('landingpage/img/nophoto.png') }}"
-                     alt="Produk">
+                  @php
+                      $image = $item->product->images->first();
+                  @endphp
+                  @if($image && $image->image_product && file_exists(storage_path('app/public/' . $image->image_product)))
+                      <img src="{{ asset('storage/' . $image->image_product) }}" alt="Produk">
+                  @else
+                      <img src="{{ asset('landingpage/img/nophoto.png') }}" alt="Produk">
+                  @endif
               </div>
               <div class="cart-item-body">
                 <div>

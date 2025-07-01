@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Label;
 use App\Models\Order;
+use App\Models\Banner;
 use App\Models\Product;
 use App\Models\Finishing;
 use App\Models\Pengarang;
 use App\Models\Newsletter;
 use Spatie\PdfToImage\Pdf;
 use App\Exports\BukuExport;
+use App\Models\Testimonial;
 use Illuminate\Support\Str;
 use App\Models\Notification;
 use App\Models\OrderProduct;
@@ -39,10 +41,12 @@ class ProductController extends Controller
 
     public function home(Request $request)
     {
+        $banners   = Banner::orderBy('created_at', 'desc')->get();
         $labels    = Label::with('products.images')->get();
         $filter    = $request->query('filter', 'all');
         $productId = $request->query('product');
         $sort      = $request->query('sort');
+        $testimonials = Testimonial::orderBy('created_at', 'desc')->get();
 
         // Mulai query, sekarang pakai method pembantu
         $query = $this->applyActiveDiscounts(Product::query());
@@ -85,7 +89,7 @@ class ProductController extends Controller
         $products = $query->paginate(20)->withQueryString();
 
         return view('landingpage.home', compact(
-            'labels','products','filter','productId','search','sort','pageTitle'
+            'labels','products','filter','productId','search','sort','pageTitle','banners','testimonials'
         ));
     }
 
@@ -193,6 +197,57 @@ class ProductController extends Controller
         ));
     }
 
+    private function createOrderNotification($order, $status, $invoiceNumber)
+    {
+        $notificationData = $this->getOrderNotificationContent($status, $invoiceNumber);
+        
+        if ($notificationData) {
+            $notification = new Notification();
+            $notification->timestamps = false;
+            $notification->forceFill([
+                'user_id' => $order->user_id,
+                'notification_type' => 'Pembelian',
+                'notification_head' => $notificationData['head'],
+                'notification_body' => $notificationData['body'],
+                'notification_status' => 0, // Unread
+                'created_at' => now(),
+                'updated_at' => now(),
+            ])->save();
+        }
+    }
+
+    private function getOrderNotificationContent($status, $invoiceNumber)
+    {
+        $notifications = [
+            0 => [
+                'head' => 'PESANANMU BERHASIL DIBUAT',
+                'body' => "Pesananmu #{$invoiceNumber} berhasil dibuat dan masuk ke keranjang. Segera lakukan pembayaran untuk memproses pesananmu. Jangan lupa cek notifikasi dan emailmu secara berkala ya."
+            ],
+            1 => [
+                'head' => 'PEMBAYARAN PESANANMU TELAH DIKONFIRMASI',
+                'body' => "Pembayaran untuk pesananmu #{$invoiceNumber} telah dikonfirmasi. Pesananmu akan segera diproses. Jangan lupa cek notifikasi dan emailmu secara berkala ya."
+            ],
+            2 => [
+                'head' => 'PESANANMU LAGI DIPRODUKSI',
+                'body' => "Pesananmu #{$invoiceNumber} udah di tahap produksi. Jangan lupa cek notifikasi dan emailmu secara berkala ya."
+            ],
+            3 => [
+                'head' => 'PESANANMU SEDANG DALAM PENGIRIMAN',
+                'body' => "Pesananmu #{$invoiceNumber} sedang dalam proses pengiriman. Pastikan kamu siap menerima pesananmu. Jangan lupa cek notifikasi dan emailmu secara berkala ya."
+            ],
+            4 => [
+                'head' => 'PESANANMU TELAH SELESAI',
+                'body' => "Selamat! Pesananmu #{$invoiceNumber} telah selesai dan sampai tujuan. Terima kasih telah mempercayai layanan kami. Jangan lupa berikan review ya!"
+            ],
+            9 => [
+                'head' => 'PESANANMU TELAH DIBATALKAN',
+                'body' => "Maaf, pesananmu #{$invoiceNumber} telah dibatalkan. Jika ada pertanyaan, silakan hubungi customer service kami. Jangan lupa cek notifikasi dan emailmu secara berkala ya."
+            ]
+        ];
+
+        return $notifications[$status] ?? null;
+    }
+
     public function beliProduk(Request $request)
     {
         $user = auth()->user();
@@ -217,19 +272,16 @@ class ProductController extends Controller
         try {
             $product = Product::with(['label.finishings', 'discounts'])->findOrFail($validated['product_id']);
 
-            // Ambil diskon aktif
             $discount = $product->discounts
                 ->where('start_discount', '<=', now())
                 ->where('end_discount', '>=', now())
                 ->first();
 
-            // Generate SPK
             $today        = now();
             $dailyCount   = Order::whereDate('created_at', $today->toDateString())->count() + 1;
             $monthlyCount = Order::whereMonth('created_at', $today->month)->count() + 1;
             $spkNumber    = sprintf('%s%s%s%02d-%03d', $today->format('y'), $today->format('m'), $today->format('d'), $dailyCount, $monthlyCount);
 
-            // Upload file
             $designFileName = $previewFileName = null;
 
             if ($request->hasFile('order_design')) {
@@ -246,7 +298,6 @@ class ProductController extends Controller
                 $file->storeAs('landingpage/img/order_design', $previewFileName, 'public');
             }
 
-            // Hitung harga dasar
             $basePrice = $product->price;
             $discountPercent = null;
             $discountFix = null;
@@ -261,7 +312,6 @@ class ProductController extends Controller
                 }
             }
 
-            // Hitung finishing
             $finishingPrice = 0;
             $finishingName = null;
             if (!empty($validated['finishing_id']) && $fin = $product->label->finishings->find($validated['finishing_id'])) {
@@ -269,7 +319,6 @@ class ProductController extends Controller
                 $finishingName  = $fin->finishing_name;
             }
 
-            // Hitung area
             $area = 1;
             if (in_array($product->additional_unit, ['cm', 'm']) && $validated['length'] && $validated['width']) {
                 $l = $validated['length'];
@@ -279,7 +328,6 @@ class ProductController extends Controller
                     : $l * $w;
             }
 
-            // Hitung subtotal
             $subtotalHpl       = $basePrice * $area * $validated['qty'];
             $subtotalFinishing = $finishingPrice * $validated['qty'];
             $subtotal          = $subtotalHpl + $subtotalFinishing;
@@ -319,6 +367,8 @@ class ProductController extends Controller
                 'subtotal'       => round($subtotal),
             ]);
 
+            $this->createOrderNotification($order, 0, $spkNumber);
+
             DB::commit();
 
             return redirect()->route('landingpage.produk_detail', $product->slug)
@@ -345,14 +395,18 @@ class ProductController extends Controller
 
     public function adminStore(Request $request)
     {
+        // dd($request->all(), $request->file('product_images'));
+        
         $request->validate([
             'name_label' => 'required|string',
             'size' => 'nullable|string',
             'unit' => 'nullable|string',
             'desc' => 'nullable|string',
             'name.*' => 'required|string',
-            'price.*' => 'nullable|string',
-            'product_images.*.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048' 
+            'price.*' => 'nullable|numeric',
+            'product_images' => 'nullable|array',
+            'product_images.*' => 'nullable|array|max:4', // Maksimal 4 gambar per produk
+            'product_images.*.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
         $label = Label::create([
@@ -383,15 +437,24 @@ class ProductController extends Controller
                 $product->save();
 
                 if ($request->hasFile("product_images.{$index}")) {
-                    foreach ($request->file("product_images.{$index}") as $imagefile) {
-                        $path = $imagefile->store('product_images', 'public');
-                        $product->images()->create(['image_product' => $path]);
+                    $files = $request->file("product_images.{$index}");
+                    
+                    if (!is_array($files)) {
+                        $files = [$files];
+                    }
+                    
+                    $files = array_slice($files, 0, 4);
+                    
+                    foreach ($files as $imagefile) {
+                        if ($imagefile && $imagefile->isValid()) {
+                            $path = $imagefile->store('product_images', 'public');
+                            $product->images()->create(['image_product' => $path]);
+                        }
                     }
                 }
             }
         }
         
-        // Handle Finishings
         if ($request->has('finishing_name')) {
             foreach ($request->finishing_name as $index => $finishingName) {
                 if($finishingName) {
@@ -417,7 +480,11 @@ class ProductController extends Controller
             'name' => 'required|array|min:1',
             'name.*' => 'required|string',
             'price.*' => 'nullable|numeric',
+            'product_images' => 'nullable|array',
+            'product_images.*' => 'nullable|array|max:4',
             'product_images.*.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'existing_images' => 'nullable|array',
+            'existing_images.*' => 'nullable|array',
             'existing_images.*.*' => 'nullable|string',
         ]);
         
@@ -467,9 +534,22 @@ class ProductController extends Controller
             }
 
             if ($request->hasFile("product_images.{$i}")) {
-                foreach ($request->file("product_images.{$i}") as $imagefile) {
-                    $path = $imagefile->store('product_images', 'public');
-                    $product->images()->create(['image_product' => $path]);
+                $files = $request->file("product_images.{$i}");
+                
+                if (!is_array($files)) {
+                    $files = [$files];
+                }
+                
+                $currentImageCount = $product->images()->count();
+                $availableSlots = 4 - $currentImageCount;
+                
+                $files = array_slice($files, 0, $availableSlots);
+                
+                foreach ($files as $imagefile) {
+                    if ($imagefile && $imagefile->isValid()) {
+                        $path = $imagefile->store('product_images', 'public');
+                        $product->images()->create(['image_product' => $path]);
+                    }
                 }
             }
         }

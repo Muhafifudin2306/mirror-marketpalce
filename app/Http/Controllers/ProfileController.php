@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Address;
+use App\Models\Product;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -25,6 +27,122 @@ class ProfileController extends Controller
             ->get();
 
         return view('landingpage.profile', compact('user', 'orders'));
+    }
+
+    /**
+     * Show detail order
+     */
+    public function showOrder(Order $order)
+    {
+        if ($order->user_id != auth()->id()) {
+            abort(403, 'Unauthorized access to order');
+        }
+
+        $order->load([
+            'orderProducts.product.images',
+            'orderProducts.product.label.finishings',
+            'user'
+        ]);
+
+        $orderProduct = $order->orderProducts->first();
+        $product = $orderProduct->product ?? null;
+
+        if (!$product) {
+            abort(404, 'Product not found');
+        }
+
+        switch ($order->order_status) {
+            case 0:
+                $badge = '#ffd782';
+                $foncol = '#444444';
+                $firlabel = 'Menunggu';
+                $seclabel = 'Pembayaran';
+                break;
+            case 1:
+                $badge = '#5ee3e3';
+                $foncol = '#444444';
+                $firlabel = 'Dalam';
+                $seclabel = 'Pengerjaan';
+                break;
+            case 2:
+                $badge = '#abceff';
+                $foncol = '#444444';
+                $firlabel = 'Dalam';
+                $seclabel = 'Pengiriman';
+                break;
+            case 3:
+                $badge = '#0258d3';
+                $foncol = '#fff';
+                $firlabel = 'Pesanan';
+                $seclabel = 'Selesai';
+                break;
+            case 9:
+                $badge = '#f8d7da';
+                $foncol = '#444444';
+                $firlabel = 'Order';
+                $seclabel = 'Dibatalkan';
+                break;
+            default:
+                $badge = '#e9ecef';
+                $foncol = '#444444';
+                $firlabel = 'Status';
+                $seclabel = 'Unknown';
+                break;
+        }
+
+        $bestProducts = Product::with('images')
+            ->withCount('orderProducts')
+            ->orderByDesc('order_products_count')
+            ->limit(4)
+            ->get();
+
+        $isEdit = false;
+
+        return view('landingpage.order_detail', compact(
+            'order',
+            'orderProduct',
+            'product',
+            'bestProducts',
+            'isEdit',
+            'badge',
+            'foncol',
+            'firlabel',
+            'seclabel'
+        ));
+    }
+
+    /**
+     * Cancel order
+     */
+    public function cancelOrder(Order $order)
+    {
+        try {
+            if ($order->user_id != auth()->id()) {
+                return response()->json(['error' => 'Unauthorized'], 403);
+            }
+
+            if ($order->order_status != 0) {
+                return response()->json(['error' => 'Order tidak dapat dibatalkan'], 400);
+            }
+
+            DB::beginTransaction();
+            
+            $order->update(['order_status' => 9]);
+            
+            DB::commit();
+            
+            return response()->json([
+                'success' => true, 
+                'message' => 'Order berhasil dibatalkan'
+            ]);
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error cancelling order: ' . $e->getMessage());
+            return response()->json([
+                'error' => 'Gagal membatalkan order: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

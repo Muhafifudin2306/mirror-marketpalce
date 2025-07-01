@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\OrderProduct;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use App\Http\Controllers\Controller;
-use App\Models\PromoCode;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -17,116 +20,221 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = DB::table('orders')
-            ->join('users', 'orders.user_id', '=', 'users.id')
-            ->select('orders.*', 'users.name as user_name')
-            ->orderBy('orders.created_at', 'desc')
+        $orders = Order::with(['user', 'orderProducts.product'])
+            ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('adminpage.order.index', compact('orders'));
+        return view('adminpage.orders.index', compact('orders'));
     }
 
-    public function create()
+    /**
+     * Update order status
+     */
+    public function updateStatus(Request $request, Order $order)
     {
-        $users = DB::table('users')->pluck('name', 'id');
-        return view('adminpage.order.form', compact('users'));
-    }
-
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'spk'               => 'nullable|string|max:100',
-            'user_id'           => 'required|exists:users,id',
-            'transaction_type'  => 'nullable|integer',
-            'transaction_method'=> 'nullable|integer',
-            'order_design'      => 'nullable|string',
-            'preview_design'    => 'nullable|string',
-            'paid_at'           => 'nullable|date',
-            'payment_status'    => 'required|integer',
-            'order_status'      => 'required|integer',
-            'subtotal'          => 'required|integer',
-            'discount_percent'  => 'nullable|numeric',
-            'discount_fix'      => 'nullable|numeric',
-            'deadline_date'     => 'nullable|date',
-            'deadline_time'     => 'nullable',
-            'express'           => 'nullable|integer',
-            'delivery_method'   => 'nullable|string',
-            'delivery_cost'     => 'nullable|integer',
-            'needs_proofing'    => 'nullable|integer',
-            'proof_qty'         => 'nullable|integer',
-            'pickup_status'     => 'nullable|integer',
-            'notes'             => 'nullable|string',
+        $request->validate([
+            'order_status' => 'required|integer|in:0,1,2,3,4,9'
         ]);
 
-        DB::table('orders')->insert(array_merge($validated, [
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]));
+        $statusMessages = [
+            0 => 'Status pesanan diubah menjadi belum bayar',
+            1 => 'Status pesanan diubah menjadi sudah bayar',
+            2 => 'Pesanan dimulai pengerjaannya',
+            3 => 'Pesanan dalam proses pengiriman',
+            4 => 'Pesanan telah selesai',
+            9 => 'Pesanan telah di cancel'
+        ];
 
-        return redirect()->route('admin.order.index')
-            ->with('success', 'Pesanan berhasil ditambahkan.');
+        DB::beginTransaction();
+        try {
+            $oldStatus = $order->order_status;
+            $newStatus = $request->order_status;
+            
+            $order->update([
+                'order_status' => $newStatus
+            ]);
+            
+            // Generate invoice number for notification
+            $invoiceNumber = $order->spk ?? 'SPK-' . str_pad($order->id, 4, '0', STR_PAD_LEFT);
+            
+            // Create notification based on new status
+            $this->createStatusNotification($order, $newStatus, $invoiceNumber);
+            
+            DB::commit();
+            
+            $message = $statusMessages[$newStatus] ?? 'Status pesanan berhasil diubah!';
+            
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'new_status' => $newStatus
+            ]);
+            
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengubah status: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
-    public function show($id)
+    /**
+     * Create notification when order status changes
+     */
+    private function createStatusNotification($order, $status, $invoiceNumber)
     {
-        $order = DB::table('orders')
-            ->where('orders.id', $id)
-            ->join('users', 'orders.user_id', '=', 'users.id')
-            ->select('orders.*', 'users.name as user_name')
-            ->first();
-
-        $products = DB::table('order_products')
-            ->where('order_id', $id)
-            ->get();
-
-        return view('adminpage.order.detail', compact('order', 'products'));
+        $notificationData = $this->getNotificationContent($status, $invoiceNumber);
+        
+        if ($notificationData) {
+            $notification = new Notification();
+            $notification->timestamps = false; // Disable auto-timestamps
+            $notification->forceFill([
+                'user_id' => $order->user_id,
+                'notification_type' => 'Pembelian',
+                'notification_head' => $notificationData['head'],
+                'notification_body' => $notificationData['body'],
+                'notification_status' => 0, // Unread
+                'created_at' => now(),
+                'updated_at' => now(),
+            ])->save();
+        }
     }
 
-    public function edit($id)
+    /**
+     * Get notification content based on order status
+     */
+    private function getNotificationContent($status, $invoiceNumber)
     {
-        $order = DB::table('orders')->find($id);
-        $users = DB::table('users')->pluck('name', 'id');
-        return view('adminpage.order.form_edit', compact('order', 'users'));
+        $notifications = [
+            0 => [
+                'head' => 'PESANANMU MENUNGGU PEMBAYARAN',
+                'body' => "Pesananmu #{$invoiceNumber} sedang menunggu pembayaran. Segera lakukan pembayaran untuk memproses pesananmu. Jangan lupa cek notifikasi dan emailmu secara berkala ya."
+            ],
+            1 => [
+                'head' => 'PEMBAYARAN PESANANMU TELAH DIKONFIRMASI',
+                'body' => "Pembayaran untuk pesananmu #{$invoiceNumber} telah dikonfirmasi. Pesananmu akan segera diproses. Jangan lupa cek notifikasi dan emailmu secara berkala ya."
+            ],
+            2 => [
+                'head' => 'PESANANMU LAGI DIPRODUKSI',
+                'body' => "Pesananmu #{$invoiceNumber} udah di tahap produksi. Jangan lupa cek notifikasi dan emailmu secara berkala ya."
+            ],
+            3 => [
+                'head' => 'PESANANMU SEDANG DALAM PENGIRIMAN',
+                'body' => "Pesananmu #{$invoiceNumber} sedang dalam proses pengiriman. Pastikan kamu siap menerima pesananmu. Jangan lupa cek notifikasi dan emailmu secara berkala ya."
+            ],
+            4 => [
+                'head' => 'PESANANMU TELAH SELESAI',
+                'body' => "Selamat! Pesananmu #{$invoiceNumber} telah selesai dan sampai tujuan. Terima kasih telah mempercayai layanan kami. Jangan lupa berikan review ya!"
+            ],
+            9 => [
+                'head' => 'PESANANMU TELAH DIBATALKAN',
+                'body' => "Maaf, pesananmu #{$invoiceNumber} telah dibatalkan. Jika ada pertanyaan, silakan hubungi customer service kami. Jangan lupa cek notifikasi dan emailmu secara berkala ya."
+            ]
+        ];
+
+        return $notifications[$status] ?? null;
     }
 
-    public function update(Request $request, $id)
+    /**
+     * Update order via AJAX
+     */
+    public function update(Request $request, Order $order)
     {
         $validated = $request->validate([
-            'spk'               => 'nullable|string|max:100',
+            'spk'               => ['nullable', 'string', 'max:100', Rule::unique('orders')->ignore($order->id)],
             'user_id'           => 'required|exists:users,id',
             'transaction_type'  => 'nullable|integer',
-            'transaction_method'=> 'nullable|integer',
-            'order_design'      => 'nullable|string',
-            'preview_design'    => 'nullable|string',
+            'transaction_method'=> 'nullable|integer|in:0,1,2',
             'paid_at'           => 'nullable|date',
-            'payment_status'    => 'required|integer',
-            'order_status'      => 'required|integer',
-            'subtotal'          => 'required|integer',
-            'discount_percent'  => 'nullable|numeric',
-            'discount_fix'      => 'nullable|numeric',
+            'payment_status'    => 'required|integer|in:0,1',
+            'order_status'      => 'required|integer|in:0,1,2,3,4,9',
+            'subtotal'          => 'required|integer|min:0',
+            'discount_percent'  => 'nullable|numeric|min:0|max:100',
+            'discount_fix'      => 'nullable|numeric|min:0',
+            'promocode_deduct'  => 'nullable|numeric|min:0',
             'deadline_date'     => 'nullable|date',
-            'deadline_time'     => 'nullable',
-            'express'           => 'nullable|integer',
-            'delivery_method'   => 'nullable|string',
-            'delivery_cost'     => 'nullable|integer',
-            'needs_proofing'    => 'nullable|integer',
-            'proof_qty'         => 'nullable|integer',
-            'pickup_status'     => 'nullable|integer',
-            'notes'             => 'nullable|string',
+            'deadline_time'     => 'nullable|date_format:H:i',
+            'express'           => 'nullable|integer|in:0,1',
+            'delivery_method'   => 'nullable|string|max:255',
+            'delivery_cost'     => 'nullable|integer|min:0',
+            'needs_proofing'    => 'nullable|integer|in:0,1',
+            'proof_qty'         => 'nullable|integer|min:0',
+            'pickup_status'     => 'nullable|integer|in:0,1',
+            'notes'             => 'nullable|string|max:1000',
         ]);
 
-        DB::table('orders')->where('id', $id)
-            ->update(array_merge($validated, ['updated_at' => now()]));
-
-        return redirect()->route('admin.order.index')
-            ->with('success', 'Pesanan berhasil diperbarui.');
+        DB::beginTransaction();
+        try {
+            $oldStatus = $order->order_status;
+            $newStatus = $validated['order_status'];
+            
+            $order->update($validated);
+            
+            // If order status changed, create notification
+            if ($oldStatus != $newStatus) {
+                $invoiceNumber = $order->spk ?? 'SPK-' . str_pad($order->id, 4, '0', STR_PAD_LEFT);
+                $this->createStatusNotification($order, $newStatus, $invoiceNumber);
+            }
+            
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Pesanan berhasil diperbarui.',
+                'order' => $order->load(['user', 'orderProducts.product'])
+            ]);
+                
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui pesanan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
-    public function destroy($id)
+    /**
+     * Get order details for editing
+     */
+    public function edit(Order $order)
     {
-        DB::table('orders')->where('id', $id)->delete();
+        $order->load(['user', 'orderProducts.product']);
+        
+        return response()->json([
+            'success' => true,
+            'order' => $order,
+            'current_user' => $order->user
+        ]);
+    }
 
-        return redirect()->route('admin.order.index')
-            ->with('success', 'Pesanan berhasil dihapus.');
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Order $order)
+    {
+        try {
+            // Delete associated files if any
+            if ($order->order_design && \Storage::disk('public')->exists($order->order_design)) {
+                \Storage::disk('public')->delete($order->order_design);
+            }
+            
+            if ($order->preview_design && \Storage::disk('public')->exists($order->preview_design)) {
+                \Storage::disk('public')->delete($order->preview_design);
+            }
+
+            $order->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Pesanan berhasil dihapus.'
+            ]);
+                
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus pesanan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

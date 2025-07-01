@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\PromoCode;
+use App\Models\Notification;
 use App\Models\OrderProduct;
 use Illuminate\Http\Request;
 use App\Services\MidtransService;
@@ -361,8 +362,40 @@ class CartController extends Controller
         }
     }
 
+    private function createPaymentNotification($order, $status, $invoiceNumber)
+    {
+        $notificationData = $this->getPaymentNotificationContent($status, $invoiceNumber);
+        
+        if ($notificationData) {
+            $notification = new Notification();
+            $notification->timestamps = false;
+            $notification->forceFill([
+                'user_id' => $order->user_id,
+                'notification_type' => 'Pembelian',
+                'notification_head' => $notificationData['head'],
+                'notification_body' => $notificationData['body'],
+                'notification_status' => 0,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ])->save();
+        }
+    }
+
+    private function getPaymentNotificationContent($status, $invoiceNumber)
+    {
+        $notifications = [
+            1 => [
+                'head' => 'PEMBAYARAN PESANANMU TELAH DIKONFIRMASI',
+                'body' => "Pembayaran untuk pesananmu #{$invoiceNumber} telah dikonfirmasi. Pesananmu akan segera diproses. Jangan lupa cek notifikasi dan emailmu secara berkala ya."
+            ]
+        ];
+
+        return $notifications[$status] ?? null;
+    }
+
     public function paymentSuccess(Request $request, Order $order)
     {
+        DB::beginTransaction();
         try {
             $order->update([
                 'order_status'       => 1,
@@ -376,11 +409,15 @@ class CartController extends Controller
                 'promocode_deduct'   => $request->input('promo_discount', 0),
             ]);
 
-            //dd($order);
+            $invoiceNumber = $order->spk ?? 'SPK-' . str_pad($order->id, 4, '0', STR_PAD_LEFT);
+            $this->createPaymentNotification($order, 1, $invoiceNumber);
+
+            DB::commit();
 
             return redirect('/keranjang')
                 ->with('success','Pembayaran berhasil! Terima kasih.');
         } catch (\Exception $e) {
+            DB::rollback();
             return redirect('/keranjang')
                 ->with('error','Gagal memproses konfirmasi pembayaran.');
         }
@@ -415,52 +452,62 @@ class CartController extends Controller
                 return response()->json(['message' => 'Already processed']);
             }
 
-            switch ($notif['transaction_status']) {
-                case 'settlement':
-                case 'capture':
-                    $updateData = [
-                        'order_status' => 1,
-                        'payment_status' => 1,
-                        'paid_at' => now(),
-                        'transaction_id' => $notif['transaction_id'],
-                        'transaction_method' => 1, // Midtrans
-                    ];
+            DB::beginTransaction();
+            try {
+                switch ($notif['transaction_status']) {
+                    case 'settlement':
+                    case 'capture':
+                        $updateData = [
+                            'order_status' => 1,
+                            'payment_status' => 1,
+                            'paid_at' => now(),
+                            'transaction_id' => $notif['transaction_id'],
+                            'transaction_method' => 1,
+                        ];
 
-                    if (!$order->delivery_method) {
-                        $updateData['delivery_method'] = 'Midtrans Payment';
-                    }
+                        if (!$order->delivery_method) {
+                            $updateData['delivery_method'] = 'Midtrans Payment';
+                        }
 
-                    $order->update($updateData);
-                    
-                    break;
-                    
-                case 'pending':
-                    $order->update([
-                        'payment_status' => 0, // Pending
-                        'transaction_id' => $notif['transaction_id']
-                    ]);
-                    
-                    break;
-                    
-                case 'cancel':
-                case 'expire':
-                case 'failure':
-                case 'deny':
-                    $order->update([
-                        'payment_status' => 2, // Failed
-                        'transaction_id' => $notif['transaction_id']
-                    ]);
-                    
-                    break;
+                        $order->update($updateData);
 
-                default:
-                    break;
+                        $invoiceNumber = $order->spk ?? 'SPK-' . str_pad($order->id, 4, '0', STR_PAD_LEFT);
+                        $this->createPaymentNotification($order, 1, $invoiceNumber);
+                        
+                        break;
+                        
+                    case 'pending':
+                        $order->update([
+                            'payment_status' => 0,
+                            'transaction_id' => $notif['transaction_id']
+                        ]);
+                        
+                        break;
+                        
+                    case 'cancel':
+                    case 'expire':
+                    case 'failure':
+                    case 'deny':
+                        $order->update([
+                            'payment_status' => 2,
+                            'transaction_id' => $notif['transaction_id']
+                        ]);
+                        
+                        break;
+
+                    default:
+                        break;
+                }
+
+                DB::commit();
+                return response()->json(['message' => 'OK']);
+
+            } catch (\Exception $e) {
+                DB::rollback();
+                return response()->json(['message' => 'Error processing callback'], 500);
             }
 
-            return response()->json(['message' => 'OK']);
-
         } catch (\Exception $e) {
-            
             return response()->json(['message' => 'Error processing callback'], 500);
         }
     }

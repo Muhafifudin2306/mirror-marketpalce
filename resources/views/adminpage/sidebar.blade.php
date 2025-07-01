@@ -15,14 +15,16 @@
                 </a>
                 <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
+                        <a class="nav-link {{ request()->is('admin/orders') ? 'active' : '' }}" href="{{ url('/admin/orders') }}">Pesanan</a>
                         <a class="nav-link {{ request()->is('admin/product') ? 'active' : '' }}" href="{{ url('/admin/product') }}">Produk</a>
+                        <a class="nav-link {{ request()->is('admin/banner') ? 'active' : '' }}" href="{{ url('/admin/banner') }}">Banner</a>
                         <a class="nav-link {{ request()->is('admin/discount') ? 'active' : '' }}" href="{{ url('/admin/discount') }}">Diskon</a>
                         <a class="nav-link {{ request()->is('admin/promocode') ? 'active' : '' }}" href="{{ url('/admin/promocode') }}">Kode Promo</a>
                         <a class="nav-link {{ request()->is('admin/newsletter') ? 'active' : '' }}" href="{{ url('/admin/newsletter') }}">Newsletter</a>
                         <a class="nav-link {{ request()->is('admin/article') ? 'active' : '' }}" href="{{ url('/admin/article') }}">Artikel</a>
                         <a class="nav-link {{ request()->is('admin/faq') ? 'active' : '' }}" href="{{ url('/admin/faq') }}">FAQ</a>
+                        <a class="nav-link {{ request()->is('admin/testimonial') ? 'active' : '' }}" href="{{ url('/admin/testimonial') }}">Testimoni</a>
                         <a class="nav-link {{ request()->is('admin/customer') ? 'active' : '' }}" href="{{ url('/admin/customer') }}">Customer</a>
-                        <a class="nav-link {{ request()->is('admin/order') ? 'active' : '' }}" href="{{ url('/admin/order') }}">Pesanan</a>
                     </nav>
                 </div>
                 @if(Auth::user()->role == 'Admin')

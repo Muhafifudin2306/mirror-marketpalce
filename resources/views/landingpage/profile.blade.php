@@ -302,6 +302,29 @@
             border: 2px solid white;
             color: black;
         }
+
+        /* Style untuk link reset password */
+        .reset-password-link {
+            font-size: 0.75rem;
+            color: #888;
+            text-decoration: underline;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            background: none;
+            border: none;
+            padding: 0;
+            margin-top: 5px;
+        }
+
+        .reset-password-link:hover {
+            color: #0439a0;
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            display: none;
+            margin-left: 8px;
+        }
     </style>
 
     
@@ -402,8 +425,14 @@
                                                         $firlabel = 'Pesanan';
                                                         $seclabel = 'Selesai';
                                                         break;
+                                                    case 9:
+                                                        $badge = '#f8d7da';
+                                                        $foncol = '#444444';
+                                                        $firlabel = 'Order';
+                                                        $seclabel = 'Dibatalkan';
+                                                        break;
                                                         } @endphp
-                                                    <span class="badge" style="display: block;width: 100%;text-align: left;font-weight: 450 !important; padding: 10px 25px 10px 10px; font-size: 0.75rem !important; background-color: {{ $badge }}; color:{{ $foncol }} !important; font-family: 'Poppins', sans-serif; border-radius:4px;">{{ $firlabel }} <br> {{ $seclabel }}</span>
+                                                    <span class="badge" style="display: block;width: 100%;text-align: left;font-weight: 450 !important; padding: 10px 25px 10px 10px; font-size: 0.75rem !important; background-color: {{ $badge ?? '#e9ecef' }}; color:{{ $foncol }} !important; font-family: 'Poppins', sans-serif; border-radius:4px;">{{ $firlabel }} <br> {{ $seclabel }}</span>
                                                 </td>
                                                 <td style="font-weight: 400 !important; padding: 20px 10px; font-size: 0.8rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{{ $order->estimasi ?? '-' }}</td>
                                                 <td style="font-weight: 400 !important; padding: 20px 10px; font-size: 0.8rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">
@@ -417,10 +446,29 @@
                                                             BAYAR
                                                         </a>
 
-                                                        <button class="btn btn-sm rounded-pill mb-1" style="border-color:#8888;display: block;width: 100%;text-align: center;font-weight: 450 !important; padding: 3px 10px; font-size: 0.77rem !important; background-color:none; color:#000 !important; font-family: 'Poppins', sans-serif;">LIHAT ORDER</button>
-                                                        <button class="btn btn-sm rounded-pill" style="display: block;width: 100%;text-align: center;font-weight: 450 !important; padding: 3px 10px; font-size: 0.77rem !important; background-color:#fc2865; color:#fff !important; font-family: 'Poppins', sans-serif;">BATALKAN</button>
+                                                        <a href="{{ route('order.show', $order->id) }}" 
+                                                        class="btn btn-sm rounded-pill mb-1" 
+                                                        style="border-color:#8888;display: block;width: 100%;text-align: center;
+                                                                font-weight: 450 !important; padding: 3px 10px; font-size: 0.77rem !important; 
+                                                                background-color:none; color:#000 !important; font-family: 'Poppins', sans-serif;">
+                                                            LIHAT ORDER
+                                                        </a>
+                                                        
+                                                        <button onclick="cancelOrder({{ $order->id }})" 
+                                                                class="btn btn-sm rounded-pill" 
+                                                                style="display: block;width: 100%;text-align: center;font-weight: 450 !important; 
+                                                                    padding: 3px 10px; font-size: 0.77rem !important; background-color:#fc2865; 
+                                                                    color:#fff !important; font-family: 'Poppins', sans-serif;">
+                                                            BATALKAN
+                                                        </button>
                                                     @else
-                                                        <button class="btn btn-sm rounded-pill" style="border-color:#8888;display: block;width: 100%;text-align: center;font-weight: 450 !important; padding: 3px 10px; font-size: 0.77rem !important; background-color:none; color:#000 !important; font-family: 'Poppins', sans-serif;">LIHAT ORDER</button>
+                                                        <a href="{{ route('order.show', $order->id) }}" 
+                                                        class="btn btn-sm rounded-pill" 
+                                                        style="border-color:#8888;display: block;width: 100%;text-align: center;
+                                                                font-weight: 450 !important; padding: 3px 10px; font-size: 0.77rem !important; 
+                                                                background-color:none; color:#000 !important; font-family: 'Poppins', sans-serif;">
+                                                            LIHAT ORDER
+                                                        </a>
                                                     @endif
                                                 </td>
                                             </tr>
@@ -546,6 +594,13 @@
                                         <div class="position-relative">
                                             <input type="password" class="form-control" placeholder="********" disabled>
                                         </div>
+                                        {{-- Link Reset Password --}}
+                                        <button type="button" id="resetPasswordBtn" class="reset-password-link">
+                                            GANTI KATA SANDI?
+                                            <span class="loading-spinner">
+                                                <i class="fas fa-spinner fa-spin"></i>
+                                            </span>
+                                        </button>
                                     </div>
 
                                     {{-- Edit mode --}}
@@ -644,7 +699,10 @@
                                     DATA PER HALAMAN 10</p>
 
                                 @php
-                                    $notifications = \App\Models\Notification::where('user_id', Auth::id())
+                                    $notifications = \App\Models\Notification::where(function($q) {
+                                            $q->where('user_id', Auth::id())
+                                            ->orWhereNull('user_id');
+                                        })
                                         ->orderBy('notification_status', 'asc')
                                         ->orderBy('created_at', request('sort') == 'oldest' ? 'asc' : 'desc')
                                         ->paginate(10, ['*'], 'notif_page');
@@ -761,6 +819,59 @@
             @else
                 setFormEditable(false);
             @endif
+
+            // Reset Password functionality
+            const resetPasswordBtn = document.getElementById('resetPasswordBtn');
+            const loadingSpinner = resetPasswordBtn.querySelector('.loading-spinner');
+
+            resetPasswordBtn.addEventListener('click', async function() {
+                // Show loading
+                loadingSpinner.style.display = 'inline-block';
+                resetPasswordBtn.disabled = true;
+
+                try {
+                    const response = await fetch('{{ route("password.email") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            email: '{{ Auth::user()->email }}'
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        swal({
+                            title: "Berhasil!",
+                            text: "Link reset password telah dikirim ke email Anda. Silakan periksa kotak masuk atau folder spam.",
+                            icon: "success",
+                            button: "OK"
+                        });
+                    } else {
+                        swal({
+                            title: "Error!",
+                            text: data.message || "Terjadi kesalahan saat mengirim email reset password.",
+                            icon: "error",
+                            button: "OK"
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    swal({
+                        title: "Error!",
+                        text: "Terjadi kesalahan saat mengirim email reset password.",
+                        icon: "error",
+                        button: "OK"
+                    });
+                } finally {
+                    // Hide loading
+                    loadingSpinner.style.display = 'none';
+                    resetPasswordBtn.disabled = false;
+                }
+            });
         });
 
         function toggleEye(fieldId, btn) {
@@ -788,6 +899,57 @@
                 el.classList.add('notification-read');
                 el.classList.remove('notification-unread');
             }
+        }
+    </script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script>
+        function cancelOrder(orderId) {
+            swal({
+                title: "Konfirmasi",
+                text: "Apakah Anda yakin ingin membatalkan order ini?",
+                icon: "warning",
+                buttons: {
+                    cancel: "Tidak",
+                    confirm: "Ya, Batalkan"
+                },
+                dangerMode: true,
+            }).then((willCancel) => {
+                if (willCancel) {
+                    fetch(`/order/${orderId}/cancel`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            swal({
+                                title: "Berhasil!",
+                                text: data.message,
+                                icon: "success",
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            swal({
+                                title: "Gagal!",
+                                text: data.error || 'Terjadi kesalahan',
+                                icon: "error",
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        swal({
+                            title: "Error!",
+                            text: "Terjadi kesalahan saat membatalkan order",
+                            icon: "error",
+                        });
+                    });
+                }
+            });
         }
     </script>
 @endsection

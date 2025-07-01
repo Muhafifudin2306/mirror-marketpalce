@@ -141,18 +141,36 @@
                                 <div class="position-relative bg-light overflow-hidden" style="border-radius:10px; height:250px;">
                                     @php
                                         $image = $prod->images->first();
-                                        $path = public_path('landingpage/img/product/' . ($image->image_product ?? ''));
                                     @endphp
 
-                                    @if($image && file_exists($path))
-                                        <img src="{{ asset('landingpage/img/product/'.$image->image_product) }}" class="img-fluid w-100 h-100" style="object-fit:cover;">
+                                    @if($image && $image->image_product)
+                                        @if(file_exists(storage_path('app/public/' . $image->image_product)))
+                                            <img src="{{ asset('storage/' . $image->image_product) }}" 
+                                                class="img-fluid w-100 h-100" 
+                                                style="object-fit:cover;"
+                                                alt="{{ $prod->name }}">
+                                        @else
+                                            <img src="{{ asset('landingpage/img/nophoto.png') }}" 
+                                                class="img-fluid w-100 h-100" 
+                                                style="object-fit:cover;"
+                                                alt="No Image">
+                                        @endif
                                     @else
-                                        <img src="{{ asset('landingpage/img/nophoto.png') }}" class="img-fluid w-100 h-100" style="object-fit:cover;">
+                                        <img src="{{ asset('landingpage/img/nophoto.png') }}" 
+                                            class="img-fluid w-100 h-100" 
+                                            style="object-fit:cover;"
+                                            alt="No Image">
                                     @endif
                                 </div>
                                 <div class="content p-3 d-flex flex-column" style="min-height:140px;">
                                     <div class="title text-dark mb-0" style="font-family: 'Poppins'; font-size:1.4rem; font-weight:600; color:#000;">{{ $prod->name }}</div>
-                                    <div class="title mb-4" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#444444;">Ukuran {{ intval($prod->long_product) }}x{{ intval($prod->width_product) }} {{ $prod->additional_unit }}</div>
+                                    <div class="title mb-4" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#444444;">
+                                        @if($prod->long_product && $prod->width_product)
+                                            Ukuran {{ intval($prod->long_product) }}x{{ intval($prod->width_product) }} {{ $prod->additional_unit }}
+                                        @else
+                                            {{ $prod->additional_size }} {{ $prod->additional_unit }}
+                                        @endif
+                                    </div>
                                     @php
                                         $base  = $prod->price;
                                         $final = $base;
@@ -160,35 +178,29 @@
 
                                         if ($disc) {
                                             if ($disc->discount_percent) {
-                                            $amount = $base * ($disc->discount_percent / 100);
+                                                $amount = $base * ($disc->discount_percent / 100);
                                             } else {
-                                            $amount = $disc->discount_fix;
+                                                $amount = $disc->discount_fix;
                                             }
                                             $final = max(0, $base - $amount);
                                         }
                                     @endphp
-                                    @if($final<$base)
+                                    @if($final < $base)
                                         <div class="title mb-0 mt-1" style="font-size:0.8rem;font-weight:600;color:#888888">MULAI DARI</div>
                                         <div class="price-container d-flex align-items-center" style="gap:8px;">
-                                            {{-- Harga asli, tercoret --}}
                                             <span class="discount-price text-decoration-line-through">
                                                 Rp {{ number_format($base,0,',','.') }}
                                             </span>
-
-                                            {{-- Logo diskon --}}
                                             <img 
                                                 src="{{ asset('landingpage/img/discount_logo.png') }}" 
                                                 alt="Diskon" 
                                                 class="discount-logo" 
                                                 style="width:18px; height:auto;"
                                             >
-
-                                            {{-- Harga setelah diskon --}}
                                             <span class="price fw-bold" style="font-family: 'Poppins'; font-size:1.3rem; font-weight:500; color:#fc2865;">
                                                 Rp {{ number_format($final,0,',','.') }}
                                             </span>
                                         </div>
-
                                     @else
                                         <div class="title mb-0 mt-1" style="font-size:0.8rem;font-weight:600;color:#888888">Mulai Dari</div>
                                         <div class="price-container mt-0">

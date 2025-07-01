@@ -279,11 +279,11 @@
     }
 
     /* Memastikan burger di mobile menjadi sidebar */
-    .navbar-toggler {
+    /* .navbar-toggler {
         position: absolute;
         left: 15px;
         top: 15px;
-    }
+    } */
 
     /* Agar logo dan search bar ditata secara vertikal */
     .navbar-nav {
@@ -826,8 +826,8 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 2.8rem;
-  font-size: 1rem;
-  font-weight: 400;
+  /* font-size: 1rem;
+  font-weight: 400; */
   color: #fff;
   border: 2px solid #fff;
   background: none;
@@ -1217,4 +1217,20 @@ header,
   border: none !important;
   font-size: 1.1rem !important;
   cursor: pointer !important;
+}
+
+.font-first {
+  font-family: 'Barlow', sans-serif !important;
+}
+
+.fw-600 {
+  font-weight:600 !important;
+}
+
+.fs-13-px {
+  font-size:13px !important;
+}
+
+.text-black {
+  color: #000 !important;
 }

@@ -50,7 +50,10 @@ class AppServiceProvider extends ServiceProvider
         // Notifications for authenticated user
         View::composer('*', function ($view) {
             if (Auth::check()) {
-                $notifications = Notification::where('user_id', Auth::id())
+                $notifications = Notification::where(function($q) {
+                        $q->where('user_id', Auth::id())
+                        ->orWhereNull('user_id');
+                    })
                     ->orderByRaw("CASE WHEN notification_status = 0 THEN 0 ELSE 1 END, updated_at DESC")
                     ->limit(10)
                     ->get();

@@ -928,11 +928,33 @@
                                             }
 
                                             const sentAt = new Date(msg.sent_at);
+
+                                            // Ambil jam dan menit seperti sebelumnya
                                             const hours = sentAt.getHours().toString().padStart(2, '0');
                                             const minutes = sentAt.getMinutes().toString().padStart(2, '0');
                                             const timeFormatted = `${hours}:${minutes}`;
 
-                                            content += `<div class="message-time">${timeFormatted}</div></div>`;
+                                            // --- Bagian baru untuk menambahkan tanggal ---
+
+                                            // Ambil hari dalam format dua digit (misal: '01' atau '22')
+                                            const day = sentAt.getDate().toString().padStart(2, '0');
+
+                                            // Array nama bulan singkat
+                                            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
+                                                "Oct", "Nov", "Dec"
+                                            ];
+                                            // Ambil nama bulan dari array berdasarkan indeks bulan
+                                            const month = monthNames[sentAt.getMonth()];
+
+                                            // Ambil tahun lengkap (misal: 2025)
+                                            const year = sentAt.getFullYear();
+
+                                            // Gabungkan semua komponen untuk mendapatkan format "DD Mon YYYY HH:MM"
+                                            const dateTimeFormatted = `${day} ${month} ${year} ${timeFormatted}`;
+
+                                            // --- Akhir bagian baru ---
+
+                                            content += `<div class="message-time">${dateTimeFormatted}</div></div>`;
 
                                             if (isSent) {
                                                 // Tambahkan avatar di kanan untuk pesan SENT
@@ -1085,11 +1107,25 @@
                                             }
 
                                             const sentAt = new Date(msg.sent_at);
+
+                                            // Get hours and minutes as before
                                             const hours = sentAt.getHours().toString().padStart(2, '0');
                                             const minutes = sentAt.getMinutes().toString().padStart(2, '0');
                                             const timeFormatted = `${hours}:${minutes}`;
 
-                                            content += `<div class="message-time">${timeFormatted}</div></div>`;
+                                            // Get day, month, and year for the date format
+                                            const day = sentAt.getDate().toString().padStart(2,
+                                                '0'); // Get the day of the month (1-31)
+                                            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
+                                                "Oct", "Nov", "Dec"
+                                            ];
+                                            const month = monthNames[sentAt.getMonth()]; // Get the month name
+                                            const year = sentAt.getFullYear(); // Get the full year
+
+                                            // Combine to create the full date and time string
+                                            const dateTimeFormatted = `${day} ${month} ${year} ${timeFormatted}`;
+
+                                            content += `<div class="message-time">${dateTimeFormatted}</div></div>`;
 
                                             if (isSent) {
                                                 // Avatar di kanan untuk pesan SENT
@@ -1604,11 +1640,30 @@
                                     }
 
                                     const originalDate = new Date(msg.sent_at || msg.timestamp);
+
                                     const hours = originalDate.getHours().toString().padStart(2, '0');
                                     const minutes = originalDate.getMinutes().toString().padStart(2, '0');
                                     const timeWIB = `${hours}:${minutes}`;
 
-                                    content += `<div class="message-time">${timeWIB}</div></div>`;
+                                    // --- New part for adding the date ---
+
+                                    // Get the day of the month (e.g., 22)
+                                    const day = originalDate.getDate().toString().padStart(2, '0');
+
+                                    // Array of abbreviated month names
+                                    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                                    // Get the month name from the array using the month index
+                                    const month = monthNames[originalDate.getMonth()];
+
+                                    // Get the full year (e.g., 2025)
+                                    const year = originalDate.getFullYear();
+
+                                    // Combine all parts into the desired "DD Mon YYYY HH:MM" format
+                                    const dateTimeFormatted = `${day} ${month} ${year} ${timeWIB}`;
+
+                                    // --- End of new part ---
+
+                                    content += `<div class="message-time">${dateTimeFormatted}</div></div>`;
 
                                     if (isSent) {
                                         // Tambahkan avatar di kanan untuk pesan sent

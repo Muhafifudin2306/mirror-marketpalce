@@ -121,9 +121,9 @@
                 @else
                   @foreach($thumbs as $i => $img)
                     @php
-                      $imgPath = public_path('landingpage/img/product/' . $img->image_product);
+                      $imgPath = storage_path('app/public/' . $img->image_product);
                       $src = file_exists($imgPath)
-                        ? asset('landingpage/img/product/' . $img->image_product)
+                        ? asset('storage/' . $img->image_product)
                         : asset('landingpage/img/nophoto.png');
                     @endphp
                     <div class="carousel-item {{ $i === 0 ? 'active' : '' }}">
@@ -169,9 +169,9 @@
               @else
                 @foreach($thumbs as $i => $img)
                   @php
-                    $imgPath = public_path('landingpage/img/product/' . $img->image_product);
+                    $imgPath = storage_path('app/public/' . $img->image_product);
                     $src = file_exists($imgPath)
-                      ? asset('landingpage/img/product/' . $img->image_product)
+                      ? asset('storage/' . $img->image_product)
                       : asset('landingpage/img/nophoto.png');
                   @endphp
                   <img src="{{ $src }}"

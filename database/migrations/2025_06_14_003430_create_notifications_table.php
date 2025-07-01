@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('notification_head', 255)->nullable();
             $table->text('notification_body')->nullable();
             $table->enum('notification_type', ['Pembelian', 'Promo', 'Profil'])->nullable();

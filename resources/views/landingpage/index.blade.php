@@ -29,13 +29,10 @@
     <link href="{{ asset('landingpage/lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="{{ asset('landingpage/css/bootstrap.min.css') }}" rel="stylesheet">
+    {{-- <link href="{{ asset('landingpage/css/bootstrap.min.css') }}" rel="stylesheet"> --}}
 
     <!-- Template Stylesheet -->
     <link href="{{ asset('landingpage/css/style.css') }}" rel="stylesheet">
-
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- PDF.js CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.6.82/pdf_viewer.min.css">
 
@@ -43,7 +40,7 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notiflix@3.2.5/dist/notiflix-3.2.5.min.css" />
+    <link rel="stylesheet" href="{{  asset('bootstrap/bootstrap.min.css') }}" />
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -79,7 +76,8 @@
 
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script> --}}
+    <script src="{{ asset('bootstrap/boostrap.bundle.min.js') }}"></script>
     <script src="{{ asset('landingpage/lib/wow/wow.min.js') }}"></script>
     <script src="{{ asset('landingpage/lib/easing/easing.min.js') }}"></script>
     <script src="{{ asset('landingpage/lib/waypoints/waypoints.min.js') }}"></script>
@@ -87,8 +85,6 @@
 
     <!-- Template Javascript -->
     <script src="{{ asset('landingpage/js/main.js') }}"></script>
-
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 
     <!-- PDF.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.6.82/pdf.min.mjs"></script>

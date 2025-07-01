@@ -1,0 +1,517 @@
+/* Hero Carousel Overrides */
+/* ===== Hero Carousel Overrides ===== */
+#heroCarousel {
+  position: relative;
+}
+
+/* IMAGE */
+#heroCarousel .carousel-inner img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+/* BULLETS (indikator) di dalam hero, bawah tengah */
+#heroCarousel .carousel-indicators {
+  position: absolute;
+  bottom: 15px;
+  left: 35%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 5;
+  margin-bottom: 3rem;
+}
+#heroCarousel .carousel-indicators button {
+  width: 10px; height: 10px;
+  border: none; border-radius: 50%;
+  background: #c3c3c3;
+}
+#heroCarousel .carousel-indicators .active {
+  width: 30px;
+  background: #05d1d1;
+  border-radius: 10px;
+}
+
+/* POSISI PANAH di dalam hero, bawah kiri & bawah kanan */
+#heroCarousel .carousel-control-prev,
+#heroCarousel .carousel-control-next {
+  position: absolute; /* penting! */
+  bottom: 15px;
+  top: auto;          /* override vertical centering */
+  transform: none;    /* hilangkan translateY */
+  width: 50px !important;
+  height: 50px !important;
+  background: none;
+  border: none;
+  z-index: 5;
+}
+
+/* sisi kiri/kanan */
+#heroCarousel .carousel-control-prev { left: 15px; }
+#heroCarousel .carousel-control-next { right: 15px; }
+
+/* hover animasi: sedikit membesar */
+/* #heroCarousel .carousel-control-prev:hover::after,
+#heroCarousel .carousel-control-next:hover::after {
+  transform: scale(1.2);
+} */
+
+
+/* Product Carousels (Pilih Sendiri Kebutuhanmu, Cetak Roll Banner, Promo) */
+.carousel-controls-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 20px;
+}
+
+.carousel-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.carousel-indicators-custom {
+  display: flex;
+  /* gap: 5px; */
+  flex-grow: 1;
+  margin-left: 10px;
+}
+
+.indicator-line {
+  flex: 1;
+  height: 2px;
+  background-color: #ccc;
+  cursor: pointer;
+  transition: height 0.7s, background-color 0.3s;
+}
+
+.indicator-line.active {
+  height: 2px;
+  background-color: #05d1d1;
+}
+
+/* === Carousel Button Animated Arrow === */
+.btn-arrow-carousel {
+  position: relative;
+  width: 40px;         /* cocokkan ukuran tombol */
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 50%;
+  background-color: #fff;
+}
+
+.btn-arrow-carousel .arrow-out,
+.btn-arrow-carousel .arrow-in {
+  position: absolute;
+  font-size: 1.8rem;
+  color: #0439a0;
+  transition: transform 0.7s, opacity 0.3s;
+}
+
+/* default posisi */
+.btn-arrow-carousel .arrow-out {
+  transform: translateX(0);
+  opacity: 1;
+}
+.btn-arrow-carousel .arrow-in {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+/* hover efek persis  */
+.carousel-control-prev:hover .btn-arrow-carousel,
+.carousel-control-next:hover .btn-arrow-carousel {
+  background-color: #fff;    /* kalau mau ganti warna circle waktu hover */
+}
+/* .carousel-control-prev:hover .arrow-out,
+.carousel-control-next:hover .arrow-out {
+  transform: translateX(100%);
+  opacity: 0;
+}
+.carousel-control-prev:hover .arrow-in,
+.carousel-control-next:hover .arrow-in {
+  transform: translateX(0);
+  opacity: 1;
+} */
+
+
+/* PRODUK PILIHAN Vertical Carousel */
+#produkPilihanCarousel .carousel-control-prev,
+#produkPilihanCarousel .carousel-control-next {
+  left: auto;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#produkPilihanCarousel .carousel-control-prev {
+  top: 40%;
+}
+
+#produkPilihanCarousel .carousel-control-next {
+  top: 60%;
+}
+
+#produkPilihanCarousel .carousel-inner {
+  height: 500px;
+  overflow: hidden;
+}
+
+#produkPilihanCarousel .carousel-item {
+  height: 100%;
+}
+/* WRAPPER untuk animated arrows */
+#animatedCarousels .carousel {
+  position: relative;
+}
+
+#animatedCarousels .carousel-control-prev,
+#animatedCarousels .carousel-control-next {
+  position: absolute;
+  bottom: 40px;
+  top: auto;
+  transform: none;
+}
+
+/* Posisi per sisi */
+#animatedCarousels .carousel-control-prev { left: 15px; }
+#animatedCarousels .carousel-control-next { right: 15px; }
+
+/* Pseudo-elements: 
+   - ::after = arrow-out (in place)
+   - ::before = arrow-in (off-screen left)
+*/
+#animatedCarousels .carousel-control-prev::after,
+#animatedCarousels .carousel-control-next::after,
+#animatedCarousels .carousel-control-prev::before,
+#animatedCarousels .carousel-control-next::before {
+  position: absolute;
+  font-size: 2.8rem;
+  color: #ffffff;
+  opacity: 1;
+}
+
+/* Hover: slide arrow-out ke kanan dan fade, arrow-in slide ke posisi */
+#animatedCarousels .carousel-control-prev:hover::after {
+  animation: slideOut 0.7s forwards;
+}
+#animatedCarousels .carousel-control-prev:hover::before {
+  animation: slideIn 0.7s forwards;
+}
+#animatedCarousels .carousel-control-next:hover::after {
+  animation: slideOut 0.7s forwards;
+}
+#animatedCarousels .carousel-control-next:hover::before {
+  animation: slideIn 0.7s forwards;
+}
+
+/* Keyframes (ambil dari CSS-mu) */
+@keyframes slideOut {
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+@keyframes slideIn {
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+#produkPilihanCarousel { position: relative; }
+
+#produkPilihanCarousel .vertical-controls {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  z-index: 5;
+}
+
+#produkPilihanCarousel .btn-vert {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.5);
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#produkPilihanCarousel .arrow-vert {
+  font-size: 1.5rem;
+  color: #fff;
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+#produkPilihanCarousel .indicators-vert {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#produkPilihanCarousel .indicators-vert button {
+  width: 8px;
+  height: 8px;
+  border: none;
+  border-radius: 50%;
+  background: #ccc;
+  transition: background 0.3s, transform 0.3s;
+}
+
+#produkPilihanCarousel .indicators-vert button.active {
+  width: 12px;
+  height: 12px;
+  background: #05d1d1;
+}
+#produkPilihanCarousel .btn-vert {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+#produkPilihanCarousel .btn-vert:hover {
+  background-color: #fff;
+}
+
+#produkPilihanCarousel .arrow-vert {
+  color: #fff;
+  font-size: 1.4rem;
+  transition: color 0.3s ease;
+}
+
+#produkPilihanCarousel .btn-vert:hover .arrow-vert {
+  color: #0258d3;
+}
+
+#produkPilihanCarousel .vertical-controls {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  z-index: 5;
+}
+
+#produkPilihanCarousel .indicators-vert {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+/* diskon modals */
+.discount-tab {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, #0258d3, #05d1d1);
+    color: white;
+    padding: 20px 10px;
+    border-radius: 10px 0 0 10px;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: -3px 0 15px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+}
+
+.discount-tab:hover {
+    transform: translateY(-50%) translateX(-5px);
+    box-shadow: -5px 0 20px rgba(0,0,0,0.3);
+}
+
+.discount-tab-text {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 2px;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.discount-tab-icon {
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+/* Modal Styling */
+.discount-modal .modal-dialog {
+    max-width: 80vw;
+    width: 80vw;
+    margin: 2vh auto;
+}
+
+.discount-modal .modal-content {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.discount-modal .modal-body {
+    padding: 0;
+}
+
+.modal-image-section {
+    /* background: linear-gradient(135deg, #0258d3, #05d1d1); */
+    position: relative;
+    overflow: hidden;
+    min-height: 500px;
+}
+
+.modal-image-section img {
+    width: 70%;
+    /* height: 100%; */
+    object-fit: cover;
+    opacity: 0.9;
+}
+
+.modal-content-section {
+    padding: 60px 40px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.modal-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #0258d3;
+    margin-bottom: 30px;
+    line-height: 1.2;
+}
+
+.modal-subtitle {
+    font-family: 'Barlow', sans-serif;
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 40px;
+}
+
+.email-form-container {
+    position: relative;
+}
+
+.email-input {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 30px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.email-input:focus {
+    outline: none;
+    border-color: #0258d3;
+    box-shadow: 0 0 0 3px rgba(2, 88, 211, 0.1);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #0258d3, #05d1d1);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(2, 88, 211, 0.3);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+/* Close button custom */
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: #888888;
+    backdrop-filter: blur(10px);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    transform: scale(1.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-title {
+        font-size: 2rem;
+    }
+    
+    .modal-content-section {
+        padding: 40px 30px;
+    }
+    
+    .discount-modal .modal-dialog {
+        width: 95vw;
+        max-width: 95vw;
+    }
+    
+    .discount-tab {
+        padding: 12px 6px;
+    }
+    
+    .discount-tab-text {
+        font-size: 12px;
+    }
+}

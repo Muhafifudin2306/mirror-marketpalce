@@ -10,6 +10,14 @@
       <li class="breadcrumb-item active">Edit Diskon</li>
     </ol>
 
+    {{-- Error Alert for Session Errors --}}
+    @if(session('error'))
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    @endif
+
     <div class="card mb-4">
       <div class="card-body">
         <form method="POST" action="{{ route('admin.discount.update', $discount->id) }}">
@@ -62,29 +70,57 @@
           {{-- Durasi --}}
           <div class="row g-2 mb-3">
             <div class="col">
-              <label class="form-label">Mulai</label>
+              <label class="form-label">Mulai <span class="text-danger">*</span></label>
               <input
                 type="date"
                 name="start_discount"
+                id="start_discount"
                 class="form-control @error('start_discount') is-invalid @enderror"
                 value="{{ old('start_discount', $discount->start_discount->format('Y-m-d')) }}"
+                required
               />
               @error('start_discount')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
             <div class="col">
-              <label class="form-label">Selesai</label>
+              <label class="form-label">Selesai <span class="text-danger">*</span></label>
               <input
                 type="date"
                 name="end_discount"
+                id="end_discount"
                 class="form-control @error('end_discount') is-invalid @enderror"
                 value="{{ old('end_discount', $discount->end_discount->format('Y-m-d')) }}"
+                required
               />
               @error('end_discount')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
           </div>
 
+          {{-- Apply to All Products Checkbox --}}
+          <div class="form-check mb-3">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="apply_to_all"
+              name="apply_to_all"
+              value="1"
+              {{ old('apply_to_all', $isAppliedToAll) ? 'checked' : '' }}
+            />
+            <label class="form-check-label" for="apply_to_all">
+              <strong>Terapkan ke Semua Produk</strong>
+            </label>
+            @if($isAppliedToAll)
+              <small class="text-muted d-block">
+                <i class="fas fa-info-circle"></i> Diskon ini saat ini diterapkan ke semua produk
+              </small>
+            @endif
+            <div id="allProductsWarning" class="alert alert-warning mt-2" style="{{ (!$isAppliedToAll && old('apply_to_all')) ? 'display: block;' : 'display: none;' }}">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              <strong>Perhatian:</strong> Hanya boleh ada satu diskon "Semua Produk" yang aktif dalam periode yang sama.
+            </div>
+          </div>
+
           {{-- Label --}}
-          <div class="form-floating mb-3">
+          <div class="form-floating mb-3" id="labelGroup">
             <select
               id="labelSelect"
               name="label_id"
@@ -100,12 +136,12 @@
                 </option>
               @endforeach
             </select>
-            <label for="labelSelect">Label</label>
+            <label for="labelSelect">Label <span class="text-danger required-star">*</span></label>
             @error('label_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
           </div>
 
           {{-- Produk --}}
-          <div class="form-floating mb-3">
+          <div class="form-floating mb-3" id="productGroup">
             <select
               id="productSelect"
               name="product_id"
@@ -122,7 +158,7 @@
                 </option>
               @endforeach
             </select>
-            <label for="productSelect">Produk</label>
+            <label for="productSelect">Produk <span class="text-danger required-star">*</span></label>
             @error('product_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
           </div>
 
@@ -138,8 +174,60 @@
 document.addEventListener("DOMContentLoaded", () => {
   const labelSel   = document.getElementById('labelSelect');
   const productSel = document.getElementById('productSelect');
+  const applyToAll = document.getElementById('apply_to_all');
+  const labelGroup = document.getElementById('labelGroup');
+  const productGroup = document.getElementById('productGroup');
+  const requiredStars = document.querySelectorAll('.required-star');
+  const allProductsWarning = document.getElementById('allProductsWarning');
+  const isCurrentlyAllProducts = {{ $isAppliedToAll ? 'true' : 'false' }};
 
+  // Function to toggle fields based on checkbox
+  function toggleFields() {
+    if (applyToAll.checked) {
+      // Show warning only if changing from non-all to all
+      if (!isCurrentlyAllProducts || (isCurrentlyAllProducts && !applyToAll.checked)) {
+        allProductsWarning.style.display = 'block';
+      }
+      
+      // Disable label and product fields
+      labelSel.disabled = true;
+      productSel.disabled = true;
+      labelSel.required = false;
+      productSel.required = false;
+      
+      // Hide required stars
+      requiredStars.forEach(star => star.style.display = 'none');
+      
+      // Add visual indication that fields are disabled
+      labelGroup.style.opacity = '0.6';
+      productGroup.style.opacity = '0.6';
+    } else {
+      // Hide warning
+      allProductsWarning.style.display = 'none';
+      
+      // Enable label and product fields
+      labelSel.disabled = false;
+      labelSel.required = true;
+      productSel.required = true;
+      
+      // Show required stars
+      requiredStars.forEach(star => star.style.display = 'inline');
+      
+      // Remove visual indication
+      labelGroup.style.opacity = '1';
+      productGroup.style.opacity = '1';
+      
+      // Re-enable product select if label is selected
+      if (labelSel.value) {
+        productSel.disabled = false;
+      }
+    }
+  }
+
+  // Handle label change for product dropdown
   labelSel.addEventListener('change', () => {
+    if (applyToAll.checked) return; // Don't load products if apply to all is checked
+    
     const id = labelSel.value;
     productSel.innerHTML = '<option>Loading…</option>';
     productSel.disabled = true;
@@ -158,6 +246,12 @@ document.addEventListener("DOMContentLoaded", () => {
           const opt = document.createElement('option');
           opt.value = prd.id;
           opt.text  = prd.name;
+          
+          // Keep the selected product if it exists in the new list
+          if (prd.id == {{ $selectedProductId ?? 'null' }}) {
+            opt.selected = true;
+          }
+          
           productSel.append(opt);
         });
       })
@@ -165,8 +259,37 @@ document.addEventListener("DOMContentLoaded", () => {
         productSel.innerHTML = '<option>Error loading</option>';
       });
   });
+
+  // Handle checkbox change
+  applyToAll.addEventListener('change', toggleFields);
+
+  // Initialize on page load
+  toggleFields();
+  
+  // If checkbox is not checked and we have existing data, make sure product dropdown is properly enabled
+  if (!applyToAll.checked && labelSel.value && productSel.options.length <= 1) {
+    // Trigger label change to load products if needed
+    labelSel.dispatchEvent(new Event('change'));
+  }
+  
+  // Auto-hide alert after 10 seconds
+  const alertElements = document.querySelectorAll('.alert-dismissible');
+  alertElements.forEach(alert => {
+    setTimeout(() => {
+      const bsAlert = new bootstrap.Alert(alert);
+      bsAlert.close();
+    }, 10000);
+  });
 });
 </script>
+
+<style>
+.alert-warning {
+  font-size: 0.875rem;
+  padding: 0.75rem;
+  margin-bottom: 0;
+}
+</style>
 @else
   @include('adminpage.access_denied')
 @endif

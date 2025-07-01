@@ -73,6 +73,7 @@ class ChatController extends Controller
         'user' => $message->user_id,
         'channel' => $message->channel,
         'message' => $message->message,
+        'sent_at' => $message->sent_at,
         'file_url' => $message->file_url,
         'timestamp' => $message->sent_at->toISOString(),
     ]);
@@ -103,6 +104,7 @@ public function sendMessageAdmin(Request $request)
         'user' => $message->user_id,
         'channel' => $message->channel,
         'message' => $message->message,
+        'sent_at' => $message->sent_at,
         'file_url' => $message->file_url,
         'timestamp' => $message->sent_at->toISOString(),
     ]);
