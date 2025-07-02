@@ -40,6 +40,9 @@ Route::get('/order-guide', function () {
     return view('landingpage.order_guide');
 })->name('landingpage.order_guide');
 
+Route::get('/articles', [BlogController::class, 'articles'])->name('landingpage.article_index');
+Route::get('/article/{slug}', [BlogController::class, 'show'])->name('landingpage.article_show');
+
 // Shipping calculation
 Route::post('/hitung-ongkir', [OngkirController::class, 'cekOngkir'])->name('ongkir.cek');
 

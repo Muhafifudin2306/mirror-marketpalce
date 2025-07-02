@@ -16,6 +16,34 @@ class BlogController extends Controller
         return view('adminpage.blogs.index', compact('blogs'));
     }
 
+    public function articles(Request $request)
+    {
+        $query = Blog::query();
+        
+        $filter = $request->get('filter', 'semua');
+        if ($filter !== 'semua') {
+            // $query->where('type', $filter);
+        }
+        
+        $sort = $request->get('sort', 'terbaru');
+        if ($sort === 'terlama') {
+            $query->oldest();
+        } else {
+            $query->latest();
+        }
+        
+        $blogs = $query->paginate(12);
+        
+        return view('landingpage.articles', compact('blogs', 'filter', 'sort'));
+    }
+    
+    // Method untuk menampilkan detail artikel
+    public function show($slug)
+    {
+        $blog = Blog::where('slug', $slug)->firstOrFail();
+        return view('landingpage.article-detail', compact('blog'));
+    }
+
     public function create()
     {
         return view('adminpage.blogs.form');
@@ -81,5 +109,4 @@ class BlogController extends Controller
         $blog->delete();
         return redirect()->route('admin.blog.index')->with('success', 'Blog deleted');
     }
-
 }

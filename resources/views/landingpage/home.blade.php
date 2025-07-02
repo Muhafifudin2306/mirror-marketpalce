@@ -43,9 +43,9 @@
                                   <div class="string-cover m-5">
                                       @foreach($processedHeading as $i => $line)
                                           @if($i == 0)
-                                              <h1 class="mb-0" style="color:#fff;">{!! $line !!}</h1>
+                                              <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3.6rem; font-weight:600; color:#fff;">{!! $line !!}</h1>
                                           @else
-                                              <h1 class="mb-0" style="color:#fff;">{!! $line !!}</h1>
+                                              <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3.6rem; font-weight:600; color:#fff;">{!! $line !!}</h1>
                                           @endif
                                       @endforeach
 
@@ -56,12 +56,13 @@
                                       @foreach($contentLines as $line)
                                           @if(trim($line))
                                               <p class="mb-0"
-                                                style="font-family: 'Barlow', sans-serif; font-weight:350; color:#fff;">
+                                                style="font-family: 'Poppins', sans-serif; font-weight:350; color:#fff;">
                                                   {{ trim($line) }}
                                               </p>
                                           @endif
                                       @endforeach
 
+                                      <br>
                                       <a href="{{ url('/products') }}" class="btn-schedule mt-3 fw-bold">
                                           <span class="btn-text">SEMUA PRODUK</span>
                                           <span class="btn-arrow">
@@ -90,19 +91,20 @@
                           <div class="slide w-100 p-xl-5 p-3 rounded"
                               style="background-image: url({{ asset('landingpage/img/banner_comp1.png') }}); height: 550px; background-size: cover;">
                               <div class="string-cover m-5">
-                                  <h1 class="mb-0" style="color:#fff;">Solusi Cetak Banner</h1>
+                                  <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3.6rem; font-weight:600; color:#fff;">Solusi Cetak Banner</h3>
                                   <h3 class="mb-4" style="margin-top:-5px !important;">
                                       <span style="color:#fff;">Tanpa</span>
                                       <span style="color:#ffc74c;"> Keluar Rumah!</span>
                                   </h3>
                                   <p class="mb-0"
-                                    style="font-family: 'Barlow', sans-serif; font-weight:350; color:#fff;">
+                                    style="font-family: 'Poppins', sans-serif; font-weight:350; color:#fff;">
                                       Cetak semua kebutuhanmu, dari indoor, outdoor, sampai perintilan kantor.
                                   </p>
                                   <p class="mb-0"
-                                    style="font-family: 'Barlow', sans-serif; font-weight:350; color:#fff;">
+                                    style="font-family: 'Poppins', sans-serif; font-weight:350; color:#fff;">
                                       Tinggal kirim, langsung jadi!
                                   </p>
+                                  <br>
                                   <a href="{{ url('/products') }}" class="btn-schedule mt-3 fw-bold">
                                       <span class="btn-text">SEMUA PRODUK</span>
                                       <span class="btn-arrow">

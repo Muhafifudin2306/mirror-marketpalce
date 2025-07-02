@@ -42,8 +42,8 @@
                             CARA PESAN
                         </a>
 
-                        <a href="{{ url('/artikel') }}"
-                            class="nav-item nav-link font-first fw-600 fs-13-px d-flex align-items-center {{ request()->is('artikel') ? 'active' : '' }}">
+                        <a href="{{ url('/articles') }}"
+                            class="nav-item nav-link font-first fw-600 fs-13-px d-flex align-items-center {{ request()->is('articles') ? 'active' : '' }}">
                             ARTIKEL
                         </a>
 
@@ -121,8 +121,8 @@
                         <i class="fas fa-angle-down ms-1" id="howToTrigger" style="cursor:pointer;"></i>
                     </a>
 
-                    <a href="{{ url('/artikel') }}"
-                        class="nav-item nav-link font-first fw-600 fs-13-px {{ request()->is('artikel') ? 'active' : '' }}">
+                    <a href="{{ url('/articles') }}"
+                        class="nav-item nav-link font-first fw-600 fs-13-px {{ request()->is('articles') ? 'active' : '' }}">
                         ARTIKEL
                     </a>
 

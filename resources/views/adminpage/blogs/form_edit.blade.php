@@ -29,6 +29,8 @@
                         <label for="content">Konten Artikel</label>
                         <textarea id="summernote" name="content" class="form-control">{{ old('content', $blog->content ?? '') }}</textarea>
                     </div>
+
+                    {{ $blog->content }}
                     <div class="mb-5">
                         <button class="btn btn-primary" type="submit">Update</button>
                         <a href="{{ route('admin.blog.index') }}" class="btn btn-danger">Batal</a>

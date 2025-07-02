@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('slug')->unique();
             $table->string('title')->nullable();
-            $table->text('content')->nullable();
+            $table->longtext('content')->nullable();
             $table->string('banner')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
