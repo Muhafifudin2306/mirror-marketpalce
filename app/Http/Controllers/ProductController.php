@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Blog;
 use App\Models\Label;
 use App\Models\Order;
 use App\Models\Banner;
@@ -47,8 +48,12 @@ class ProductController extends Controller
         $productId = $request->query('product');
         $sort      = $request->query('sort');
         $testimonials = Testimonial::orderBy('created_at', 'desc')->get();
+        
+        $latestBlogs = Blog::where('is_live', true)
+              ->orderBy('created_at', 'desc')
+              ->take(4)
+              ->get();
 
-        // Mulai query, sekarang pakai method pembantu
         $query = $this->applyActiveDiscounts(Product::query());
 
         if ($productId) {
@@ -56,7 +61,6 @@ class ProductController extends Controller
             $pageTitle = Product::find($productId)?->name ?: 'Produk';
         }
         elseif ($filter === 'promo') {
-            // Filter produk yang punya diskon aktif
             $query->whereHas('discounts');
             $pageTitle = 'Promo';
         }
@@ -73,9 +77,7 @@ class ProductController extends Controller
             $query->where('name', 'like', "%{$search}%");
         }
 
-        // Sorting masih sama, tapi untuk harga perlu pertimbangkan diskon:
         if ($sort === 'price-desc' || $sort === 'price-asc') {
-            // Kalkulasi manual sorting berdasarkan kolom `price` tanpa diskon
             $direction = $sort === 'price-desc' ? 'desc' : 'asc';
             $query->orderBy('price', $direction);
         }
@@ -89,7 +91,7 @@ class ProductController extends Controller
         $products = $query->paginate(20)->withQueryString();
 
         return view('landingpage.home', compact(
-            'labels','products','filter','productId','search','sort','pageTitle','banners','testimonials'
+            'labels','products','filter','productId','search','sort','pageTitle','banners','testimonials','latestBlogs'
         ));
     }
 
@@ -256,8 +258,8 @@ class ProductController extends Controller
             'product_id'      => 'required|exists:products,id',
             'finishing_id'    => 'nullable|exists:finishings,id',
             'express'         => 'required|in:0,1',
-            'deadline_time'   => 'nullable|required_if:express,1|date_format:H:i',
-            'needs_proofing'  => 'required|in:0,1',
+            'waktu_deadline'  => 'nullable|required_if:express,1|date_format:H:i',
+            'kebutuhan_proofing'  => 'required|in:0,1',
             'proof_qty'       => 'nullable|integer|min:1',
             'order_design'    => 'nullable|file|mimes:jpeg,jpg,png,pdf,zip,rar|max:20480',
             'preview_design'  => 'nullable|file|mimes:jpeg,jpg,png,pdf|max:10240',
@@ -346,11 +348,11 @@ class ProductController extends Controller
                 'payment_status'    => 0,
                 'order_status'      => 0,
                 'subtotal'          => round($subtotal),
-                'discount_percent'  => $discountPercent,
-                'discount_fix'      => $discountFix,
-                'deadline_time'     => $validated['deadline_time'] ?? null,
+                'diskon_persen'     => $discountPercent,
+                'potongan_rp'       => $discountFix,
+                'waktu_deadline'    => $validated['waktu_deadline'] ?? null,
                 'express'           => $validated['express'],
-                'needs_proofing'    => $validated['needs_proofing'],
+                'kebutuhan_proofing'=> $validated['kebutuhan_proofing'],
                 'proof_qty'         => $validated['proof_qty'] ?? null,
                 'pickup_status'     => 0,
                 'notes'             => $validated['notes'] ?? null,

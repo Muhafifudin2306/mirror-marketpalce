@@ -391,27 +391,27 @@
                                             @if (!$isset)
                                                 <select 
                                                     id="deliveryMethod" 
-                                                    name="delivery_method" 
-                                                    class="form-select @error('delivery_method') is-invalid @enderror"
+                                                    name="kurir" 
+                                                    class="form-select @error('kurir') is-invalid @enderror"
                                                     style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;" 
                                                     disabled>
-                                                    <option value="0" {{ old('delivery_method','0')=='0'?'selected':'' }}>
+                                                    <option value="0" {{ old('kurir','0')=='0'?'selected':'' }}>
                                                         LENGKAPI DATA ALAMAT ANDA DI MENU PROFIL!!!
                                                     </option> 
                                                 </select>
                                             @else
                                                 <select 
                                                     id="deliveryMethod" 
-                                                    name="delivery_method" 
-                                                    class="form-select @error('delivery_method') is-invalid @enderror"
+                                                    name="kurir" 
+                                                    class="form-select @error('kurir') is-invalid @enderror"
                                                     style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;" >
-                                                    <option value="0" {{ old('delivery_method','0')=='0'?'selected':'' }}>
+                                                    <option value="0" {{ old('kurir','0')=='0'?'selected':'' }}>
                                                         Memuat data ongkir...
                                                     </option> 
                                                 </select>
                                             @endif
 
-                                            @error('delivery_method')
+                                            @error('kurir')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
                                                 </span>
@@ -673,8 +673,8 @@
                 }
 
                 const payload = {
-                    delivery_method: deliverySelect.value,
-                    delivery_cost: ongkirCost,
+                    kurir: deliverySelect.value,
+                    ongkir: ongkirCost,
                     notes: document.getElementById('notesInput').value,
                     promo_code: hiddenPromo.value,
                     promo_discount: promoDiscount
@@ -713,8 +713,8 @@
                                 body: JSON.stringify({
                                     transaction_id: res.transaction_id,
                                     notes: payload.notes,
-                                    delivery_method: payload.delivery_method,
-                                    delivery_cost: payload.delivery_cost,
+                                    kurir: payload.kurir,
+                                    ongkir: payload.ongkir,
                                     promo_discount: payload.promo_discount
                                 })
                             })

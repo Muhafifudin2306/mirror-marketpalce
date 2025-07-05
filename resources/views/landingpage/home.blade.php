@@ -2,6 +2,274 @@
 @section('content')
     <link rel="stylesheet" href="{{ asset('landingpage/css/homepage.css') }}">
 
+    <style>
+      .btn-about-sinau {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 30px;
+            background: transparent;
+            border: 1px solid #000;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn-about-sinau .btn-text {
+            color: #000;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .btn-about-sinau .btn-arrow {
+            width: 32px;
+            height: 32px;
+            background: #0258d3;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.3s ease;
+        }
+
+        .btn-about-sinau .arrow-out,
+        .btn-about-sinau .arrow-in {
+            color: #fff;
+            font-size: 20px;
+            position: absolute;
+            transition: all 0.3s ease;
+        }
+
+        .btn-about-sinau .arrow-in {
+            transform: translateX(40px);
+        }
+
+        .btn-about-sinau:hover {
+            background: #0258d3;
+            border-color: transparent;
+        }
+
+        .btn-about-sinau:hover .btn-text {
+            color: #fff;
+        }
+
+        .btn-about-sinau:hover .btn-arrow {
+            background: #05d1d1;
+        }
+
+        .btn-about-sinau:hover .arrow-out {
+            transform: translateX(-40px);
+        }
+
+        .btn-about-sinau:hover .arrow-in {
+            transform: translateX(0);
+        }
+        .btn-semua-artikel {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 30px;
+            background: transparent;
+            border: 1px solid #000;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-semua-artikel .btn-text {
+            color: #000;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .btn-semua-artikel .btn-arrow {
+            width: 32px;
+            height: 32px;
+            background: #0258d3;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.3s ease;
+        }
+
+        .btn-semua-artikel .arrow-out,
+        .btn-semua-artikel .arrow-in {
+            color: #fff;
+            font-size: 20px;
+            position: absolute;
+            transition: all 0.3s ease;
+        }
+
+        .btn-semua-artikel .arrow-in {
+            transform: translateX(40px);
+        }
+
+        .btn-semua-artikel:hover {
+            background: #0258d3;
+            border-color: transparent;
+        }
+
+        .btn-semua-artikel:hover .btn-text {
+            color: #fff;
+        }
+
+        .btn-semua-artikel:hover .btn-arrow {
+            background: #05d1d1;
+        }
+
+        .btn-semua-artikel:hover .arrow-out {
+            transform: translateX(-40px);
+        }
+
+        .btn-semua-artikel:hover .arrow-in {
+            transform: translateX(0);
+        }
+
+        /* Style untuk card artikel - mirip dengan card produk */
+        .article-card-home {
+            background: #fff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .article-image-container-home {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .article-image-home {
+            transition: transform 0.3s ease;
+        }
+
+        .article-card-home:hover .article-image-home {
+            transform: scale(1.05);
+        }
+
+        /* Overlay yang muncul saat hover */
+        .article-overlay-home {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0) 0%, rgba(59, 130, 246, 0.8) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .article-card-home:hover .article-overlay-home {
+            opacity: 1;
+        }
+
+        .overlay-content-home {
+            text-align: center;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .read-more-text-home {
+            font-family: 'Poppins';
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .arrow-circle-home {
+            width: 30px;
+            height: 30px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .arrow-circle-home i {
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .article-card-home:hover .arrow-circle-home {
+            background: #fff;
+        }
+
+        .article-card-home:hover .arrow-circle-home i {
+            color: #3b82f6;
+        }
+
+        /* Style untuk kategori dan tanggal */
+        .article-category-home {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .article-date-home {
+            font-size: 0.7rem !important;
+            font-weight: 400 !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .col-md-6.text-end {
+                text-align: center !important;
+                margin-top: 20px;
+            }
+            
+            .btn-semua-artikel {
+                padding: 10px 25px;
+            }
+            
+            .btn-semua-artikel .btn-text {
+                font-size: 12px;
+            }
+            
+            .btn-semua-artikel .btn-arrow {
+                width: 28px;
+                height: 28px;
+            }
+            
+            .article-card-home {
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .step-content h3 {
+                font-size: 2rem !important;
+            }
+            
+            .read-more-text-home {
+                font-size: 0.8rem;
+            }
+            
+            .arrow-circle-home {
+                width: 25px;
+                height: 25px;
+            }
+            
+            .arrow-circle-home i {
+                font-size: 12px;
+            }
+        }
+    </style>
+
     <div class="py-4 my-4"></div>
 
     <div id="animatedCarousels">
@@ -43,9 +311,9 @@
                                   <div class="string-cover m-5">
                                       @foreach($processedHeading as $i => $line)
                                           @if($i == 0)
-                                              <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3.6rem; font-weight:600; color:#fff;">{!! $line !!}</h1>
+                                              <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:600; color:#fff;">{!! $line !!}</h1>
                                           @else
-                                              <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3.6rem; font-weight:600; color:#fff;">{!! $line !!}</h1>
+                                              <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:600; color:#fff;">{!! $line !!}</h1>
                                           @endif
                                       @endforeach
 
@@ -91,17 +359,17 @@
                           <div class="slide w-100 p-xl-5 p-3 rounded"
                               style="background-image: url({{ asset('landingpage/img/banner_comp1.png') }}); height: 550px; background-size: cover;">
                               <div class="string-cover m-5">
-                                  <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3.6rem; font-weight:600; color:#fff;">Solusi Cetak Banner</h3>
-                                  <h3 class="mb-4" style="margin-top:-5px !important;">
+                                  <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:600; color:#fff;">Solusi Cetak Banner</h3>
+                                  <h3 class="mb-4" style="margin-top:-5px !important; font-family: 'Poppins'; font-size:3.3rem; font-weight:600;">
                                       <span style="color:#fff;">Tanpa</span>
                                       <span style="color:#ffc74c;"> Keluar Rumah!</span>
                                   </h3>
                                   <p class="mb-0"
-                                    style="font-family: 'Poppins', sans-serif; font-weight:350; color:#fff;">
+                                    style="font-family: 'Poppins', sans-serif; font-weight:350; font-size:0.9rem; color:#fff;">
                                       Cetak semua kebutuhanmu, dari indoor, outdoor, sampai perintilan kantor.
                                   </p>
                                   <p class="mb-0"
-                                    style="font-family: 'Poppins', sans-serif; font-weight:350; color:#fff;">
+                                    style="font-family: 'Poppins', sans-serif; font-weight:350; font-size:0.9rem; color:#fff;">
                                       Tinggal kirim, langsung jadi!
                                   </p>
                                   <br>
@@ -134,75 +402,92 @@
 
     <div class="container-xl">
         <div class="title-up pt-4">
-            <h3 class="mb-0 mt-4" style="color:#000;">Pilih Sendiri</h3>
-            <h3 class="mb-4" style="color:#0439a0;">Kebutuhanmu!</h3>
+            <h3 class="mb-0 mt-4" style="font-family: 'Poppins'; font-size:2.5rem; font-weight:600; color:#000;">Pilih Sendiri</h3>
+            <h3 class="mb-4" style="font-family: 'Poppins'; font-size:2.5rem; font-weight:600; color:#0439a0;">Kebutuhanmu!</h3>
         </div>
         <div id="labelsCarousel" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                @foreach ($labels->chunk(4) as $index => $chunk)
-                    <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                        <div class="row g-4">
-                            @foreach ($chunk as $lbl)
-                                @foreach ($lbl->products as $product)
-                                    <div class="col-lg-3 col-md-6 col-sm-12">
-                                        <a href="{{ route('landingpage.produk_detail', $product->slug) }}"
-                                            class="text-decoration-none">
-                                            <div class="product-item shadow-sm bg-white h-100"
-                                                style="border-radius:10px;">
-                                                <div class="position-relative bg-light overflow-hidden"
-                                                    style="border-radius:10px; height:290px;">
-                                                    <img src="{{ asset('landingpage/img/product/product-1.png') }}"
-                                                        class="img-fluid w-100 h-100" style="object-fit:cover;">
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
-                                @endforeach
-                            @endforeach
-                        </div>
-                    </div>
-                @endforeach
-            </div>
+          <div class="carousel-inner">
+              @foreach ($labels->chunk(4) as $index => $chunk)
+                  <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                      <div class="row g-4">
+                          @foreach ($chunk as $label)
+                              <div class="col-lg-3 col-md-6 col-sm-12">
+                                  <a href="{{ route('landingpage.products', array_merge(request()->all(), ['filter' => $label->id, 'product' => null])) }}"
+                                      class="text-decoration-none">
+                                      <div class="product-item shadow-sm bg-white h-100"
+                                          style="border-radius:10px;">
+                                          <div class="position-relative bg-light overflow-hidden"
+                                              style="border-radius:10px; height:290px;">
+                                              @php
+                                                  $firstProduct = $label->products->first();
+                                                  $image = $firstProduct ? $firstProduct->images->first() : null;
+                                              @endphp
+                                              @if($image && $image->image_product && file_exists(storage_path('app/public/' . $image->image_product)))
+                                                  <img src="{{ asset('storage/' . $image->image_product) }}"
+                                                      class="img-fluid w-100 h-100" style="object-fit:cover;" 
+                                                      alt="{{ $label->name }}">
+                                              @else
+                                                  <img src="{{ asset('landingpage/img/nophoto.png') }}"
+                                                      class="img-fluid w-100 h-100" style="object-fit:cover;"
+                                                      alt="No Image">
+                                              @endif
+                                              <div class="position-absolute bottom-0 start-0 w-100 p-3" 
+                                                  style="background: linear-gradient(transparent, rgba(0,0,0,0.7)); border-radius: 0 0 10px 10px;">
+                                                  <h5 class="text-white mb-0 fw-bold" style="font-family: 'Poppins'; font-size: 1.1rem; font-weight:550 !important;">
+                                                      {{ Str::limit($label->name, 35) }}
+                                                  </h5>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </a>
+                              </div>
+                          @endforeach
+                      </div>
+                  </div>
+              @endforeach
+          </div>
 
-            <div class="carousel-controls-container">
-                <div class="carousel-controls">
-                    <!-- Prev tombol -->
-                    <button class="carousel-control-prev" type="button" data-bs-target="#labelsCarousel"
-                        data-bs-slide="prev">
-                        <span class="btn-arrow-carousel">
-                            <span class="arrow-out">&#8592;</span>
-                            <span class="arrow-in">&#8592;</span>
-                        </span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
+          <!-- Controls tetap sama -->
+          <div class="carousel-controls-container">
+              <div class="carousel-controls">
+                  <!-- Prev tombol -->
+                  <button class="carousel-control-prev" type="button" data-bs-target="#labelsCarousel"
+                      data-bs-slide="prev">
+                      <span class="btn-arrow-carousel">
+                          <span class="arrow-out">&#8592;</span>
+                          <span class="arrow-in">&#8592;</span>
+                      </span>
+                      <span class="visually-hidden">Previous</span>
+                  </button>
 
-                    <!-- Next tombol -->
-                    <button class="carousel-control-next" type="button" data-bs-target="#labelsCarousel"
-                        data-bs-slide="next">
-                        <span class="btn-arrow-carousel">
-                            <span class="arrow-out">&#8594;</span>
-                            <span class="arrow-in">&#8594;</span>
-                        </span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
+                  <!-- Next tombol -->
+                  <button class="carousel-control-next" type="button" data-bs-target="#labelsCarousel"
+                      data-bs-slide="next">
+                      <span class="btn-arrow-carousel">
+                          <span class="arrow-out">&#8594;</span>
+                          <span class="arrow-in">&#8594;</span>
+                      </span>
+                      <span class="visually-hidden">Next</span>
+                  </button>
+              </div>
 
-                <div class="carousel-indicators-custom" id="labelsIndicators">
-                    @foreach ($labels->chunk(4) as $index => $chunk)
-                        <div class="indicator-line {{ $index == 0 ? 'active' : '' }}" data-bs-target="#labelsCarousel"
-                            data-bs-slide-to="{{ $index }}">
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-        <br><br><br>
+              <div class="carousel-indicators-custom" id="labelsIndicators">
+                  @foreach ($labels->chunk(4) as $index => $chunk)
+                      <div class="indicator-line {{ $index == 0 ? 'active' : '' }}" data-bs-target="#labelsCarousel"
+                          data-bs-slide-to="{{ $index }}">
+                      </div>
+                  @endforeach
+              </div>
+          </div>
+      </div>
+        <br>
         <div class="row align-items-center">
-            <div class="col-md-12 position-relative">
-                <div class="step-content">
-                    <h4 style="font-family: 'Poppins'; font-size:1rem; font-weight:600; color:#444444;">X DAN ROLL BANNER
+          <div class="col-md-12 position-relative">
+              <div class="diamond-accent"></div>
+              <div class="step-content">
+                  <h4 style="font-family: 'Poppins'; font-size:0.8rem; font-weight:600; color:#444444;">X DAN ROLL BANNER</h4>
                     </h4>
-                    <h3 class="mb-4" style="margin-top:-5px !important;"><span class="mt-0"
+                    <h3 class="mb-4" style="margin-top:-5px !important; font-family: 'Poppins'; font-size:2.5rem; font-weight:600;"><span class="mt-0"
                             style="color:#000;">Cetak Roll Banner</span><span class="mt-0" style="color:#0258d3;">
                             Berkualitas</span></h3>
                 </div>
@@ -219,7 +504,7 @@
                                         class="text-decoration-none">
                                         <div class="product-item shadow-sm bg-white h-100" style="border-radius:10px;">
                                             <div class="position-relative bg-light overflow-hidden"
-                                                style="border-radius:10px; height:290px;">
+                                                style="border-radius:10px; height:200px;">
                                                 @php
                                                     $image = $prod->images->first();
                                                 @endphp
@@ -235,10 +520,10 @@
                                             </div>
                                             <div class="content p-3 d-flex flex-column" style="min-height:140px;">
                                                 <div class="title text-dark mb-0"
-                                                    style="font-family: 'Poppins'; font-size:1.4rem; font-weight:600;">
-                                                    {{ $prod->name }}
+                                                    style="font-family: 'Poppins'; font-size:1.1rem; font-weight:600;">
+                                                    {{ Str::limit($prod->name, 35) }}
                                                 </div>
-                                                <div class="title mb-4" style="font-family: 'Poppins'; font-size:0.8rem;">
+                                                <div class="title mb-4" style="font-family: 'Poppins'; font-size:0.7rem; font-weight:400;">
                                                     Ukuran
                                                     {{ intval($prod->long_product) }}x{{ intval($prod->width_product) }}
                                                     {{ $prod->additional_unit }}
@@ -258,25 +543,25 @@
                           }
                         @endphp
                         @if($final < $base)
-                          <div class="title mb-0 mt-1" style="font-size:0.8rem; font-weight:600; color:#888;">
+                          <div class="title mb-0 mt-1" style="font-size:0.6rem; font-weight:600; color:#888;">
                             MULAI DARI
                           </div>
                           <div class="price-container d-flex align-items-center" style="gap:8px;">
                             <span class="discount-price text-decoration-line-through">
                               Rp {{ number_format($base,0,',','.') }}
                             </span>
-                            <img src="{{ asset('landingpage/img/discount_logo.png') }}" alt="Diskon" style="width:18px;">
+                            <img src="{{ asset('landingpage/img/discount_logo.png') }}" alt="Diskon" style="width:14px;">
                             <span class="price fw-bold"
-                                  style="font-family: 'Poppins'; font-size:1.3rem; color:#fc2865;">
+                                  style="font-family: 'Poppins'; font-size:1.1rem; color:#fc2865;">
                               Rp {{ number_format($final,0,',','.') }}
                             </span>
                           </div>
                         @else
-                          <div class="title mb-0 mt-1" style="font-size:0.8rem; font-weight:600; color:#888;">
-                            Mulai Dari
+                          <div class="title mb-0 mt-1" style="font-size:0.6rem; font-weight:600; color:#888;">
+                            MULAI DARI
                           </div>
                           <div class="price-container mt-0">
-                            <span class="fw-bold" style="font-family: 'Poppins'; font-size:1.3rem; color:#444444;">Rp {{ number_format($base,0,',','.') }}</span>
+                            <span class="fw-bold" style="font-family: 'Poppins'; font-size:1.1rem; color:#444444;">Rp {{ number_format($base,0,',','.') }}</span>
                           </div>
                         @endif
                       </div>
@@ -322,12 +607,13 @@
         </div>
       </div>
     </div>
-    <br><br><br>
+    <br>
     <div class="row align-items-center">
       <div class="col-md-12 position-relative">
-        <div class="step-content">
-          <h4 style="font-family: 'Poppins'; font-size:1rem; font-weight:600; color:#444444;">PRODUK PROMO</h4>
-          <h3 class="mb-4" style="margin-top:-5px !important;"><span class="mt-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:600; color:#000;">Lagi Promo Bulan Ini!</span></h3>
+          <div class="diamond-accent"></div>
+          <div class="step-content">
+              <h4 style="font-family: 'Poppins'; font-size:0.8rem; font-weight:600; color:#444444;">PRODUK PROMO</h4>
+          <h3 class="mb-4" style="margin-top:-5px !important; font-family: 'Poppins'; font-size:2.5rem; font-weight:600;"><span class="mt-0" style="color:#000;">Lagi Promo Bulan Ini!</span></h3>
         </div>
       </div>
     </div>
@@ -340,7 +626,7 @@
                 <div class="col-lg-3 col-md-6 col-sm-12">
                   <a href="{{ route('landingpage.produk_detail', $prod->slug) }}" class="text-decoration-none">
                     <div class="product-item shadow-sm bg-white h-100" style="border-radius:10px;">
-                      <div class="position-relative bg-light overflow-hidden" style="border-radius:10px; height:290px;">
+                      <div class="position-relative bg-light overflow-hidden" style="border-radius:10px; height:200px;">
                         @php
                             $image = $prod->images->first();
                         @endphp
@@ -356,11 +642,11 @@
                       </div>
                       <div class="content p-3 d-flex flex-column" style="min-height:140px;">
                         <div class="title text-dark mb-0"
-                            style="font-family: 'Poppins'; font-size:1.4rem; font-weight:600;">
-                          {{ $prod->name }}
+                            style="font-family: 'Poppins'; font-size:1.1rem; font-weight:600;">
+                          {{ Str::limit($prod->name, 35) }}
                         </div>
                         <div class="title mb-4"
-                            style="font-family: 'Poppins'; font-size:0.8rem;">
+                            style="font-family: 'Poppins'; font-size:0.7rem;">
                           Ukuran {{ intval($prod->long_product) }}x{{ intval($prod->width_product) }} {{ $prod->additional_unit }}
                         </div>
                         @php
@@ -378,25 +664,25 @@
                           }
                         @endphp
                         @if($final < $base)
-                          <div class="title mb-0 mt-1" style="font-size:0.8rem; font-weight:600; color:#888;">
+                          <div class="title mb-0 mt-1" style="font-size:0.6rem; font-weight:600; color:#888;">
                             MULAI DARI
                           </div>
                           <div class="price-container d-flex align-items-center" style="gap:8px;">
                             <span class="discount-price text-decoration-line-through">
                               Rp {{ number_format($base,0,',','.') }}
                             </span>
-                            <img src="{{ asset('landingpage/img/discount_logo.png') }}" alt="Diskon" style="width:18px;">
+                            <img src="{{ asset('landingpage/img/discount_logo.png') }}" alt="Diskon" style="width:14px;">
                             <span class="price fw-bold"
-                                  style="font-family: 'Poppins'; font-size:1.3rem; color:#fc2865;">
+                                  style="font-family: 'Poppins'; font-size:1.1rem; color:#fc2865;">
                               Rp {{ number_format($final,0,',','.') }}
                             </span>
                           </div>
                         @else
-                          <div class="title mb-0 mt-1" style="font-size:0.8rem; font-weight:600; color:#888;">
+                          <div class="title mb-0 mt-1" style="font-size:0.6rem; font-weight:600; color:#888;">
                             Mulai Dari
                           </div>
                           <div class="price-container mt-0">
-                            <span class="fw-bold" style="font-family: 'Poppins'; font-size:1.3rem; color:#444444;">Rp {{ number_format($base,0,',','.') }}</span>
+                            <span class="fw-bold" style="font-family: 'Poppins'; font-size:1.1rem; color:#444444;">Rp {{ number_format($base,0,',','.') }}</span>
                           </div>
                         @endif
                       </div>
@@ -446,22 +732,22 @@
 
   <!-- PRODUK PILIHAN Vertical Carousel -->
   <div class="container-fluid footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
-    <div id="produkPilihanCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div id="produkPilihanCarousel" class="carousel slide carousel-vertical" data-bs-ride="carousel" data-bs-interval="4000">
       <div class="carousel-inner">
         <!-- Slide 1 -->
         <div class="carousel-item active">
           <img class="w-100 rounded" src="{{ asset('landingpage/img/home_choice.png') }}" alt="CTA Image 1">
           <div class="position-absolute top-50 start-0 translate-middle-y cta-content">
-            <h4 class="mb-0" style="font-family: 'Poppins'; font-size:1rem; font-weight:600; color:#fff;">PRODUK PILIHAN</h4>
-            <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:550; color:#fff;">Mau Cetak Banner</h3>
+            <h4 class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:600; color:#fff;">PRODUK PILIHAN</h4>
+            <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#fff;">Mau Cetak Banner</h3>
             <h3 class="mb-4" style="margin-top:-5px !important;">
-              <span class="mt-0" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:550; color:#fff;">Biar</span>
-              <span class="mt-0" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:550; color:#ffc74c;"> Keliatan di Jalan?</span>
+              <span class="mt-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#fff;">Biar</span>
+              <span class="mt-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#ffc74c;"> Keliatan di Jalan?</span>
             </h3>
-            <p class="mb-0" style="font-family: 'Poppins'; font-size:1.1rem; font-weight:350; color:#fff;">
+            <p class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
               Cetak banner ukuran besar biar mencolok dari kejauhan.
             </p>
-            <p class="mb-0" style="font-family: 'Poppins'; font-size:1.1rem; font-weight:350; color:#fff;">
+            <p class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
               Tipis-tipis curi perhatian pelanggan, mau coba lihat dulu?
             </p>
             <a href="{{ url('/products') }}" class="btn-schedule">
@@ -477,16 +763,16 @@
         <div class="carousel-item">
           <img class="w-100 rounded" src="{{ asset('landingpage/img/home_choice.png') }}" alt="CTA Image 2">
           <div class="position-absolute top-50 start-0 translate-middle-y cta-content">
-            <h4 class="mb-0" style="font-family: 'Poppins'; font-size:1rem; font-weight:600; color:#fff;">PRODUK PILIHAN</h4>
-            <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:550; color:#fff;">Cetak Stiker</h3>
+            <h4 class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:600; color:#fff;">PRODUK PILIHAN</h4>
+            <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#fff;">Cetak Stiker</h3>
             <h3 class="mb-4" style="margin-top:-5px !important;">
-              <span class="mt-0" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:550; color:#fff;">Buat</span>
-              <span class="mt-0" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:550; color:#ffc74c;"> Branding Keren!</span>
+              <span class="mt-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#fff;">Buat</span>
+              <span class="mt-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#ffc74c;"> Branding Keren!</span>
             </h3>
-            <p class="mb-0" style="font-family: 'Poppins'; font-size:1.1rem; font-weight:350; color:#fff;">
+            <p class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
               Stiker custom untuk promosi atau dekorasi.
             </p>
-            <p class="mb-0" style="font-family: 'Poppins'; font-size:1.1rem; font-weight:350; color:#fff;">
+            <p class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
               Tahan lama dan eye-catching, cek sekarang!
             </p>
             <a href="{{ url('/products') }}" class="btn-schedule">
@@ -502,16 +788,16 @@
         <div class="carousel-item">
           <img class="w-100 rounded" src="{{ asset('landingpage/img/home_choice.png') }}" alt="CTA Image 3">
           <div class="position-absolute top-50 start-0 translate-middle-y cta-content">
-            <h4 class="mb-0" style="font-family: 'Poppins'; font-size:1rem; font-weight:600; color:#fff;">PRODUK PILIHAN</h4>
-            <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:550; color:#fff;">Poster Besar</h3>
+            <h4 class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:600; color:#fff;">PRODUK PILIHAN</h4>
+            <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#fff;">Poster Besar</h3>
             <h3 class="mb-4" style="margin-top:-5px !important;">
-              <span class="mt-0" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:550; color:#fff;">Untuk</span>
-              <span class="mt-0" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:550; color:#ffc74c;"> Event Spesial!</span>
+              <span class="mt-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#fff;">Untuk</span>
+              <span class="mt-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#ffc74c;"> Event Spesial!</span>
             </h3>
-            <p class="mb-0" style="font-family: 'Poppins'; font-size:1.1rem; font-weight:350; color:#fff;">
+            <p class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
               Poster berkualitas tinggi untuk acara pentingmu.
             </p>
-            <p class="mb-0" style="font-family: 'Poppins'; font-size:1.1rem; font-weight:350; color:#fff;">
+            <p class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
               Desain menarik, pesan sekarang!
             </p>
             <a href="{{ url('/products') }}" class="btn-schedule">
@@ -526,27 +812,25 @@
       </div>
 
       <div class="vertical-controls">
-        <!-- Prev ↑ -->
-        <button class="carousel-control-prev btn-vert" type="button"
-                data-bs-target="#produkPilihanCarousel" data-bs-slide="prev">
-          <span class="arrow-vert up">&#8593;</span>
-          <span class="visually-hidden">Previous</span>
-        </button>
+    <!-- Prev ↑ -->
+    <button class="carousel-control-prev btn-vert" type="button" data-bs-target="#produkPilihanCarousel" data-bs-slide="prev">
+        <span class="arrow-vert up">&#8593;</span>
+        <span class="visually-hidden">Previous</span>
+    </button>
 
-        <!-- Indicators Vertikal -->
-        <div class="indicators-vert" id="produkPilihanIndicators">
-          <button type="button" data-bs-target="#produkPilihanCarousel" data-bs-slide-to="0" class="active"></button>
-          <button type="button" data-bs-target="#produkPilihanCarousel" data-bs-slide-to="1"></button>
-          <button type="button" data-bs-target="#produkPilihanCarousel" data-bs-slide-to="2"></button>
-        </div>
+    <!-- Indicators Vertikal -->
+    <div class="indicators-vert" id="produkPilihanIndicators">
+        <button type="button" data-bs-target="#produkPilihanCarousel" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#produkPilihanCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#produkPilihanCarousel" data-bs-slide-to="2"></button>
+    </div>
 
-        <!-- Next ↓ -->
-        <button class="carousel-control-next btn-vert" type="button"
-                data-bs-target="#produkPilihanCarousel" data-bs-slide="next">
-          <span class="arrow-vert down">&#8595;</span>
-          <span class="visually-hidden">Next</span>
-        </button>
-      </div>
+    <!-- Next ↓ -->
+    <button class="carousel-control-next btn-vert" type="button" data-bs-target="#produkPilihanCarousel" data-bs-slide="next">
+        <span class="arrow-vert down">&#8595;</span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
     </div>
   </div>
 
@@ -559,19 +843,19 @@
       </div>
       <div class="col-md-6 position-relative">
         <div class="step-content">
-          <h4 class="step-title" style="font-family: 'Poppins'; font-size:3rem; font-weight:600; color:#000;">Dari Semarang ke</h4>
-          <h4 class="step-title" style="font-family: 'Poppins'; font-size:3rem; font-weight:600; color:#0258d3; margin-top: -20px">Seluruh Indonesia</h4>
-          <p class="step-desc">
+          <h4 class="step-title" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:600; color:#000;">Dari Semarang ke</h4>
+          <h4 class="step-title" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:600; color:#0258d3; margin-top: -20px">Seluruh Indonesia</h4>
+          <p class="step-desc" style="font-size:0.8rem;">
               Sejak 2024, Sinau Print selalu berkomitmen untuk menjadi penyedia jasa
               printing terbaik di Semarang. Dengan berbekal pengalaman dan teknologi
               mesin paling mutakhir, kami siap cetak segala kebutuhanmu.
           </p>
-          <a href="{{ url('/products') }}" class="btn-schedule">
-          <span class="btn-text">TENTANG SINAU</span>
-          <span class="btn-arrow">
-              <i class="bi bi-arrow-right-short arrow-out"></i>
-              <i class="bi bi-arrow-right-short arrow-in"></i>
-          </span>
+          <a href="{{ url('/products') }}" class="btn-about-sinau">
+              <span class="btn-text">TENTANG SINAU</span>
+              <span class="btn-arrow">
+                  <i class="bi bi-arrow-right-short arrow-out"></i>
+                  <i class="bi bi-arrow-right-short arrow-in"></i>
+              </span>
           </a>
         </div>
       </div>
@@ -587,7 +871,7 @@
         />
 
         <div class="position-absolute top-50 start-50 translate-middle text-center w-100 px-3 feedback-container">
-            <h3 class="mb-5" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:550; color:#fff;">
+            <h3 class="mb-5" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#fff;">
                 Kata Mereka <span style="color:#ffc74c;">Tentang Sinau Print</span>
             </h3>
 
@@ -686,13 +970,82 @@
     </div>
 </div>
 
+<div class="container-xl py-5">
+    <div class="row align-items-center mb-2">
+        <div class="col-md-6">
+            <div class="step-content">
+                <h3 style="margin-top:-5px !important; font-family: 'Poppins'; font-size:2.5rem; font-weight:600;"><span class="mt-0"
+                            style="color:#000;">Ikuti Artikel</span><span class="mt-0" style="color:#0258d3;"> Terbaru</span></h3>
+            </div>
+        </div>
+        <div class="col-md-6 text-end">
+            <a href="{{ route('landingpage.article_index') }}" class="btn-semua-artikel">
+                <span class="btn-text">SEMUA ARTIKEL</span>
+                <span class="btn-arrow">
+                    <i class="bi bi-arrow-right-short arrow-out"></i>
+                    <i class="bi bi-arrow-right-short arrow-in"></i>
+                </span>
+            </a>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        @if($latestBlogs->count() > 0)
+            @foreach($latestBlogs as $blog)
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <a href="{{ route('landingpage.article_show', $blog->slug) }}" class="text-decoration-none">
+                        <div class="article-card-home h-100" style="border-radius:10px;">
+                            <div class="position-relative bg-light overflow-hidden article-image-container-home" style="border-radius:10px; height:170px;">
+                                @if($blog->banner && file_exists(storage_path('app/public/' . $blog->banner)))
+                                    <img src="{{ asset('storage/' . $blog->banner) }}"
+                                        class="img-fluid w-100 h-100 article-image-home" style="object-fit:cover;" 
+                                        alt="{{ $blog->title }}">
+                                @else
+                                    <img src="{{ asset('landingpage/img/nophoto_blog.png') }}"
+                                        class="img-fluid w-100 h-100 article-image-home" style="object-fit:cover;"
+                                        alt="No Image">
+                                @endif
+                                
+                                {{-- Overlay yang muncul saat hover --}}
+                                <div class="article-overlay-home">
+                                    <div class="overlay-content-home">
+                                        <span class="read-more-text-home">Baca Selengkapnya</span>
+                                        <div class="arrow-circle-home">
+                                            <i class="bi bi-arrow-right"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content p-3 d-flex flex-column" style="min-height:140px;">
+                                <div class="article-category-home mb-2" style="font-family: 'Poppins'; font-size:0.7rem; font-weight:600; color:#666;">
+                                    {{-- Updated: Use blog type instead of hardcoded categories --}}
+                                    {{ strtoupper($blog->blog_type ?? 'ARTIKEL') }}
+                                    <span class="article-date-home ms-auto" style="color:#999;">{{ $blog->created_at->format('d M Y') }}</span>
+                                </div>
+                                <div class="title text-dark mb-0"
+                                    style="font-family: 'Poppins'; font-size:1.1rem; font-weight:600;">
+                                    {{ Str::limit($blog->title, 50) }}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            @endforeach
+        @else
+            <div class="col-12 text-center py-4">
+                <p style="font-family: 'Poppins'; color: #666;">Belum ada artikel yang tersedia.</p>
+            </div>
+        @endif
+    </div>
+</div>
+
 {{-- CTA Section --}}
 <div class="container-fluid footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
     <div class="position-relative">
         <img class="w-100 rounded" src="{{ asset('landingpage/img/CTA.png') }}" alt="CTA Image">
         <div class="position-absolute top-50 start-0 translate-middle-y cta-content">
-            <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:550; color:#fff;">Mau Cetak Keperluan Kantor?</h3>
-            <h3 class="mb-8" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:550; color:#ffc74c; margin-top:-4px;">Boleh Tanya Dulu!</h3>
+            <h3 class="mb-0" style="font-family: 'Poppins'; font-size:2.6rem !important; font-weight:550; color:#fff;">Mau Cetak Keperluan Kantor?</h3>
+            <h3 class="mb-8" style="font-family: 'Poppins'; font-size:2.6rem !important; font-weight:550; color:#ffc74c; margin-top:-4px;">Boleh Tanya Dulu!</h3>
             <a href="{{ url('/products') }}" class="btn-schedule">
             <span class="btn-text">JADWALKAN KONSULTASI</span>
             <span class="btn-arrow">
@@ -770,7 +1123,7 @@
 .testimonial-card {
     position: relative;
     max-width: 400px;
-    height: 260px;
+    height: 230px;
     margin: 0 auto;
     padding: 30px;
     border-radius: 10px;
@@ -837,7 +1190,7 @@
 @media (max-width: 768px) {
     .testimonial-card {
         max-width: 350px;
-        height: 240px;
+        height: 150px;
         padding: 25px;
     }
     

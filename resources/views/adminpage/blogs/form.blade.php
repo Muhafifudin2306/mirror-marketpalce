@@ -28,6 +28,32 @@
                         <label for="content">Konten Artikel</label>
                         <textarea id="summernote" name="content" class="form-control">{{ old('content', $blog->content ?? '') }}</textarea>
                     </div>
+                    <div class="mb-3 form-floating">
+                        <select name="blog_type" id="blog_type"
+                            class="form-select @error('blog_type') is-invalid @enderror">
+                            <option value="" disabled>-- Pilih Tipe Blog --</option>
+                            @foreach(['Promo Sinau','Printips','Company','Printutor'] as $type)
+                                <option value="{{ $type }}"
+                                    {{ old('blog_type', $blog->blog_type ?? '') === $type ? 'selected' : '' }}>
+                                    {{ $type }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <label for="blog_type">Tipe Artikel</label>
+                        @error('blog_type')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="hidden" name="is_live" value="0">
+                        <input type="checkbox" name="is_live" id="is_live" value="1"
+                            class="form-check-input @error('is_live') is-invalid @enderror"
+                            {{ old('is_live', $blog->is_live ?? 1) ? 'checked' : '' }}>
+                        <label for="is_live" class="form-check-label">Publikasi?</label>
+                        @error('is_live')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
                     <div class="mb-5">
                         <button class="btn btn-primary" type="submit">Simpan</button>
                         <a href="{{ route('admin.blog.index') }}" class="btn btn-danger">Batal</a>

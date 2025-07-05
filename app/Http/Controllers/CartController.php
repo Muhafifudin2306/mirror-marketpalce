@@ -139,8 +139,8 @@ class CartController extends Controller
         $validated = $request->validate([
             'finishing_id'   => 'nullable|exists:finishings,id',
             'express'        => 'required|in:0,1',
-            'deadline_time'  => 'nullable|required_if:express,1|date_format:H:i',
-            'needs_proofing' => 'required|in:0,1',
+            'waktu_deadline'  => 'nullable|required_if:express,1|date_format:H:i',
+            'kebutuhan_proofing' => 'required|in:0,1',
             'proof_qty'      => 'nullable|integer|min:1',
             'order_design'   => 'nullable|file|mimes:jpeg,jpg,png,pdf,zip,rar|max:20480',
             'preview_design' => 'nullable|file|mimes:jpeg,jpg,png,pdf|max:10240',
@@ -177,8 +177,8 @@ class CartController extends Controller
             }
 
             $order->express        = $validated['express'];
-            $order->deadline_time  = $validated['deadline_time'] ?? null;
-            $order->needs_proofing = $validated['needs_proofing'];
+            $order->waktu_deadline  = $validated['waktu_deadline'] ?? null;
+            $order->kebutuhan_proofing = $validated['kebutuhan_proofing'];
             $order->proof_qty      = $validated['proof_qty'] ?? null;
             $order->notes          = $validated['notes'] ?? null;
 
@@ -290,14 +290,14 @@ class CartController extends Controller
         try {
             DB::beginTransaction();
 
-            $deliveryMethod = $request->input('delivery_method');
+            $deliveryMethod = $request->input('kurir');
             $deliveryCost = 0;
             $deliveryService = '';
 
             if ($deliveryMethod && $deliveryMethod != '0') {
                 list($courierCode, $serviceCode) = explode(':', $deliveryMethod);
                 
-                $deliveryCost = $request->input('delivery_cost', 0);
+                $deliveryCost = $request->input('ongkir', 0);
                 $deliveryService = $courierCode . ' - ' . $serviceCode;
             }
 
@@ -345,8 +345,8 @@ class CartController extends Controller
                 'order_id' => $order->id,
                 'temp_data' => [
                     'notes' => $request->input('notes'),
-                    'delivery_method' => $deliveryService,
-                    'delivery_cost' => $deliveryCost,
+                    'kurir' => $deliveryService,
+                    'ongkir' => $deliveryCost,
                     'promo_code' => $promoCode,
                     'promo_discount' => $promoDiscount,
                 ]
@@ -404,8 +404,8 @@ class CartController extends Controller
                 'transaction_id'     => $request->input('transaction_id'),
                 'transaction_method' => 1, //paid
                 'notes'              => $request->input('notes'),
-                'delivery_method'    => $request->input('delivery_method'),
-                'delivery_cost'      => $request->input('delivery_cost', 0),
+                'kurir'    => $request->input('kurir'),
+                'ongkir'      => $request->input('ongkir', 0),
                 'promocode_deduct'   => $request->input('promo_discount', 0),
             ]);
 
@@ -465,8 +465,8 @@ class CartController extends Controller
                             'transaction_method' => 1,
                         ];
 
-                        if (!$order->delivery_method) {
-                            $updateData['delivery_method'] = 'Midtrans Payment';
+                        if (!$order->kurir) {
+                            $updateData['kurir'] = 'Midtrans Payment';
                         }
 
                         $order->update($updateData);

@@ -27,12 +27,12 @@ return new class extends Migration
             $table->decimal('discount_percent', 5, 2)->nullable();
             $table->decimal('discount_fix', 12, 2)->nullable();
             $table->decimal('promocode_deduct', 12, 2)->nullable();
-            $table->date('deadline_date')->nullable();
-            $table->time('deadline_time')->nullable();
+            $table->date('deadline')->nullable();
+            $table->time('waktu_deadline')->nullable();
             $table->tinyInteger('express')->nullable()->default(0);  // 0 = normal, 1 = express
-            $table->string('delivery_method')->nullable();    // e.g. Kurir, Ekspedisi
-            $table->integer('delivery_cost')->nullable();
-            $table->tinyInteger('needs_proofing')->nullable();   // 0 = tidak perlu, 1 = perlu
+            $table->string('kurir')->nullable();    // e.g. Kurir, Ekspedisi
+            $table->integer('ongkir')->nullable();
+            $table->tinyInteger('kebutuhan_proofing')->nullable();   // 0 = tidak perlu, 1 = perlu
             $table->integer('proof_qty')->nullable();
             $table->tinyInteger('pickup_status')->nullable()->default(0);  // 0 = Diambil, 1 = Dikirim
             $table->text('notes')->nullable();

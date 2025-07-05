@@ -6,6 +6,7 @@ use App\Models\Label;
 use App\Models\Order;
 use App\Models\Notification;
 use App\Models\SearchHistory;
+use App\Models\Chat;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
@@ -75,6 +76,34 @@ class AppServiceProvider extends ServiceProvider
             }
             $view->with('orders', $orders);
         });
+
+        
+        View::composer('*', function ($view) {
+            $relevantChats = collect(); // Inisialisasi koleksi kosong untuk chat yang relevan
+            // dd(Auth::user()->id);
+
+            if (Auth::check()) { // Pastikan pengguna sudah login
+                $user = Auth::user();
+
+                if ($user->role === 'Admin') {
+                    $relevantChats = Chat::where('chat_status', 0) 
+                                        ->orderBy('updated_at', 'desc')
+                                        ->where('channel','chat')
+                                        ->limit(10)
+                                        ->get();
+                } elseif ($user->role === 'Customer') {
+                    $relevantChats = Chat::where('user_id', $user->id)
+                                        ->where('chat_status', 0)
+                                        ->where('channel','reply')
+                                        ->orderBy('updated_at', 'desc')
+                                        ->limit(10)
+                                        ->get();
+                }
+            }
+
+            $view->with('chats', $relevantChats); // Mengirimkan chat yang sudah difilter ke view
+        });
+
 
         // keranjang
         View::composer('landingpage.header', function ($view) {

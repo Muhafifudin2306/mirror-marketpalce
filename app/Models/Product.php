@@ -13,7 +13,6 @@ class Product extends Model
     protected $table = 'products';
 
     protected $fillable = [
-        'uuid',
         'name',
         'label_id',
         'price',
@@ -34,15 +33,6 @@ class Product extends Model
         'long_product'     => 'decimal:2',
         'width_product'    => 'decimal:2',
     ];
-
-    protected static function booted()
-    {
-        static::creating(function ($model) {
-            if (empty($model->uuid)) {
-                $model->uuid = (string) Str::uuid();
-            }
-        });
-    }
 
     public function label()
     {

@@ -62,6 +62,9 @@ class ChatController extends Controller
         $messageData['file_url'] = asset('storage/' . $path);
     }
 
+    Chat::where('user_id', $request->input('user'))
+        ->where('channel', 'reply')
+        ->update(['chat_status' => 1]);
     // Simpan ke DB
     $message = Chat::create($messageData);
 
@@ -95,6 +98,10 @@ public function sendMessageAdmin(Request $request)
         $messageData['file_url'] = asset('storage/' . $path);
     }
 
+    Chat::where('user_id', $request->input('user'))
+        ->where('channel', 'chat')
+        ->update(['chat_status' => 1]);
+
     $message = Chat::create($messageData);
 
     $ably = new \Ably\AblyRest(['key' => env('ABLY_KEY')]);
@@ -112,5 +119,18 @@ public function sendMessageAdmin(Request $request)
     return response()->json(['status' => 'Message sent']);
 }
 
+public function markAsRead(Chat $chat)
+    {
+        
+        // Cek jika statusnya sudah 1, tidak perlu update lagi
+        if ($chat->chat_status == 1) {
+            return response()->json(['message' => 'Chat already marked as read'], 200);
+        }
+
+        $chat->chat_status = 1; // Update status
+        $chat->save();
+
+        return response()->json(['message' => 'Chat marked as read successfully'], 200);
+    }
 
 }

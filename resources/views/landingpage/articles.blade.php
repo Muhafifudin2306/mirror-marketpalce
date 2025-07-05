@@ -32,7 +32,7 @@
     <div id="artikelPilihanCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
             @php
-                $featuredBlogs = $blogs->take(6); // Ambil 6 artikel untuk 3 slide (2 artikel per slide)
+                $featuredBlogs = $blogs->take(6);
             @endphp
             @foreach ($featuredBlogs->chunk(2) as $index => $chunk)
                 <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
@@ -42,10 +42,10 @@
                                 <a href="{{ route('landingpage.article_show', $blog->slug) }}" class="text-decoration-none">
                                     <div class="featured-article-card h-100">
                                         <div class="featured-article-image-container position-relative">
-                                            @if($blog->banner)
+                                            @if($blog->banner && file_exists(storage_path('app/public/' . $blog->banner)))
                                                 <img src="{{ asset('storage/' . $blog->banner) }}" alt="{{ $blog->title }}" class="featured-article-image">
                                             @else
-                                                <img src="{{ asset('landingpage/img/default-article.jpg') }}" alt="{{ $blog->title }}" class="featured-article-image">
+                                                <img src="{{ asset('landingpage/img/nophoto_blog.png') }}" alt="{{ $blog->title }}" class="featured-article-image">
                                             @endif
                                             
                                             {{-- Content Overlay - Always visible at bottom --}}
@@ -53,11 +53,7 @@
                                                 {{-- Category and Date --}}
                                                 <div class="d-flex align-items-center mb-2">
                                                     <span class="featured-article-category">
-                                                        @if(str_contains(strtolower($blog->title), 'promo'))
-                                                            PROMO SINAU
-                                                        @else
-                                                            PRINTIPS
-                                                        @endif
+                                                        {{ strtoupper($blog->blog_type) }}
                                                     </span>
                                                     <span class="featured-article-date ms-auto">{{ $blog->created_at->format('d M Y') }}</span>
                                                 </div>
@@ -125,19 +121,23 @@
                     <div class="dropdown">
                         <button class="btn btn-outline-secondary dropdown-toggle px-4 py-2" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 25px; min-width: 200px; text-align: left;">
                             @if($filter == 'semua') SEMUA ARTIKEL
-                            @elseif($filter == 'artikel') ARTIKEL
-                            @else PROMO
+                            @else {{ strtoupper($filter) }}
                             @endif
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="filterDropdown">
                             <li><a class="dropdown-item" href="{{ request()->fullUrlWithQuery(['filter' => 'semua']) }}">SEMUA ARTIKEL</a></li>
-                            <li><a class="dropdown-item" href="{{ request()->fullUrlWithQuery(['filter' => 'artikel']) }}">ARTIKEL</a></li>
-                            <li><a class="dropdown-item" href="{{ request()->fullUrlWithQuery(['filter' => 'promo']) }}">PROMO</a></li>
+                            @foreach(['Promo Sinau','Printips','Company','Printutor'] as $type)
+                                <li>
+                                    <a class="dropdown-item" 
+                                    href="{{ request()->fullUrlWithQuery(['filter' => $type]) }}">
+                                    {{ strtoupper($type) }}
+                                    </a>
+                                </li>
+                            @endforeach
                         </ul>
                     </div>
                 </div>
                 
-                {{-- Sortir --}}
                 <div class="d-flex align-items-center">
                     <span class="me-3" style="font-family: 'Poppins'; font-weight: 500; color: #666;">SORTIR</span>
                     <div class="dropdown">
@@ -159,45 +159,45 @@
 
 {{-- Articles Grid Section --}}
 <div class="container mb-5">
-    <div class="row">
+    <div class="row g-4">
         @forelse($blogs as $blog)
-        <div class="col-lg-3 col-md-6 mb-4">
-            <div class="article-card h-100">
-                <a href="{{ route('landingpage.article_show', $blog->slug) }}" class="text-decoration-none">
-                    <div class="article-image-container position-relative">
-                        @if($blog->banner)
-                            <img src="{{ asset('storage/' . $blog->banner) }}" alt="{{ $blog->title }}" class="article-image">
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <a href="{{ route('landingpage.article_show', $blog->slug) }}" class="text-decoration-none">
+                <div class="article-card-home h-100" style="border-radius:10px;">
+                    <div class="position-relative bg-light overflow-hidden article-image-container-home" style="border-radius:10px; height:170px;">
+                        @if($blog->banner && file_exists(storage_path('app/public/' . $blog->banner)))
+                            <img src="{{ asset('storage/' . $blog->banner) }}"
+                                class="img-fluid w-100 h-100 article-image-home" style="object-fit:cover;" 
+                                alt="{{ $blog->title }}">
                         @else
-                            <img src="{{ asset('landingpage/img/default-article.jpg') }}" alt="{{ $blog->title }}" class="article-image">
+                            <img src="{{ asset('landingpage/img/nophoto_blog.png') }}"
+                                class="img-fluid w-100 h-100 article-image-home" style="object-fit:cover;"
+                                alt="No Image">
                         @endif
                         
                         {{-- Overlay yang muncul saat hover --}}
-                        <div class="article-overlay">
-                            <div class="overlay-content">
-                                <span class="read-more-text">BACA SELENGKAPNYA</span>
-                                <i class="bi bi-arrow-right ms-2"></i>
+                        <div class="article-overlay-home">
+                            <div class="overlay-content-home">
+                                <span class="read-more-text-home">Baca Selengkapnya</span>
+                                <div class="arrow-circle-home">
+                                    <i class="bi bi-arrow-right"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="article-content p-3">
-                        {{-- Category and Date --}}
-                        <div class="d-flex align-items-center mb-2">
-                            <span class="article-category">
-                                @if(str_contains(strtolower($blog->title), 'promo'))
-                                    PROMO
-                                @else
-                                    ARTIKEL
-                                @endif
-                            </span>
-                            <span class="article-date ms-auto">{{ $blog->created_at->format('d M Y') }}</span>
+                    <div class="content p-3 d-flex flex-column" style="min-height:140px;">
+                        <div class="article-category-home mb-2" style="font-family: 'Poppins'; font-size:0.7rem; font-weight:600; color:#666;">
+                            {{-- Updated: Use blog type instead of hardcoded categories --}}
+                            {{ strtoupper($blog->blog_type ?? 'ARTIKEL') }}
+                            <span class="article-date-home ms-auto" style="color:#999;">{{ $blog->created_at->format('d M Y') }}</span>
                         </div>
-                        
-                        {{-- Title --}}
-                        <h5 class="article-title">{{ $blog->title }}</h5>
+                        <div class="title text-dark mb-0"
+                            style="font-family: 'Poppins'; font-size:1.1rem; font-weight:600;">
+                            {{ Str::limit($blog->title, 50) }}
+                        </div>
                     </div>
-                </a>
-            </div>
+                </div>
+            </a>
         </div>
         @empty
         <div class="col-12 text-center py-5">
@@ -235,7 +235,124 @@
 </div>
 
 <style>
-/* Updated Featured Article Carousel Styles - Equal Size Cards */
+/* Style untuk card artikel - mirip dengan card produk (dari home) */
+.article-card-home {
+    background: #fff;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.article-card-home:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+.article-image-container-home {
+    position: relative;
+    overflow: hidden;
+}
+
+.article-image-home {
+    transition: transform 0.3s ease;
+}
+
+.article-card-home:hover .article-image-home {
+    transform: scale(1.05);
+}
+
+/* Overlay yang muncul saat hover */
+.article-overlay-home {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0) 0%, rgba(59, 130, 246, 0.8) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 10px;
+}
+
+.article-card-home:hover .article-overlay-home {
+    opacity: 1;
+}
+
+.overlay-content-home {
+    text-align: center;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.read-more-text-home {
+    font-family: 'Poppins';
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.arrow-circle-home {
+    width: 30px;
+    height: 30px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.arrow-circle-home i {
+    font-size: 14px;
+    color: #fff;
+}
+
+.article-card-home:hover .arrow-circle-home {
+    background: #fff;
+}
+
+.article-card-home:hover .arrow-circle-home i {
+    color: #3b82f6;
+}
+
+/* Style untuk kategori dan tanggal */
+.article-category-home {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.article-date-home {
+    font-size: 0.7rem !important;
+    font-weight: 400 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .article-card-home {
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .read-more-text-home {
+        font-size: 0.8rem;
+    }
+    
+    .arrow-circle-home {
+        width: 25px;
+        height: 25px;
+    }
+    
+    .arrow-circle-home i {
+        font-size: 12px;
+    }
+}
 .featured-article-card {
     border-radius: 16px;
     overflow: hidden;

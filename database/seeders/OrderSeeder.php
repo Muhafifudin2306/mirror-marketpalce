@@ -64,11 +64,11 @@ class OrderSeeder extends Seeder
                 'subtotal'           => 0,            // hitung setelahnya
                 'discount_percent'   => rand(0, 20),  // contoh 0–20%
                 'discount_fix'       => null,
-                'deadline_date'      => $date->toDateString(),
-                'deadline_time'      => $time,
+                'deadline'      => $date->toDateString(),
+                'waktu_deadline'      => $time,
                 'express'            => rand(0, 1),
-                'delivery_method'    => 'JNE',
-                'needs_proofing'     => rand(0, 1),
+                'kurir'    => 'JNE',
+                'kebutuhan_proofing'     => rand(0, 1),
                 'pickup_status'      => rand(0, 1),
                 'notes'              => 'Tolong kasih nama ' . $user->name . ' yang besar di tengah ya',
             ]);

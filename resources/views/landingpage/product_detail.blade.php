@@ -253,9 +253,9 @@
             <input type="hidden" id="unit"         value="{{ $product->additional_unit }}">
             <input type="hidden" name="order_status" value="0">
             @if($disc && $disc->discount_percent)
-              <input type="hidden" name="discount_percent" value="{{ $disc->discount_percent }}">
+              <input type="hidden" name="diskon_persen" value="{{ $disc->discount_percent }}">
             @elseif($disc && $disc->discount_fix)
-              <input type="hidden" name="discount_fix" value="{{ $disc->discount_fix }}">
+              <input type="hidden" name="potongan_rp" value="{{ $disc->discount_fix }}">
             @endif
 
             {{-- BAHAN --}}
@@ -322,12 +322,12 @@
                 <input
                   type="time"
                   id="deadlineTime"
-                  name="deadline_time"
-                  class="form-control @error('deadline_time') is-invalid @enderror"
+                  name="waktu_deadline"
+                  class="form-control @error('waktu_deadline') is-invalid @enderror"
                   style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;"
                   {{ old('express', optional($order)->express ?? '0') == '1' ? '' : 'disabled' }}
-                  value="{{ old('deadline_time', optional($order)->deadline_time ? substr($order->deadline_time,0,5) : '') }}">
-                @error('deadline_time')
+                  value="{{ old('waktu_deadline', optional($order)->waktu_deadline ? substr($order->waktu_deadline,0,5) : '') }}">
+                @error('waktu_deadline')
                   <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
                 @enderror
               </div>
@@ -339,13 +339,13 @@
                 <label class="form-label"><b>KEBUTUHAN PROOFING</b></label>
                 <select 
                   id="needProofing" 
-                  name="needs_proofing" 
-                  class="form-select @error('needs_proofing') is-invalid @enderror"
+                  name="kebutuhan_proofing" 
+                  class="form-select @error('kebutuhan_proofing') is-invalid @enderror"
                   style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;">
-                  <option value="0" {{ old('needs_proofing', optional($order)->needs_proofing ?? '0') == '0' ? 'selected' : '' }}>Tidak</option>
-                  <option value="1" {{ old('needs_proofing', optional($order)->needs_proofing ?? '0') == '1' ? 'selected' : '' }}>Ya</option>
+                  <option value="0" {{ old('kebutuhan_proofing', optional($order)->kebutuhan_proofing ?? '0') == '0' ? 'selected' : '' }}>Tidak</option>
+                  <option value="1" {{ old('kebutuhan_proofing', optional($order)->kebutuhan_proofing ?? '0') == '1' ? 'selected' : '' }}>Ya</option>
                 </select>
-                @error('needs_proofing')
+                @error('kebutuhan_proofing')
                   <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
                 @enderror
               </div>
@@ -358,7 +358,7 @@
                   class="form-control @error('proof_qty') is-invalid @enderror"
                   style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;"
                   value="{{ old('proof_qty', optional($order)->proof_qty ?? '') }}"
-                  {{ old('needs_proofing', optional($order)->needs_proofing ?? '0') == '1' ? '' : 'disabled' }}>
+                  {{ old('kebutuhan_proofing', optional($order)->kebutuhan_proofing ?? '0') == '1' ? '' : 'disabled' }}>
                 @error('proof_qty')
                   <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
                 @enderror

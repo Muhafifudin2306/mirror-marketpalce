@@ -183,10 +183,10 @@
                 <div class="col-4"><strong>Tanggal:</strong></div>
                 <div class="col-8">{{ $order->created_at->format('d M Y H:i') }}</div>
               </div>
-              @if($order->deadline_time)
+              @if($order->waktu_deadline)
               <div class="row mb-2">
                 <div class="col-4"><strong>Deadline:</strong></div>
-                <div class="col-8">{{ $order->deadline_time }}</div>
+                <div class="col-8">{{ $order->waktu_deadline }}</div>
               </div>
               @endif
             </div>
@@ -216,11 +216,11 @@
                 {{ $order->express ? 'Ya' : 'Tidak' }}
               </div>
             </div>
-            @if($order->deadline_time)
+            @if($order->waktu_deadline)
             <div class="col">
               <label class="form-label"><b>DEADLINE JAM</b></label>
               <div class="form-control" style="height:50px; border-radius:70px; display:flex; align-items:center; background-color:#f8f9fa;">
-                {{ $order->deadline_time }}
+                {{ $order->waktu_deadline }}
               </div>
             </div>
             @endif
@@ -230,7 +230,7 @@
             <div class="col">
               <label class="form-label"><b>KEBUTUHAN PROOFING</b></label>
               <div class="form-control" style="height:50px; border-radius:70px; display:flex; align-items:center; background-color:#f8f9fa;">
-                {{ $order->needs_proofing ? 'Ya' : 'Tidak' }}
+                {{ $order->kebutuhan_proofing ? 'Ya' : 'Tidak' }}
               </div>
             </div>
             @if($order->proof_qty)

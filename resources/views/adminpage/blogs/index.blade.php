@@ -12,40 +12,65 @@
             <li class="breadcrumb-item active">Kelola Artikel</li>
         </ol>
 
-        <div class="card mb-4">
-            <div class="card-header">
-                <a href="{{ route('admin.blog.create') }}" class="btn btn-primary">Tambah Artikel</a>
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fa fa-newspaper-o me-2"></i>Daftar Artikel</span>
+                <a href="{{ route('admin.blog.create') }}" class="btn btn-primary">
+                    <i class="fa fa-plus me-1"></i> Tambah Artikel
+                </a>
             </div>
             <div class="card-body">
-                <table id="datatablesSimple">
-                    <thead>
+                <table id="datatablesSimple" class="table table-striped">
+                    <thead class="table-light">
                         <tr>
-                            <th>No</th>
+                            <th style="width: 5%">No</th>
                             <th>Judul</th>
-                            <th>Terakhir diubah</th>
-                            <th>Deskripsi</th>
-                            <th>Pembuat</th>
-                            <th>Action</th>
+                            <th style="width: 15%">Terakhir Diubah</th>
+                            <th style="width: 20%">Deskripsi</th>
+                            <th style="width: 13%">Pembuat</th>
+                            <th style="width: 12%">Tipe</th>
+                            <th style="width: 10%">Live</th>
+                            <th style="width: 10%">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @php $no = 1; @endphp
                         @foreach($blogs as $item)
                         <tr>
-                            <th>{{ $no }}</th>
-                            <td>{{ $item->title }}</td>
-                            <td>{{ $item->updated_at->format('d F Y') }}</td>
-                            <td>{!! Str::limit(strip_tags($item->content), 100, '...') !!}</td>
-                            <td>{{ $item->user->name }}</td>
-                            <td>
-                                <div class="btn-group">
-                                    <a href="{{ route('admin.blog.edit', $item->id) }}" class="btn btn-warning btn-sm me-1" title="Ubah">
+                            <td>{{ $no }}</td>
+                            <td class="align-middle">{{ $item->title }}</td>
+                            <td class="align-middle">{{ $item->updated_at->format('d F Y') }}</td>
+                            <td class="align-middle">
+                                {!! Str::limit(strip_tags($item->content), 100, '...') !!}
+                            </td>
+                            <td class="align-middle">{{ $item->user->name }}</td>
+                            <td class="align-middle">
+                                <span class="badge bg-info text-dark">
+                                    {{ $item->blog_type }}
+                                </span>
+                            </td>
+                            <td class="align-middle">
+                                @if($item->is_live)
+                                    <span class="badge bg-success">Ya</span>
+                                @else
+                                    <span class="badge bg-danger">Tidak</span>
+                                @endif
+                            </td>
+                            <td class="align-middle">
+                                <div class="btn-group" role="group">
+                                    <a href="{{ route('admin.blog.edit', $item->id) }}"
+                                       class="btn btn-sm btn-warning"
+                                       title="Ubah">
                                         <i class="fa fa-edit"></i>
                                     </a>
-                                    <form method="POST" action="{{ route('admin.blog.destroy', $item->id) }}" style="display:inline;">
+                                    <form method="POST"
+                                          action="{{ route('admin.blog.destroy', $item->id) }}"
+                                          onsubmit="return confirm('Yakin ingin menghapus artikel ini?');"
+                                          style="display:inline-block;">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('Anda yakin ingin menghapus blog ini?')" title="Hapus">
+                                        <button class="btn btn-sm btn-danger"
+                                                title="Hapus">
                                             <i class="fa fa-trash"></i>
                                         </button>
                                     </form>

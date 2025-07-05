@@ -310,13 +310,13 @@
                 <input 
                   type="time" 
                   id="deadlineTime" 
-                  name="deadline_time" 
-                  class="form-control @error('deadline_time') is-invalid @enderror" 
+                  name="waktu_deadline" 
+                  class="form-control @error('waktu_deadline') is-invalid @enderror" 
                   style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;"
                   {{ old('express','0')=='1'? '':'disabled' }}
-                  value="{{ old('deadline_time') }}"
+                  value="{{ old('waktu_deadline') }}"
                 >
-                @error('deadline_time')
+                @error('waktu_deadline')
                   <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
                 @enderror
               </div>
@@ -328,14 +328,14 @@
                 <label class="form-label"><b>KEBUTUHAN PROOFING</b></label>
                 <select 
                   id="needProofing" 
-                  name="needs_proofing" 
-                  class="form-select @error('needs_proofing') is-invalid @enderror"
+                  name="kebutuhan_proofing" 
+                  class="form-select @error('kebutuhan_proofing') is-invalid @enderror"
                   style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;"
                 >
-                  <option value="0" {{ old('needs_proofing','0')=='0'?'selected':'' }}>Tidak</option>
-                  <option value="1" {{ old('needs_proofing')=='1'?'selected':'' }}>Ya</option>
+                  <option value="0" {{ old('kebutuhan_proofing','0')=='0'?'selected':'' }}>Tidak</option>
+                  <option value="1" {{ old('kebutuhan_proofing')=='1'?'selected':'' }}>Ya</option>
                 </select>
-                @error('needs_proofing')
+                @error('kebutuhan_proofing')
                   <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
                 @enderror
               </div>
@@ -347,7 +347,7 @@
                   name="proof_qty" 
                   class="form-control @error('proof_qty') is-invalid @enderror" 
                   style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;"
-                  {{ old('needs_proofing','0')=='1'? '':'disabled' }}
+                  {{ old('kebutuhan_proofing','0')=='1'? '':'disabled' }}
                   value="{{ old('proof_qty') }}"
                 >
                 @error('proof_qty')
@@ -456,28 +456,28 @@
               @if (!$isset)
               <select 
                 id="deliveryMethod" 
-                name="delivery_method" 
-                class="form-select @error('delivery_method') is-invalid @enderror"
+                name="kurir" 
+                class="form-select @error('kurir') is-invalid @enderror"
                 style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;" 
                 disabled
               >
-                <option value="0" {{ old('delivery_method','0')=='0'?'selected':'' }}>
+                <option value="0" {{ old('kurir','0')=='0'?'selected':'' }}>
                   LENGKAPI DATA ALAMAT ANDA DI MENU PROFIL!!!
                 </option> 
             @else
               <select 
                 id="deliveryMethod" 
-                name="delivery_method" 
-                class="form-select @error('delivery_method') is-invalid @enderror"
+                name="kurir" 
+                class="form-select @error('kurir') is-invalid @enderror"
                 style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;" 
               >
-                <option value="0" {{ old('delivery_method','0')=='0'?'selected':'' }}>
+                <option value="0" {{ old('kurir','0')=='0'?'selected':'' }}>
                   Memuat data ongkir...
                 </option> 
             @endif
             </select>
 
-            @error('delivery_method')
+            @error('kurir')
               <span class="invalid-feedback" role="alert">
                 <strong>{{ $message }}</strong>
               </span>

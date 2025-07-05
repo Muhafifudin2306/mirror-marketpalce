@@ -159,7 +159,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <strong>Rp {{ number_format($order->subtotal + ($order->delivery_cost ?? 0), 0, ',', '.') }}</strong>
+                                        <strong>Rp {{ number_format($order->subtotal + ($order->ongkir ?? 0), 0, ',', '.') }}</strong>
                                         @if($order->express == 1)
                                             <span class="badge bg-warning text-dark ms-1">Express</span>
                                         @endif
@@ -191,15 +191,15 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if($order->deadline_date)
+                                        @if($order->deadline)
                                             <div>
                                                 <i class="fas fa-calendar-alt me-1"></i>
-                                                {{ \Carbon\Carbon::parse($order->deadline_date)->format('d/m/Y') }}
+                                                {{ \Carbon\Carbon::parse($order->deadline)->format('d/m/Y') }}
                                             </div>
-                                            @if($order->deadline_time)
+                                            @if($order->waktu_deadline)
                                                 <small class="text-muted">
                                                     <i class="fas fa-clock me-1"></i>
-                                                    {{ \Carbon\Carbon::parse($order->deadline_time)->format('H:i') }}
+                                                    {{ \Carbon\Carbon::parse($order->waktu_deadline)->format('H:i') }}
                                                 </small>
                                             @endif
                                         @else
@@ -336,10 +336,10 @@
                                     <tr>
                                         <td>Deadline</td>
                                         <td>: 
-                                            @if($order->deadline_date)
-                                                {{ \Carbon\Carbon::parse($order->deadline_date)->format('d/m/Y') }}
-                                                @if($order->deadline_time)
-                                                    {{ \Carbon\Carbon::parse($order->deadline_time)->format('H:i') }}
+                                            @if($order->deadline)
+                                                {{ \Carbon\Carbon::parse($order->deadline)->format('d/m/Y') }}
+                                                @if($order->waktu_deadline)
+                                                    {{ \Carbon\Carbon::parse($order->waktu_deadline)->format('H:i') }}
                                                 @endif
                                             @else
                                                 -
@@ -417,21 +417,21 @@
                                         <td>Subtotal Produk</td>
                                         <td class="text-end">Rp {{ number_format($order->subtotal, 0, ',', '.') }}</td>
                                     </tr>
-                                    @if($order->delivery_cost)
+                                    @if($order->ongkir)
                                         <tr>
                                             <td>Biaya Kirim</td>
-                                            <td class="text-end">Rp {{ number_format($order->delivery_cost, 0, ',', '.') }}</td>
+                                            <td class="text-end">Rp {{ number_format($order->ongkir, 0, ',', '.') }}</td>
                                         </tr>
                                     @endif
-                                    @if($order->discount_fix)
+                                    @if($order->potongan_rp)
                                         <tr>
                                             <td>Diskon</td>
-                                            <td class="text-end text-success">- Rp {{ number_format($order->discount_fix, 0, ',', '.') }}</td>
+                                            <td class="text-end text-success">- Rp {{ number_format($order->potongan_rp, 0, ',', '.') }}</td>
                                         </tr>
                                     @endif
                                     <tr class="fw-bold border-top">
                                         <td>Total</td>
-                                        <td class="text-end">Rp {{ number_format($order->subtotal + ($order->delivery_cost ?? 0) - ($order->discount_fix ?? 0), 0, ',', '.') }}</td>
+                                        <td class="text-end">Rp {{ number_format($order->subtotal + ($order->ongkir ?? 0) - ($order->potongan_rp ?? 0), 0, ',', '.') }}</td>
                                     </tr>
                                 </table>
                             </div>
@@ -473,8 +473,8 @@
                                     <input type="number" class="form-control" id="edit_subtotal" name="subtotal" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="edit_delivery_cost" class="form-label">Biaya Kirim</label>
-                                    <input type="number" class="form-control" id="edit_delivery_cost" name="delivery_cost">
+                                    <label for="edit_ongkir" class="form-label">Biaya Kirim</label>
+                                    <input type="number" class="form-control" id="edit_ongkir" name="ongkir">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -497,12 +497,12 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="edit_deadline_date" class="form-label">Tanggal Deadline</label>
-                                    <input type="date" class="form-control" id="edit_deadline_date" name="deadline_date">
+                                    <label for="edit_deadline" class="form-label">Tanggal Deadline</label>
+                                    <input type="date" class="form-control" id="edit_deadline" name="deadline">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="edit_deadline_time" class="form-label">Waktu Deadline</label>
-                                    <input type="time" class="form-control" id="edit_deadline_time" name="deadline_time">
+                                    <label for="edit_waktu_deadline" class="form-label">Waktu Deadline</label>
+                                    <input type="time" class="form-control" id="edit_waktu_deadline" name="waktu_deadline">
                                 </div>
                             </div>
                         </div>
@@ -748,11 +748,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 document.getElementById('edit_spk').value = data.order.spk || '';
                 document.getElementById('edit_subtotal').value = data.order.subtotal || 0;
-                document.getElementById('edit_delivery_cost').value = data.order.delivery_cost || '';
+                document.getElementById('edit_ongkir').value = data.order.ongkir || '';
                 document.getElementById('edit_payment_status').value = data.order.payment_status;
                 document.getElementById('edit_order_status').value = data.order.order_status;
-                document.getElementById('edit_deadline_date').value = data.order.deadline_date || '';
-                document.getElementById('edit_deadline_time').value = data.order.deadline_time || '';
+                document.getElementById('edit_deadline').value = data.order.deadline || '';
+                document.getElementById('edit_waktu_deadline').value = data.order.waktu_deadline || '';
                 document.getElementById('edit_notes').value = data.order.notes || '';
                 
                 const customerDisplay = `${data.order.user.name} (${data.order.user.email})`;

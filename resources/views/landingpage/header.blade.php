@@ -4,7 +4,7 @@
             <!-- Logo -->
             <a href="{{ url('/') }}" class="">
                 <img src="{{ asset('landingpage/img/sinau_logo.png') }}" alt="Sinau Logo"
-                    style="max-height:70px; width:auto;">
+                    style="max-height:55px; width:auto;">
             </a>
 
             <!-- Burger Mobile -->
@@ -96,57 +96,57 @@
 
             <!-- Desktop Menu -->
             <div class="collapse navbar-collapse" id="navbarCollapse">
-                <div class="navbar-nav ms-auto p-4 p-lg-0">
+                <div class="navbar-nav mx-auto p-4 p-lg-0">
                     <a href="{{ url('/') }}"
-                        class="nav-item nav-link font-first fw-600 fs-13-px {{ request()->is('/') ? 'active' : '' }}">
+                        class="nav-item nav-link font-first nav-menu-item fs-12-px {{ request()->is('/') ? 'active' : '' }}">
                         BERANDA
                     </a>
 
                     <!-- SEMUA PRODUK Trigger -->
                     <a href="{{ url('/products') }}"
-                        class="nav-item nav-link font-first fw-600 fs-13-px d-flex align-items-center {{ request()->is('products*') ? 'active' : '' }}">
+                        class="nav-item nav-link font-first nav-menu-item fs-12-px d-flex align-items-center {{ request()->is('products*') ? 'active' : '' }}">
                         SEMUA PRODUK
-                        <i class="fas fa-angle-down ms-1" id="allProductsTrigger" style="cursor:pointer;"></i>
+                        <i class="fas fa-angle-down ms-1" id="allProductsTrigger" style="cursor:pointer; font-size: 11px;"></i>
                     </a>
 
                     <a href="{{ url('/about') }}"
-                        class="nav-item nav-link font-first fw-600 fs-13-px d-flex align-items-center {{ request()->is('about*') ? 'active' : '' }}">
+                        class="nav-item nav-link font-first nav-menu-item fs-12-px d-flex align-items-center {{ request()->is('about*') ? 'active' : '' }}">
                         TENTANG SINAU
-                        <i class="fas fa-angle-down ms-1" id="aboutTrigger" style="cursor:pointer;"></i>
+                        <i class="fas fa-angle-down ms-1" id="aboutTrigger" style="cursor:pointer; font-size: 11px;"></i>
                     </a>
 
-                    <a class="nav-item nav-link font-first fw-600 fs-13-px d-flex align-items-center {{ request()->is('order-guide*') ? 'active' : '' }}"
+                    <a class="nav-item nav-link font-first nav-menu-item fs-12-px d-flex align-items-center {{ request()->is('order-guide*') ? 'active' : '' }}"
                         href="{{ url('/order-guide') }}">
                         CARA PESAN
-                        <i class="fas fa-angle-down ms-1" id="howToTrigger" style="cursor:pointer;"></i>
+                        <i class="fas fa-angle-down ms-1" id="howToTrigger" style="cursor:pointer; font-size: 11px;"></i>
                     </a>
 
                     <a href="{{ url('/articles') }}"
-                        class="nav-item nav-link font-first fw-600 fs-13-px {{ request()->is('articles') ? 'active' : '' }}">
+                        class="nav-item nav-link font-first nav-menu-item fs-12-px {{ request()->is('articles') ? 'active' : '' }}">
                         ARTIKEL
                     </a>
 
                     <a href="{{ url('/faq') }}"
-                        class="nav-item nav-link font-first fw-600 fs-13-px {{ request()->is('faq') ? 'active' : '' }}">
+                        class="nav-item nav-link font-first nav-menu-item fs-12-px {{ request()->is('faq') ? 'active' : '' }}">
                         FAQ
                     </a>
                 </div>
 
                 <!-- Icons + Login/User -->
-                <ul class="navbar-nav ms-auto d-flex align-items-center">
+                <ul class="navbar-nav d-flex align-items-center">
                     <!-- Search -->
-                    <li class="nav-item me-3">
-                        <button class="btn btn-link p-0 text-secondary" data-bs-toggle="modal"
+                    <li class="nav-item">
+                        <button class="btn btn-link p-0 text-secondary nav-icon-btn" data-bs-toggle="modal"
                             data-bs-target="#searchModal">
-                            <i class="fas fa-search fa-2x" style="font-size: 18px; color: #888888"></i>
+                            <i class="fas fa-search" style="font-size: 18px; color: #888888"></i>
                         </button>
                     </li>
 
                     <!-- Notifications -->
-                    <li class="nav-item dropdown position-relative me-3">
-                        <button id="notifBtn" class="btn btn-link text-secondary position-relative dropdown-btn"
+                    <li class="nav-item dropdown position-relative">
+                        <button id="notifBtn" class="btn btn-link text-secondary position-relative dropdown-btn nav-icon-btn"
                             data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-                            <i class="fas fa-bell fa-lg" style="font-size: 18px; color: #888888"></i>
+                            <i class="fas fa-bell" style="font-size: 18px; color: #888888"></i>
                             @if ($notifications->where('notification_status', false)->count())
                                 <span class="notification-badge-dot"></span>
                             @endif
@@ -197,10 +197,10 @@
                     </li>
 
                     <!-- Cart Dropdown -->
-                    <li class="nav-item dropdown position-relative me-3">
-                        <button class="btn btn-link p-0 text-secondary position-relative dropdown-btn" id="cartBtn"
+                    <li class="nav-item dropdown position-relative">
+                        <button class="btn btn-link p-0 text-secondary position-relative dropdown-btn nav-icon-btn" id="cartBtn"
                             data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-                            <i class="fas fa-shopping-cart fa-2x" style="font-size: 18px; color: #888888"></i>
+                            <i class="fas fa-shopping-cart" style="font-size: 18px; color: #888888"></i>
                             @if ($cartCount)
                                 <span class="cart-badge-count">
                                     {{ $cartCount }}
@@ -265,60 +265,112 @@
                     </li>
 
                     <!-- Chat -->
-                    <li class="nav-item me-3">
-                        <a href="{{ url('/chats') }}" class="btn btn-link p-0 text-secondary">
+                    <li class="nav-item dropdown position-relative me-3">
+                        <button id="notifChat" class="btn btn-link text-secondary position-relative dropdown-btn"
+                            data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
                             <i class="fas fa-comment fa-2x" style="font-size: 18px; color: #888888"></i>
-                        </a>
+                            @if ($chats->count() > 0)
+                                <span class="notification-badge-dot" id="chatNotificationDot"></span> {{-- Tambahkan ID --}}
+                            @endif
+                        </button>
+
+                        <div class="dropdown-menu modern-dropdown notification-dropdown">
+                            <div class="dropdown-header">
+                                <h6 class="dropdown-title">Pesan Baru</h6>
+                                <a href="{{ url('/chats') }}" class="view-all-link">
+                                    LIHAT CHAT
+                                </a>
+                            </div>
+
+                            <div class="dropdown-body">
+                                @forelse($chats as $chat)
+                                    <a href="{{ url('chats/') }}" style="text-decoration: none;color: inherit" data-chat-id="{{ $chat->id }}">
+                                        <div class="notification-item" data-id="{{ $chat->id }}">
+                                            <div class="notification-content">
+                                                @if (Auth::user()->role == 'Admin')
+                                                    <h6 class="notification-title">
+                                                        {{ $chat->user ? $chat->user->name : 'Pengguna Tidak Dikenal' }}
+                                                    </h6>
+                                                    <p class="notification-text">
+                                                        {{ Str::limit($chat->message, 90) }}
+                                                    </p>
+                                                    <small class="notification-date">
+                                                        {{ $chat->created_at->format('d M Y') }}
+                                                    </small>
+                                                @elseif (Auth::user()->role == 'Customer')
+                                                    @if ($chat->channel == 'reply')
+                                                        <h6 class="notification-title">
+                                                            CS Sinau
+                                                        </h6>
+                                                        <p class="notification-text">
+                                                            {{ Str::limit($chat->message, 90) }}
+                                                        </p>
+                                                        <small class="notification-date">
+                                                            {{ $chat->created_at->format('d M Y') }}
+                                                        </small>
+                                                    @endif
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </a>
+                                @empty
+                                    <div class="empty-state">
+                                        <i class="fas fa-comment"></i>
+                                        <p>Tidak ada chat terbaru</p>
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
                     </li>
 
                     <!-- Separator -->
-                    <li class="nav-item me-3">
+                    <li class="nav-item ms-3">
                         <div class="nav-separator"></div>
                     </li>
 
                     @guest
-                        <li class="nav-item">
+                        <li class="nav-item ms-3">
                             <a href="{{ route('login') }}"
                                 class="btn btn-link p-0 d-flex align-items-center text-decoration-none text-dark">
                                 <img src="{{ asset('landingpage/img/profil_login.png') }}" class="rounded-circle me-2"
-                                    style="width: 40px; height: 40px;" alt="avatar">
-                                <span class="font-first fw-600">LOGIN</span>
+                                    style="width: 32px; height: 32px;" alt="avatar">
+                                <span class="font-first fw-600" style="font-size: 12px;">LOGIN</span>
                             </a>
                         </li>
                     @else
-                        <li class="nav-item dropdown">
+                        <li class="nav-item dropdown ms-3">
                             <a href="#"
                                 class="btn btn-link p-0 d-flex align-items-center text-decoration-none text-dark dropdown-btn"
                                 data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
                                 @if (Auth::user()->foto)
                                     <img src="{{ url('landingpage/img/' . Auth::user()->foto) }}"
-                                        class="rounded-circle me-2" style="width: 40px; height: 40px;" alt="avatar">
+                                        class="rounded-circle me-2" style="width: 32px; height: 32px;" alt="avatar">
                                 @else
                                     <img src="{{ asset('landingpage/img/profil_login.png') }}"
-                                        class="rounded-circle me-2" style="width: 40px; height: 40px;" alt="avatar">
+                                        class="rounded-circle me-2" style="width: 32px; height: 32px;" alt="avatar">
                                 @endif
-                                <span class="font-first fw-600">{{ Str::upper(Auth::user()->first_name) }}</span>
+                                <span class="font-first fw-600" style="font-size: 12px;">{{ Str::upper(Auth::user()->first_name) }}</span>
                             </a>
 
                             <ul class="dropdown-menu dropdown-menu-end profile-dropdown p-2">
                                 <div class="py-2"
-                                    style="font-family:'Poppins';  font-size:1rem; color:#000; margin-top: 10px; padding:15px 20px;">
+                                    style="font-family:'Poppins';  font-size:0.9rem; color:#000; margin-top: 8px; padding:12px 16px;">
                                     Hai, {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}!
                                 </div>
                                 <a class="dropdown-item" href="{{ url('/profile') }}"
-                                    style="font-family:'Poppins'; font-weight:500; font-size:1rem; color:#888888; margin-top: 10px; padding:15px 20px;">
+                                    style="font-family:'Poppins'; font-weight:500; font-size:0.9rem; color:#888888; margin-top: 8px; padding:12px 16px;">
                                     AKUN ANDA
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center gap-2" href="#"
                                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                                    style="font-family:'Poppins'; font-weight:500; font-size:1rem; color:#888888; margin-top: 10px; padding:15px 20px;">
+                                    style="font-family:'Poppins'; font-weight:500; font-size:0.9rem; color:#888888; margin-top: 8px; padding:12px 16px;">
                                     <i class="fas fa-sign-out-alt"></i>
                                     LOGOUT
                                 </a>
                                 <hr class="dropdown-divider">
                                 @if (Auth::user()->role != 'Customer')
                                     <a class="dropdown-item" href="{{ url('/admin') }}"
-                                        style="font-family:'Poppins'; font-weight:500; font-size:1rem; color:#888888;">
+                                        style="font-family:'Poppins'; font-weight:500; font-size:0.9rem; color:#888888;">
                                         DASHBOARD
                                     </a>
                                 @endif
@@ -389,12 +441,12 @@
                         </div>
                     </div>
                     <div class="col-md-7 h-100 d-flex flex-column">
-                        <div class="p-4 overflow-auto">
+                        <div class="p-2 overflow-auto">
                             <br>
-                            <a href="#" class="btn-schedule mb-4 d-inline-flex align-items-center ms-0"
-                                style="margin-top: 0.5rem; margin-left: 0 !important;">
+                            <a href="#" class="btn-schedule mb-4 d-inline-flex align-items-center ms-2"
+                                style="margin-top: 0 !important; margin-left: 0 !important;">
                                 <span class="btn-text text-dark"
-                                    style="font-family: 'Poppins'; font-size:1.2rem; font-weight:550; color: #4d4d4d !important;">
+                                    style="font-family: 'Poppins'; font-size:1rem; font-weight:550; color: #4d4d4d !important;">
                                     JELAJAHI SEMUA PRODUK
                                 </span>
                                 <span class="btn-arrow ms-3">
@@ -402,14 +454,19 @@
                                     <i class="bi bi-arrow-right arrow-in"></i>
                                 </span>
                             </a>
-                            <ul class="labels-list">
+                            <div class="row g-2">
                                 @foreach ($labels->take(12) as $lbl)
-                                    <li>
-                                        <h5>{{ $lbl->name }}</h5>
-                                        <p>{{ $lbl->desc }}</p>
-                                    </li>
+                                    <div class="col-4">
+                                        <a href="{{ route('landingpage.products', array_merge(request()->all(), ['filter' => $lbl->id, 'product' => null])) }}" 
+                                        class="label-item-link text-decoration-none">
+                                            <div class="label-item p-2">
+                                                <h6 class="mb-1 label-title">{{ $lbl->name }}</h6>
+                                                <p class="mb-0 label-desc">{{ $lbl->desc }}</p>
+                                            </div>
+                                        </a>
+                                    </div>
                                 @endforeach
-                            </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -431,29 +488,31 @@
                         </div>
                     </div>
                     <div class="col-md-5 h-100 d-flex flex-column">
-                        <div class="p-3 overflow-auto">
+                        <div class="p-2 overflow-auto">
                             <br>
                             <h3 class="about-title mb-4">
-                                <span class="me-1">Semua</span><br>
-                                <span class="text-primary">Tentang</span><br>
-                                <span class="text-primary">Kami</span>
+                                <span style="font-family: 'Poppins' !important; font-weight: 600 !important;" class="me-1">Semua</span><br>
+                                <span style="font-family: 'Poppins' !important; font-weight: 600 !important; color: #0049a0 !important;" class="text-primary">Tentang</span><br>
+                                <span style="font-family: 'Poppins' !important; font-weight: 600 !important; color: #0049a0 !important;" class="text-primary">Kami</span>
                             </h3>
                             <br>
-                            <a href="{{ url('/about') }}">
+                            <a class="text-decoration-none" href="{{ url('/about') }}">
                                 <ul class="labels-list">
                                     <li>
-                                        <h5>Tentang Sinau Print</h5>
-                                        <p>Kenali Sinau Print lebih dekat</p>
+                                        <h5 style="font-family: 'Poppins' !important; font-size: 0.75rem; color: #888888 !important; text-decoration: none !important;">Tentang Sinau Print</h5>
+                                        <p style="font-family: 'Poppins' !important; font-size: 0.65rem; color: #c3c3c3 !important; text-decoration: none !important;">Kenali Sinau Print lebih dekat</p>
                                     </li>
                                 </ul>
                             </a>
                             <br><br>
-                            <ul class="labels-list">
-                                <li>
-                                    <h5>Kontak Sinau Print</h5>
-                                    <p>Informasi dan kontak perusahaan</p>
-                                </li>
-                            </ul>
+                            <a class="text-decoration-none" href="{{ url('/contact') }}">
+                                <ul class="labels-list">
+                                    <li>
+                                        <h5 style="font-family: 'Poppins' !important; font-size: 0.75rem; color: #888888 !important; text-decoration: none !important;">Kontak Sinau Print</h5>
+                                        <p style="font-family: 'Poppins' !important; font-size: 0.65rem; color: #c3c3c3 !important; text-decoration: none !important;">Informasi dan kontak perusahaan</p>
+                                    </li>
+                                </ul>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -478,24 +537,28 @@
                         <div class="p-4 overflow-auto">
                             <br>
                             <h3 class="about-title mb-4">
-                                <span class="me-1">Cara</span><br>
-                                <span class="me-1">Pesan dan</span><br>
-                                <span class="text-primary">Konsultasi</span>
+                                <span style="font-family: 'Poppins' !important; font-weight: 600 !important;" class="me-1">Cara</span><br>
+                                <span style="font-family: 'Poppins' !important; font-weight: 600 !important; color: #000 !important;" class="text-primary">Pesan dan</span><br>
+                                <span style="font-family: 'Poppins' !important; font-weight: 600 !important; color: #0049a0 !important;" class="text-primary">Konsultasi</span>
                             </h3>
                             <br>
-                            <ul class="labels-list">
-                                <li>
-                                    <h5>Cara Pesan</h5>
-                                    <p>Panduan lengkap pemesanan online di Sinau Print</p>
-                                </li>
-                            </ul>
+                            <a class="text-decoration-none" href="{{ url('/order-guide') }}">
+                                <ul class="labels-list">
+                                    <li>
+                                        <h5 style="font-family: 'Poppins' !important; font-size: 0.75rem; color: #888888 !important; text-decoration: none !important;">Cara Pesan</h5>
+                                        <p style="font-family: 'Poppins' !important; font-size: 0.65rem; color: #c3c3c3 !important; text-decoration: none !important;">Panduan lengkap pemesanan online di Sinau Print</p>
+                                    </li>
+                                </ul>
+                            </a>
                             <br><br>
-                            <ul class="labels-list">
-                                <li>
-                                    <h5>Konsultasi</h5>
-                                    <p>Konsultasi online & offline bareng Sinau Print</p>
-                                </li>
-                            </ul>
+                            <a class="text-decoration-none" href="{{ url('/consultation') }}">
+                                <ul class="labels-list">
+                                    <li>
+                                        <h5 style="font-family: 'Poppins' !important; font-size: 0.75rem; color: #888888 !important; text-decoration: none !important;">Konsultasi</h5>
+                                        <p style="font-family: 'Poppins' !important; font-size: 0.65rem; color: #c3c3c3 !important; text-decoration: none !important;">Konsultasi online & offline bareng Sinau Print</p>
+                                    </li>
+                                </ul>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -721,13 +784,80 @@ style.textContent = `
 document.head.appendChild(style);
 </script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatNotificationDot = document.getElementById('chatNotificationDot');
+        const notificationItems = document.querySelectorAll('.notification-item-link');
+
+        notificationItems.forEach(item => {
+            item.addEventListener('click', function(event) {
+                const chatId = this.dataset.chatId; 
+                
+                fetch(`/chats/${chatId}/mark-as-read`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}' 
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success:', data.message);
+                    item.remove(); 
+
+                    const remainingNotifications = document.querySelectorAll('.notification-item-link').length;
+                    if (remainingNotifications === 0 && chatNotificationDot) {
+                        chatNotificationDot.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+    });
+</script>
+
 <style>
+/* ===== NAVBAR ICON SPACING ===== */
+.nav-icon-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* margin: 0 1px; */
+    border-radius: 6px;
+    text-decoration: none !important;
+    transition: all 0.2s ease;
+}
+
+.nav-icon-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    text-decoration: none !important;
+    transform: translateY(-1px);
+}
+
+/* ===== FONT SIZE ADJUSTMENTS ===== */
+.fs-12-px {
+    font-size: 12px !important;
+}
+
+.fs-13-px {
+    font-size: 13px !important;
+}
+
 /* ===== DROPDOWN STYLES ===== */
 .modern-dropdown {
-    min-width: 350px;
+    min-width: 280px;
     border: none;
-    border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
     padding: 0;
     background: #fff;
     transform: translateY(8px);
@@ -755,24 +885,24 @@ document.head.appendChild(style);
     left: auto !important;
     right: 0 !important;
     transform: translateY(8px) !important;
-    min-width: 280px;
+    min-width: 220px;
 }
 
 /* ===== DROPDOWN HEADERS ===== */
 .dropdown-header {
-    padding: 20px 24px 16px;
+    padding: 16px 20px 12px;
     border-bottom: 1px solid #f0f0f0;
     display: flex;
-    justify-content: between;
+    justify-content: space-between;
     align-items: center;
     background: #fff;
-    border-radius: 16px 16px 0 0;
+    border-radius: 12px 12px 0 0;
 }
 
 .dropdown-title {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 0.85rem;
     color: #2c3e50;
     margin: 0;
     flex: 1;
@@ -781,7 +911,7 @@ document.head.appendChild(style);
 .view-all-link {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     color: #3498db;
     text-decoration: none;
     transition: color 0.2s ease;
@@ -794,14 +924,14 @@ document.head.appendChild(style);
 
 /* ===== DROPDOWN BODY ===== */
 .dropdown-body {
-    max-height: 400px;
+    max-height: 320px;
     overflow-y: auto;
-    padding: 8px 0 16px;
+    padding: 6px 0 12px;
 }
 
 /* Custom scrollbar */
 .dropdown-body::-webkit-scrollbar {
-    width: 4px;
+    width: 3px;
 }
 
 .dropdown-body::-webkit-scrollbar-track {
@@ -815,11 +945,11 @@ document.head.appendChild(style);
 
 /* ===== NOTIFICATION STYLES ===== */
 .notification-dropdown {
-    min-width: 380px;
+    min-width: 300px;
 }
 
 .notification-item {
-    padding: 16px 24px;
+    padding: 12px 20px;
     border-bottom: 1px solid #f8f9fa;
     cursor: pointer;
     transition: background-color 0.2s ease;
@@ -835,13 +965,13 @@ document.head.appendChild(style);
 
 .notification-type-badge {
     display: inline-block;
-    padding: 4px 10px;
-    font-size: 0.7rem;
+    padding: 3px 8px;
+    font-size: 0.6rem;
     font-weight: 600;
-    border-radius: 12px;
+    border-radius: 10px;
     text-transform: uppercase;
     font-family: 'Poppins', sans-serif;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .badge-purchase {
@@ -862,37 +992,37 @@ document.head.appendChild(style);
 .notification-title {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #2c3e50;
-    margin: 0 0 6px 0;
+    margin: 0 0 4px 0;
     line-height: 1.3;
 }
 
 .notification-text {
     font-family: 'Poppins', sans-serif;
     font-weight: 400;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     color: #6c757d;
-    margin: 0 0 8px 0;
+    margin: 0 0 6px 0;
     line-height: 1.4;
 }
 
 .notification-date {
     font-family: 'Poppins', sans-serif;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: #95a5a6;
 }
 
 /* ===== CART STYLES ===== */
 .cart-dropdown {
-    min-width: 380px;
+    min-width: 300px;
 }
 
 .cart-item {
-    padding: 16px 24px;
+    padding: 12px 20px;
     border-bottom: 1px solid #f8f9fa;
     display: flex;
-    gap: 16px;
+    gap: 12px;
     transition: background-color 0.2s ease;
 }
 
@@ -909,10 +1039,10 @@ document.head.appendChild(style);
 }
 
 .cart-item-image img {
-    width: 70px;
-    height: 70px;
+    width: 56px;
+    height: 56px;
     object-fit: cover;
-    border-radius: 12px;
+    border-radius: 8px;
     border: 1px solid #e9ecef;
 }
 
@@ -924,41 +1054,41 @@ document.head.appendChild(style);
 .cart-item-title {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #2c3e50;
-    margin: 0 0 6px 0;
+    margin: 0 0 4px 0;
     line-height: 1.3;
 }
 
 .cart-item-size {
     font-family: 'Poppins', sans-serif;
     font-weight: 400;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     color: #6c757d;
-    margin: 0 0 4px 0;
+    margin: 0 0 3px 0;
 }
 
 .cart-item-note {
     font-family: 'Poppins', sans-serif;
     font-weight: 400;
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     color: #95a5a6;
-    margin: 0 0 8px 0;
+    margin: 0 0 6px 0;
     font-style: italic;
 }
 
 .cart-item-price {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     color: #e74c3c;
 }
 
-/* ===== PROFILE STYLES (OLD DESIGN) ===== */
+/* ===== PROFILE STYLES ===== */
 .profile-dropdown {
-    min-width: 280px;
-    border-radius: 1rem;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    min-width: 220px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
     left: auto !important;
     right: 0 !important;
     transform: translateY(8px) !important;
@@ -967,76 +1097,67 @@ document.head.appendChild(style);
 /* ===== EMPTY STATE ===== */
 .empty-state {
     text-align: center;
-    padding: 40px 24px;
+    padding: 32px 20px;
     color: #6c757d;
 }
 
 .empty-state i {
-    font-size: 3rem;
+    font-size: 2.4rem;
     color: #dee2e6;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .empty-state p {
     font-family: 'Poppins', sans-serif;
     font-weight: 500;
-    font-size: 0.9rem;
-    margin: 0 0 16px 0;
+    font-size: 0.8rem;
+    margin: 0 0 12px 0;
 }
 
 /* ===== BADGE COUNTS ===== */
 .notification-badge-dot {
     position: absolute;
-    top: -2px;
-    right: -2px;
+    top: 4px;
+    right: 4px;
     background: #e74c3c;
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    border: 2px solid white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .cart-badge-count {
     position: absolute;
-    top: -5px;
-    right: -5px;
+    top: 2px;
+    right: 2px;
     background: #e74c3c;
     color: white;
     border-radius: 50%;
-    min-width: 20px;
-    height: 20px;
+    min-width: 14px;
+    height: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Poppins', sans-serif;
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     font-weight: 600;
-    border: 2px solid white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* ===== PROFILE DROPDOWN (OLD STYLE) ===== */
-.profile-dropdown {
-    min-width: 280px;
-    border-radius: 1rem;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
 }
 
 /* ===== NAVIGATION STYLES ===== */
 .nav-link.active {
     position: relative;
-    font-weight: bold;
-    padding-left: 24px !important;
+    font-weight: 500 !important;
+    padding-left: 20px !important;
 }
 
 .nav-link.active::before {
     content: '';
-    width: 7px;
-    height: 7px;
+    width: 6px;
+    height: 6px;
     background-color: #0258d3;
     position: absolute;
-    left: 8px;
+    left: 6px;
     top: 50%;
     transform: translateY(-50%) rotate(45deg);
     border-radius: 1px;
@@ -1044,9 +1165,9 @@ document.head.appendChild(style);
 
 .nav-separator {
     width: 1px;
-    height: 24px;
+    height: 20px;
     background-color: #e4e4e4;
-    margin: 10px 10px;
+    margin: 8px 0;
 }
 
 .dropdown-btn {
@@ -1075,8 +1196,8 @@ document.head.appendChild(style);
     pointer-events: auto !important;
     background: rgba(255, 255, 255, 0.2);
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1086,7 +1207,7 @@ document.head.appendChild(style);
 .search-title-2 {
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
-    font-size: 3rem;
+    font-size: 2.4rem;
     line-height: 1.1;
 }
 
@@ -1099,17 +1220,17 @@ document.head.appendChild(style);
 }
 
 .search-form {
-    max-width: 600px;
+    max-width: 500px;
 }
 
 .search-input {
     font-family: 'Poppins', sans-serif;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     border: none;
     border-bottom: 2px solid rgba(255, 255, 255, 0.3);
     background: transparent;
     color: white;
-    padding: 15px 50px 15px 0;
+    padding: 12px 45px 12px 0;
     border-radius: 0;
     transition: border-color 0.3s ease;
 }
@@ -1134,8 +1255,8 @@ document.head.appendChild(style);
     background: none;
     border: none;
     color: white;
-    font-size: 1.25rem;
-    padding: 10px;
+    font-size: 1.1rem;
+    padding: 8px;
     cursor: pointer;
     transition: color 0.3s ease;
 }
@@ -1150,26 +1271,26 @@ document.head.appendChild(style);
 
 .popular-title {
     font-weight: 600;
-    font-size: 1.2rem;
-    margin-bottom: 16px;
+    font-size: 1.1rem;
+    margin-bottom: 14px;
 }
 
 .popular-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
 }
 
 .popular-search-item {
     display: inline-block;
-    padding: 12px 20px;
+    padding: 10px 18px;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 25px;
+    border-radius: 20px;
     color: white;
     text-decoration: none;
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
 }
@@ -1185,13 +1306,13 @@ document.head.appendChild(style);
 /* ===== RESPONSIVE STYLES ===== */
 @media (max-width: 768px) {
     .modern-dropdown {
-        min-width: 300px;
+        min-width: 260px;
         transform: translateY(5px);
     }
     
     .notification-dropdown,
     .cart-dropdown {
-        min-width: 320px;
+        min-width: 280px;
     }
     
     .dropdown-menu.modern-dropdown {
@@ -1203,57 +1324,29 @@ document.head.appendChild(style);
         right: 0 !important;
         left: auto !important;
         transform: translateY(5px) !important;
-        min-width: 260px;
+        min-width: 200px;
     }
     
     .dropdown-header {
-        padding: 16px 20px 12px;
+        padding: 14px 16px 10px;
     }
     
     .dropdown-title {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
     }
     
     .view-all-link {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
     }
     
     .notification-item,
     .cart-item {
-        padding: 12px 20px;
+        padding: 10px 16px;
     }
     
     .cart-item-image img {
-        width: 60px;
-        height: 60px;
-    }
-    
-    .search-title-1,
-    .search-title-2 {
-        font-size: 2.5rem;
-    }
-    
-    .search-input {
-        font-size: 1.1rem;
-        padding: 12px 45px 12px 0;
-    }
-    
-    .popular-search-item {
-        padding: 10px 16px;
-        font-size: 0.85rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .modern-dropdown {
-        min-width: 280px;
-        max-width: 90vw;
-    }
-    
-    .notification-dropdown,
-    .cart-dropdown {
-        min-width: 280px;
-        max-width: 90vw;
+        width: 48px;
+        height: 48px;
     }
     
     .search-title-1,
@@ -1261,12 +1354,40 @@ document.head.appendChild(style);
         font-size: 2rem;
     }
     
+    .search-input {
+        font-size: 1rem;
+        padding: 10px 40px 10px 0;
+    }
+    
+    .popular-search-item {
+        padding: 8px 14px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .modern-dropdown {
+        min-width: 240px;
+        max-width: 90vw;
+    }
+    
+    .notification-dropdown,
+    .cart-dropdown {
+        min-width: 260px;
+        max-width: 90vw;
+    }
+    
+    .search-title-1,
+    .search-title-2 {
+        font-size: 1.8rem;
+    }
+    
     .search-form {
         max-width: 100%;
     }
     
     .dropdown-body {
-        max-height: 300px;
+        max-height: 280px;
     }
 }
 
@@ -1283,7 +1404,7 @@ document.head.appendChild(style);
 .dropdown-btn:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba(2, 88, 211, 0.1);
-    border-radius: 8px;
+    border-radius: 6px;
 }
 
 .modern-dropdown {
@@ -1294,5 +1415,55 @@ document.head.appendChild(style);
 .modern-dropdown .notification-item,
 .modern-dropdown .cart-item {
     pointer-events: auto;
+}
+.nav-menu-item {
+    font-weight: 400 !important;
+}
+.label-item-link {
+    display: block;
+    text-decoration: none !important;
+    color: inherit;
+}
+
+.label-item {
+    background: none;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.label-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #05d1d1;
+    transition: width 0.3s ease;
+}
+
+.label-item-link:hover .label-item::after {
+    width: 100%;
+}
+.label-title {
+    font-family: 'Poppins';
+    font-size: 0.75rem;
+    color: #888888 !important;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.label-desc {
+    font-family: 'Poppins';
+    font-size: 0.65rem;
+    color: #c3c3c3 !important;
+    line-height: 1.2;
+    transition: color 0.3s ease;
+}
+
+.label-item-link:hover .label-desc {
+    color: #888888 !important;
 }
 </style>

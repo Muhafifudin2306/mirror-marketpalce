@@ -536,11 +536,9 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">PROVINSI</label>
-                                            <select name="province"
-                                                class="form-control @error('province') is-invalid @enderror" disabled>
-                                                <option value="{{ Auth::user()->province }}">{{ Auth::user()->province }}
-                                                </option>
-                                            </select>
+                                            <input name="province" type="text"
+                                                class="form-control @error('province') is-invalid @enderror"
+                                                value="{{ Auth::user()->province }}" disabled>
                                             @error('province')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
@@ -549,11 +547,9 @@
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">KECAMATAN/KOTA</label>
-                                            <select name="city"
-                                                class="form-control @error('city') is-invalid @enderror" disabled>
-                                                <option value="{{ Auth::user()->city }}">{{ Auth::user()->city }}
-                                                </option>
-                                            </select>
+                                            <input name="city" type="text"
+                                                class="form-control @error('city') is-invalid @enderror"
+                                                value="{{ Auth::user()->city }}" disabled>
                                             @error('city')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>

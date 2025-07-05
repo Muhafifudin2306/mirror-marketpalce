@@ -18,30 +18,34 @@ class BlogController extends Controller
 
     public function articles(Request $request)
     {
-        $query = Blog::query();
-        
+        $query = Blog::where('is_live', 1);
+
         $filter = $request->get('filter', 'semua');
         if ($filter !== 'semua') {
-            // $query->where('type', $filter);
+            $query->where('blog_type', $filter);
         }
-        
+
         $sort = $request->get('sort', 'terbaru');
-        if ($sort === 'terlama') {
-            $query->oldest();
-        } else {
-            $query->latest();
-        }
-        
+        $sort === 'terlama' ? $query->oldest() : $query->latest();
+
         $blogs = $query->paginate(12);
-        
+
         return view('landingpage.articles', compact('blogs', 'filter', 'sort'));
     }
     
-    // Method untuk menampilkan detail artikel
     public function show($slug)
     {
-        $blog = Blog::where('slug', $slug)->firstOrFail();
-        return view('landingpage.article-detail', compact('blog'));
+        $blog = Blog::where('slug', $slug)
+                    ->where('is_live', 1)
+                    ->firstOrFail();
+
+        $otherArticles = Blog::where('is_live', 1)
+                            ->where('id', '!=', $blog->id)
+                            ->latest()
+                            ->limit(4)
+                            ->get();
+
+        return view('landingpage.article-detail', compact('blog', 'otherArticles'));
     }
 
     public function create()
@@ -52,22 +56,27 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'nullable',
-            'content' => 'nullable',
-            'banner' => 'nullable',
+            'title'     => 'nullable|string',
+            'content'   => 'nullable|string',
+            'banner'    => 'nullable|image',
+            'blog_type' => 'required|in:Promo Sinau,Printips,Company,Printutor',
+            'is_live'   => 'required|boolean',
         ]);
 
         $bannerPath = $request->file('banner')?->store('banners', 'public');
 
         Blog::create([
-            'slug' => Str::slug($request->title) . '-' . uniqid(),
-            'content' => $request->content,
-            'title' => $request->title,
-            'banner' => $bannerPath,
-            'user_id' => auth()->id(),
+            'slug'      => Str::slug($request->title) . '-' . uniqid(),
+            'title'     => $request->title,
+            'content'   => $request->content,
+            'banner'    => $bannerPath,
+            'user_id'   => auth()->id(),
+            'blog_type' => $request->blog_type,
+            'is_live'   => $request->is_live,
         ]);
 
-        return redirect()->route('admin.blog.index')->with('success', 'Blog created');
+        return redirect()->route('admin.blog.index')
+                        ->with('success', 'Blog created');
     }
 
     public function edit($id)
@@ -79,26 +88,30 @@ class BlogController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'title' => 'nullable',
-            'content' => 'nullable',
-            'banner' => 'nullable',
+            'title'     => 'nullable|string',
+            'content'   => 'nullable|string',
+            'banner'    => 'nullable|image',
+            'blog_type' => 'required|in:Promo Sinau,Printips,Company,Printutor',
+            'is_live'   => 'required|boolean',
         ]);
 
         $blog = Blog::findOrFail($id);
-
         if ($request->hasFile('banner')) {
-            // Storage::disk('public')->delete($blog->banner);
-            $blog->banner = $request->file('banner')->store('banners', 'public');
+            $blog->banner = $request->file('banner')
+                            ->store('banners', 'public');
         }
 
         $blog->update([
-            'slug' => Str::slug($request->title) . '-' . uniqid(),
-            'content' => $request->content,
-            'title' => $request->title,
-            'user_id' => auth()->id(),
+            'slug'      => Str::slug($request->title) . '-' . uniqid(),
+            'title'     => $request->title,
+            'content'   => $request->content,
+            'blog_type' => $request->blog_type,
+            'is_live'   => $request->is_live,
+            'user_id'   => auth()->id(),
         ]);
 
-        return redirect()->route('admin.blog.index')->with('success', 'Blog updated');
+        return redirect()->route('admin.blog.index')
+                        ->with('success', 'Blog updated');
     }
 
     public function destroy($id)

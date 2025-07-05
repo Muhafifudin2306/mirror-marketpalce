@@ -79,6 +79,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
     Route::post('/readnotif/{id}', [ProfileController::class, 'markNotificationAsRead'])->name('profile.readnotif');
     Route::get('/chats', [ChatController::class, 'index'])->name('landingpage.chats');
+    Route::patch('/chats/{chat}/mark-as-read', [ChatController::class, 'markAsRead'])->name('chats.markAsRead');
     Route::get('/order/{order}', [ProfileController::class, 'showOrder'])->name('order.show');
     Route::delete('/order/{order}/cancel', [ProfileController::class, 'cancelOrder'])->name('order.cancel');
     
@@ -140,7 +141,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/add',            [BlogController::class,'create'])->name('blog.create');
         Route::post('/store',         [BlogController::class,'store'])->name('blog.store');
         Route::get('/edit/{item}',  [BlogController::class,'edit'])->name('blog.edit');
-        Route::post('update/{item}',  [BlogController::class,'update'])->name('blog.update');
+        Route::PUT('update/{item}',  [BlogController::class,'update'])->name('blog.update');
         Route::delete('remove/{item}',[BlogController::class,'destroy'])->name('blog.destroy');
     });
 });
