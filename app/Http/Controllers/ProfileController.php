@@ -26,7 +26,42 @@ class ProfileController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('landingpage.profile', compact('user', 'orders'));
+        $provinsiId = DB::table('d_provinsi')
+                     ->where('id', $user->province)
+                     ->pluck('id')
+                     ->first();
+
+        $provinsi = DB::table('d_provinsi')
+                    ->orderBy('nama')
+                    ->get(['id', 'nama']);
+
+        $kota = DB::table('d_kabkota')
+                    ->where('d_provinsi_id', $provinsiId)
+                    ->orderBy('nama')
+                    ->get(['id', 'nama']);
+
+        $kotaId = DB::table('d_kabkota')
+                     ->where('id', $user->district)
+                     ->pluck('id')
+                     ->first();
+
+        $kecamatan = DB::table('d_kecamatan')
+                    ->orderBy('nama')
+                    ->where('d_kabkota_id', $kotaId)
+                    ->get(['id', 'nama']);
+
+        $kecamatanId = DB::table('d_kecamatan')
+                     ->where('id', $user->city)
+                     ->pluck('id')
+                     ->first();
+        
+        $kodepos = DB::table('d_kodepos')
+                    ->where('d_kabkota_id', $kotaId)
+                    ->where('d_kecamatan_id', $kecamatanId)
+                    ->orderBy('kodepos')
+                    ->get(['id', 'kodepos as nama']);
+
+        return view('landingpage.profile', compact('user', 'orders','provinsi','kota', 'kecamatan','kodepos'));
     }
 
     /**
@@ -51,33 +86,46 @@ class ProfileController extends Controller
             abort(404, 'Product not found');
         }
 
+        $product->load([
+            'discounts' => function($q) {
+                $q->where('start_discount', '<=', now())
+                ->where('end_discount', '>=', now());
+            }
+        ]);
+
         switch ($order->order_status) {
             case 0:
                 $badge = '#ffd782';
-                $foncol = '#444444';
+                $foncol= '#444444';
                 $firlabel = 'Menunggu';
                 $seclabel = 'Pembayaran';
                 break;
             case 1:
+                $badge = '#4CAF50';
+                $foncol= '#ffffff';
+                $firlabel = 'Sudah';
+                $seclabel = 'Dibayar';
+                break;
+            case 2:
                 $badge = '#5ee3e3';
-                $foncol = '#444444';
+                $foncol= '#444444';
                 $firlabel = 'Dalam';
                 $seclabel = 'Pengerjaan';
                 break;
-            case 2:
+            case 3:
                 $badge = '#abceff';
-                $foncol = '#444444';
+                $foncol= '#444444';
                 $firlabel = 'Dalam';
                 $seclabel = 'Pengiriman';
                 break;
-            case 3:
+            case 4:
                 $badge = '#0258d3';
-                $foncol = '#fff';
+                $foncol= '#fff';
                 $firlabel = 'Pesanan';
                 $seclabel = 'Selesai';
                 break;
             case 9:
-                $badge = '#f8d7da';
+                $badge = '#721c24';
                 $foncol = '#444444';
                 $firlabel = 'Order';
                 $seclabel = 'Dibatalkan';
@@ -90,7 +138,17 @@ class ProfileController extends Controller
                 break;
         }
 
-        $bestProducts = Product::with('images')
+        $bestProducts = Product::where('is_live', true)
+            ->whereHas('label', function($q) {
+                $q->where('is_live', true);
+            })
+            ->with([
+                'images',
+                'discounts' => function($q) {
+                    $q->where('start_discount', '<=', now())
+                    ->where('end_discount', '>=', now());
+                }
+            ])
             ->withCount('orderProducts')
             ->orderByDesc('order_products_count')
             ->limit(4)
@@ -138,7 +196,6 @@ class ProfileController extends Controller
             
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Error cancelling order: ' . $e->getMessage());
             return response()->json([
                 'error' => 'Gagal membatalkan order: ' . $e->getMessage()
             ], 500);
@@ -159,6 +216,7 @@ class ProfileController extends Controller
             'phone'             => ['required','regex:/^08[0-9]{8,11}$/'],
             'province'          => 'nullable|string|max:100',
             'city'              => 'nullable|string|max:100',
+            'district'          => 'nullable|string|max:100',
             'address'           => 'nullable|string|max:255',
             'postal_code'       => ['nullable','regex:/^[0-9]{5}$/'],
             // 'current_password'  => ['nullable', 'string', 'required_with:new_password'],
@@ -212,6 +270,7 @@ class ProfileController extends Controller
         $user->email        = $data['email'];
         $user->phone        = $data['phone'] ?? null;
         $user->province     = $data['province'] ?? null;
+        $user->district     = $data['district'] ?? null;
         $user->city         = $data['city'] ?? null;
         $user->address      = $data['address'] ?? null;
         $user->postal_code  = $data['postal_code'] ?? null;

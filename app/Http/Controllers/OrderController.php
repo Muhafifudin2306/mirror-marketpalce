@@ -2,16 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Order;
-use App\Models\Product;
-use App\Models\OrderProduct;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -54,10 +50,8 @@ class OrderController extends Controller
                 'order_status' => $newStatus
             ]);
             
-            // Generate invoice number for notification
             $invoiceNumber = $order->spk ?? 'SPK-' . str_pad($order->id, 4, '0', STR_PAD_LEFT);
             
-            // Create notification based on new status
             $this->createStatusNotification($order, $newStatus, $invoiceNumber);
             
             DB::commit();
@@ -88,13 +82,13 @@ class OrderController extends Controller
         
         if ($notificationData) {
             $notification = new Notification();
-            $notification->timestamps = false; // Disable auto-timestamps
+            $notification->timestamps = false;
             $notification->forceFill([
                 'user_id' => $order->user_id,
                 'notification_type' => 'Pembelian',
                 'notification_head' => $notificationData['head'],
                 'notification_body' => $notificationData['body'],
-                'notification_status' => 0, // Unread
+                'notification_status' => 0,
                 'created_at' => now(),
                 'updated_at' => now(),
             ])->save();
@@ -141,7 +135,7 @@ class OrderController extends Controller
      */
     public function update(Request $request, Order $order)
     {
-        $validated = $request->validate([
+        $rules = [
             'spk'               => ['nullable', 'string', 'max:100', Rule::unique('orders')->ignore($order->id)],
             'user_id'           => 'required|exists:users,id',
             'transaction_type'  => 'nullable|integer',
@@ -153,8 +147,6 @@ class OrderController extends Controller
             'diskon_persen'     => 'nullable|numeric|min:0|max:100',
             'potongan_rp'       => 'nullable|numeric|min:0',
             'promocode_deduct'  => 'nullable|numeric|min:0',
-            'deadline'          => 'nullable|date',
-            'waktu_deadline'    => 'nullable|date_format:H:i',
             'express'           => 'nullable|integer|in:0,1',
             'kurir'             => 'nullable|string|max:255',
             'ongkir'            => 'nullable|integer|min:0',
@@ -162,7 +154,19 @@ class OrderController extends Controller
             'proof_qty'         => 'nullable|integer|min:0',
             'pickup_status'     => 'nullable|integer|in:0,1',
             'notes'             => 'nullable|string|max:1000',
-        ]);
+        ];
+        
+        if ($request->express == 1) {
+            $rules['waktu_deadline'] = 'required|date_format:H:i';
+        } else {
+            $rules['waktu_deadline'] = 'nullable|date_format:H:i';
+        }
+        
+        $validated = $request->validate($rules);
+        
+        if ($validated['express'] == 0) {
+            $validated['waktu_deadline'] = null;
+        }
 
         DB::beginTransaction();
         try {
@@ -171,7 +175,6 @@ class OrderController extends Controller
             
             $order->update($validated);
             
-            // If order status changed, create notification
             if ($oldStatus != $newStatus) {
                 $invoiceNumber = $order->spk ?? 'SPK-' . str_pad($order->id, 4, '0', STR_PAD_LEFT);
                 $this->createStatusNotification($order, $newStatus, $invoiceNumber);
@@ -214,7 +217,6 @@ class OrderController extends Controller
     public function destroy(Order $order)
     {
         try {
-            // Delete associated files if any
             if ($order->order_design && \Storage::disk('public')->exists($order->order_design)) {
                 \Storage::disk('public')->delete($order->order_design);
             }

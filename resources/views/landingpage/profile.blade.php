@@ -2,16 +2,19 @@
 @section('content')
     <style>
         .form-control {
-            border-radius: 50px !important;
-            height: 55px;
+            border-radius: 20px !important;
+            height: 44px;
             font-family: 'Poppins', sans-serif;
             background-color: #fff;
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
         }
 
         .form-control::placeholder {
-            padding: 0 10px;
+            padding: 0 8px;
             color: #c3c3c3;
             opacity: 1;
+            font-size: 0.875rem;
         }
 
         .form-control:disabled {
@@ -22,7 +25,7 @@
 
         .form-label {
             font-weight: 600;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-family: 'Poppins', sans-serif;
             color: #444;
         }
@@ -38,7 +41,7 @@
             transform: translateY(-50%);
             background: none;
             border: none;
-            font-size: 1.1rem;
+            font-size: 1rem;
             cursor: pointer;
         }
 
@@ -48,9 +51,9 @@
             background-color: #fff !important;
             color: #8888 !important;
             font-weight: 500;
-            border-radius: 50px !important;
-            padding: 8px 20px !important;
-            margin-bottom: 8px !important;
+            border-radius: 40px !important;
+            padding: 6px 16px !important;
+            margin-bottom: 6px !important;
             position: relative !important;
             overflow: hidden !important;
             transition: all .3s !important;
@@ -58,10 +61,11 @@
             text-align: left !important;
             text-decoration: none !important;
             cursor: pointer !important;
+            font-size: 0.875rem !important;
         }
 
         .sidebar-filter a:hover {
-            padding-right: 40px !important;
+            padding-right: 32px !important;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
             color: #000 !important;
         }
@@ -74,11 +78,11 @@
         .sidebar-filter a.active::after {
             content: '' !important;
             position: absolute !important;
-            width: 10px !important;
-            height: 10px !important;
+            width: 8px !important;
+            height: 8px !important;
             background-color: #0439a0 !important;
             top: 50% !important;
-            right: 12px !important;
+            right: 10px !important;
             transform: translateY(-50%) rotate(45deg) !important;
         }
 
@@ -93,11 +97,11 @@
             font-family: 'Poppins', sans-serif !important;
             background-color: #f1f7ff;
             color: #0439a0;
-            border-radius: 50px;
-            padding: 15px 30px;
+            border-radius: 40px;
+            padding: 12px 24px;
             font-weight: 600;
-            font-size: 1.6rem;
-            margin-bottom: 16px;
+            font-size: 1.3rem;
+            margin-bottom: 12px;
         }
 
         .is-invalid {
@@ -107,14 +111,14 @@
         .invalid-feedback {
             display: block;
             color: #fc2865;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-weight: 200;
         }
 
         .btn-edit-text {
             display: inline-block;
-            padding: 6px 12px;
-            font-size: 16px;
+            padding: 5px 10px;
+            font-size: 0.875rem;
             font-weight: 550;
             color: #444444;
             background-color: #fff;
@@ -132,11 +136,11 @@
         .btn-save {
             background-color: #0258d3;
             color: white;
-            padding: 13px 14px;
-            font-size: 18px;
-            margin-top: 24px;
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            margin-top: 20px;
             border: none;
-            border-radius: 50px;
+            border-radius: 40px;
             font-weight: 500;
             cursor: pointer;
             transition: background-color 0.2s ease;
@@ -152,8 +156,8 @@
             background: none;
             border: none;
             color: #888;
-            font-size: 13px;
-            margin-top: 18px;
+            font-size: 0.75rem;
+            margin-top: 15px;
             text-decoration: underline;
             font-weight: 500;
             font-family: 'Poppins', sans-serif;
@@ -171,8 +175,8 @@
         .input-edit {
             border: 1px solid #ced4da;
             border-radius: 4px;
-            padding: 6px 10px;
-            font-size: 14px;
+            padding: 5px 8px;
+            font-size: 0.8rem;
             width: 100%;
             box-sizing: border-box;
             transition: border-color 0.2s ease;
@@ -185,12 +189,13 @@
 
         .field-label {
             font-weight: bold;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             display: inline-block;
+            font-size: 0.8rem;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .password-wrapper {
@@ -198,7 +203,7 @@
         }
 
         .password-wrapper input.form-control {
-            padding-right: 45px !important;
+            padding-right: 40px !important;
         }
 
         .eye-btn {
@@ -208,7 +213,7 @@
             transform: translateY(-50%);
             background: none;
             border: none;
-            font-size: 1.2rem;
+            font-size: 1rem;
             color: #999;
             cursor: pointer;
             padding: 0;
@@ -216,9 +221,9 @@
         }
 
         .notification-badge {
-            font-size: 0.9rem;
-            padding: 4px 12px;
-            border-radius: 4px;
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            border-radius: 3px;
             font-weight: 500;
             display: inline-block;
             text-transform: uppercase;
@@ -257,19 +262,20 @@
 
         .pagination {
             margin: 0;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
 
         .pagination .page-link {
             border-radius: 50% !important;
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             padding: 0;
-            line-height: 38px;
+            line-height: 30px;
             text-align: center;
             font-weight: 500;
             color: #0258d3;
             border: 1px solid #ccc;
+            font-size: 0.8rem;
         }
 
         .pagination .page-item.active .page-link {
@@ -286,12 +292,12 @@
 
         .logout-button {
             border: none;
-            padding: 12px 65px;
+            padding: 10px 52px;
             background-color: transparent;
             color: white;
-            border-radius: 50px;
+            border-radius: 40px;
             border: 2px solid white;
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             font-weight: 500;
             font-family: 'Poppins', sans-serif;
             transition: background-color 0.2s ease;
@@ -305,7 +311,7 @@
 
         /* Style untuk link reset password */
         .reset-password-link {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #888;
             text-decoration: underline;
             cursor: pointer;
@@ -313,7 +319,7 @@
             background: none;
             border: none;
             padding: 0;
-            margin-top: 5px;
+            margin-top: 4px;
         }
 
         .reset-password-link:hover {
@@ -323,18 +329,65 @@
         /* Loading spinner */
         .loading-spinner {
             display: none;
-            margin-left: 8px;
+            margin-left: 6px;
+        }
+
+        /* Table responsive styling */
+        .table {
+            font-size: 0.8rem;
+        }
+
+        .table th {
+            font-weight: 450 !important;
+            font-size: 0.75rem !important;
+            color: #000 !important;
+            font-family: 'Poppins', sans-serif;
+            padding: 12px 8px !important;
+        }
+
+        .table td {
+            font-weight: 400 !important;
+            padding: 16px 8px !important;
+            font-size: 0.7rem !important;
+            color: #000 !important;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .table .btn {
+            font-size: 0.65rem !important;
+            padding: 2px 8px !important;
+            margin-bottom: 2px !important;
+        }
+
+        .table .badge {
+            font-size: 0.65rem !important;
+            padding: 8px 20px 8px 8px !important;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .login-left h3 {
+                font-size: 2.5rem !important;
+            }
+            .logout-button {
+                padding: 8px 40px;
+                font-size: 0.8rem;
+            }
+            .section-pill {
+                font-size: 1.1rem;
+                padding: 10px 20px;
+            }
         }
     </style>
 
-    
-    <div class="container-fluid footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
+    <br><br>
+    <div class="container-fluid footer mt-4 pt-4 wow fadeIn" data-wow-delay="0.1s">
         <div class="position-relative mb-0">
             <img class="w-100 rounded" src="{{ asset('landingpage/img/blue_bg.png') }}" alt="CTA Image">
             <div class="position-absolute start-0 translate-middle-y cta-overlay" style="left: 5%; width: 90%;">
                 <!-- WRAPPER BARU untuk greeting + logout -->
                 <div class="d-flex align-items-center justify-content-between w-100 mb-2">
-                    <h3 class="mb-0" style="font-family:'Poppins'; font-size:3.3rem; font-weight:550; color:#fff;">
+                    <h3 class="mb-0" style="font-family:'Poppins'; font-size:2.6rem; font-weight:550; color:#fff;">
                         Halo, <span style="color:#ffc74c">{{ Auth::user()->name }}</span>
                     </h3>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="m-0">
@@ -345,7 +398,7 @@
 
                 <!-- Breadcrumb tetap di bawah -->
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-0" style="font-family:'Poppins'; font-size:1rem; font-weight:400;">
+                    <ol class="breadcrumb mb-0" style="font-family:'Poppins'; font-size:0.875rem; font-weight:400;">
                         <li class="breadcrumb-item"><a href="{{ url('/') }}">BERANDA</a></li>
                         <li class="breadcrumb-item active" aria-current="page">PROFIL</li>
                     </ol>
@@ -356,9 +409,9 @@
     </div>
 
     <main>
-        <div class="container-fluid px-4">
-            <div class="container product-card" style="margin-top:-180px;">
-                <div class="row g-5" style="margin-top:40px;">
+        <div class="container-fluid px-3">
+            <div class="container product-card" style="margin-top:-144px;">
+                <div class="row g-4" style="margin-top:32px;">
 
                     {{-- Sidebar Tabs --}}
                     <div class="col-lg-3">
@@ -383,21 +436,21 @@
                                 <table class="table table-borderless">
                                     <thead>
                                         <tr class="border-bottom">
-                                            <th style="font-weight: 450 !important; width:130px; font-size: 0.9rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Pesanan Saya</th>
-                                            <th style="font-weight: 450 !important; width:130px; font-size: 0.9rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Tanggal</th>
-                                            <th style="font-weight: 450 !important; width:130px; font-size: 0.9rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Total</th>
-                                            <th style="font-weight: 450 !important; width:130px; font-size: 0.9rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Status</th>
-                                            <th style="font-weight: 450 !important; width:130px; font-size: 0.9rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Estimasi</th>
-                                            <th style="font-weight: 450 !important; width:130px; font-size: 0.9rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Aksi</th>
+                                            <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Pesanan Saya</th>
+                                            <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Tanggal</th>
+                                            <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Total</th>
+                                            <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Status</th>
+                                            <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Estimasi</th>
+                                            <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($orders as $order)
                                             <tr class="border-bottom">
-                                                <td style="font-weight: 400 !important; padding: 20px 10px; font-size: 0.8rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{{ 'INV' . substr($order->spk, 3, strpos($order->spk, '-') - 3) }}</td>
-                                                <td style="font-weight: 400 !important; padding: 20px 10px; font-size: 0.8rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{!! $order->created_at->locale('id')->translatedFormat('l, d M') . '<br>' . $order->created_at->translatedFormat('Y') !!}</td>
-                                                <td style="font-weight: 400 !important; padding: 20px 10px; font-size: 0.8rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Rp {{ number_format($order->subtotal, 0, ',', '.') }}</td>
-                                                <td style="font-weight: 400 !important; padding: 20px 10px; font-size: 0.8rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">
+                                                <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{{ 'INV' . substr($order->spk, 3, strpos($order->spk, '-') - 3) }}</td>
+                                                <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{!! $order->created_at->locale('id')->translatedFormat('l, d M') . '<br>' . $order->created_at->translatedFormat('Y') !!}</td>
+                                                <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Rp {{ number_format($order->subtotal, 0, ',', '.') }}</td>
+                                                <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">
                                                     @php
                                                     switch 
                                                     ($order->order_status) {
@@ -408,40 +461,51 @@
                                                         $seclabel = 'Pembayaran';
                                                         break;
                                                     case 1:
+                                                        $badge = '#4CAF50';
+                                                        $foncol= '#ffffff';
+                                                        $firlabel = 'Sudah';
+                                                        $seclabel = 'Dibayar';
+                                                        break;
+                                                    case 2:
                                                         $badge = '#5ee3e3';
                                                         $foncol= '#444444';
                                                         $firlabel = 'Dalam';
                                                         $seclabel = 'Pengerjaan';
                                                         break;
-                                                    case 2:
+                                                    case 3:
                                                         $badge = '#abceff';
                                                         $foncol= '#444444';
                                                         $firlabel = 'Dalam';
                                                         $seclabel = 'Pengiriman';
                                                         break;
-                                                    case 3:
+                                                    case 4:
                                                         $badge = '#0258d3';
                                                         $foncol= '#fff';
                                                         $firlabel = 'Pesanan';
-                                                        $seclabel = 'Selesai';
+                                                        $seclabel = 'Diterima';
                                                         break;
                                                     case 9:
-                                                        $badge = '#f8d7da';
+                                                        $badge = '#721c24';
                                                         $foncol = '#444444';
                                                         $firlabel = 'Order';
                                                         $seclabel = 'Dibatalkan';
                                                         break;
-                                                        } @endphp
-                                                    <span class="badge" style="display: block;width: 100%;text-align: left;font-weight: 450 !important; padding: 10px 25px 10px 10px; font-size: 0.75rem !important; background-color: {{ $badge ?? '#e9ecef' }}; color:{{ $foncol }} !important; font-family: 'Poppins', sans-serif; border-radius:4px;">{{ $firlabel }} <br> {{ $seclabel }}</span>
+                                                    default:
+                                                        $badge = '#e9ecef';
+                                                        $foncol = '#444444';
+                                                        $firlabel = 'Status';
+                                                        $seclabel = 'Unknown';
+                                                    } @endphp
+                                                    <span class="badge" style="display: block;width: 100%;text-align: left;font-weight: 450 !important; padding: 8px 20px 8px 8px; font-size: 0.65rem !important; background-color: {{ $badge ?? '#e9ecef' }}; color:{{ $foncol }} !important; font-family: 'Poppins', sans-serif; border-radius:3px;">{{ $firlabel }} <br> {{ $seclabel }}</span>
                                                 </td>
-                                                <td style="font-weight: 400 !important; padding: 20px 10px; font-size: 0.8rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{{ $order->estimasi ?? '-' }}</td>
-                                                <td style="font-weight: 400 !important; padding: 20px 10px; font-size: 0.8rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">
+                                                <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{{ $order->estimasi ?? '-' }}</td>
+                                                <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">
                                                     @if ($order->order_status == 0)
                                                         <a href="{{ route('checkout.order', $order->id) }}"
                                                         class="btn btn-sm rounded-pill mb-1"
                                                         style="display:block; width:100%; text-align:center;
-                                                                font-weight:450!important; padding:3px 10px;
-                                                                font-size:0.77rem!important; background-color:#0258d3;
+                                                                font-weight:450!important; padding:2px 8px;
+                                                                font-size:0.65rem!important; background-color:#0258d3;
                                                                 color:#fff!important; font-family:'Poppins',sans-serif;">
                                                             BAYAR
                                                         </a>
@@ -449,7 +513,7 @@
                                                         <a href="{{ route('order.show', $order->id) }}" 
                                                         class="btn btn-sm rounded-pill mb-1" 
                                                         style="border-color:#8888;display: block;width: 100%;text-align: center;
-                                                                font-weight: 450 !important; padding: 3px 10px; font-size: 0.77rem !important; 
+                                                                font-weight: 450 !important; padding: 2px 8px; font-size: 0.65rem !important; 
                                                                 background-color:none; color:#000 !important; font-family: 'Poppins', sans-serif;">
                                                             LIHAT ORDER
                                                         </a>
@@ -457,7 +521,7 @@
                                                         <button onclick="cancelOrder({{ $order->id }})" 
                                                                 class="btn btn-sm rounded-pill" 
                                                                 style="display: block;width: 100%;text-align: center;font-weight: 450 !important; 
-                                                                    padding: 3px 10px; font-size: 0.77rem !important; background-color:#fc2865; 
+                                                                    padding: 2px 8px; font-size: 0.65rem !important; background-color:#fc2865; 
                                                                     color:#fff !important; font-family: 'Poppins', sans-serif;">
                                                             BATALKAN
                                                         </button>
@@ -465,7 +529,7 @@
                                                         <a href="{{ route('order.show', $order->id) }}" 
                                                         class="btn btn-sm rounded-pill" 
                                                         style="border-color:#8888;display: block;width: 100%;text-align: center;
-                                                                font-weight: 450 !important; padding: 3px 10px; font-size: 0.77rem !important; 
+                                                                font-weight: 450 !important; padding: 2px 8px; font-size: 0.65rem !important; 
                                                                 background-color:none; color:#000 !important; font-family: 'Poppins', sans-serif;">
                                                             LIHAT ORDER
                                                         </a>
@@ -536,47 +600,48 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">PROVINSI</label>
-                                            <input name="province" type="text"
-                                                class="form-control @error('province') is-invalid @enderror"
-                                                value="{{ Auth::user()->province }}" disabled>
-                                            @error('province')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
+                                            <select id="provinsi" name="province" class="form-control">
+                                                <option value="">PILIH PROVINSI</option>
+                                                @foreach ($provinsi as $item)
+                                                    <option value="{{ $item->id ?? '' }}"
+                                                        {{ $item->id == Auth::user()->province ? 'selected' : '' }}>{{ $item->nama }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label">KECAMATAN/KOTA</label>
-                                            <input name="city" type="text"
-                                                class="form-control @error('city') is-invalid @enderror"
-                                                value="{{ Auth::user()->city }}" disabled>
-                                            @error('city')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
+                                            <label class="form-label">KOTA/KABUPATEN</label>
+                                            <select id="kota" name="district" class="form-control">
+                                                <option value="">PILIH KOTA/KABUPATEN</option>
+                                            @foreach ($kota as $item)
+                                                <option value="{{ $item->id ?? '' }}"
+                                                    {{ $item->id == Auth::user()->district ? 'selected' : '' }}>{{ $item->nama }}
+                                                </option>
+                                            @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">KECAMATAN</label>
+                                            <select id="kecamatan" name="city" class="form-control">
+                                                <option value="">PILIH KECAMATAN</option>
+                                                @foreach ($kecamatan as $item)
+                                                    <option value="{{ $item->id ?? '' }}"
+                                                        {{ $item->id == Auth::user()->city ? 'selected' : '' }}>{{ $item->nama }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">KODE POS</label>
+                                            <select id="kodepos" name="postal_code" class="form-control">
+                                                <option value="">PILIH KODE POS</option>
+                                                <option value="{{ Auth::user()->postal_code }}" selected>{{ Auth::user()->postal_code }}</option>
+                                            </select>
                                         </div>
                                         <div class="col-12 mb-3">
                                             <label class="form-label">DETAIL ALAMAT PENGIRIMAN</label>
-                                            <input name="address" type="text"
-                                                class="form-control @error('address') is-invalid @enderror"
-                                                value="{{ old('address', Auth::user()->address) }}" disabled>
-                                            @error('address')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">KODE POS</label>
-                                            <input name="postal_code" type="text"
-                                                class="form-control @error('postal_code') is-invalid @enderror"
-                                                value="{{ old('postal_code', Auth::user()->postal_code) }}" disabled>
-                                            @error('postal_code')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
+                                            <textarea name="address" id="" style="height: 100px;border-radius: 5%" class="form-control">{{ Auth::user()->address }}</textarea>
                                         </div>
                                     </div>
 
@@ -592,7 +657,7 @@
                                         </div>
                                         {{-- Link Reset Password --}}
                                         <button type="button" id="resetPasswordBtn" class="reset-password-link">
-                                            GANTI KATA SANDI?
+                                            LUPA SANDI?
                                             <span class="loading-spinner">
                                                 <i class="fas fa-spinner fa-spin"></i>
                                             </span>
@@ -605,7 +670,7 @@
                                             <label class="form-label">SANDI SAAT INI</label>
                                             <input id="currentPassword" name="current_password" type="password"
                                                 class="form-control @error('current_password') is-invalid @enderror">
-                                            <button type="button" class="eye-btn"
+                                            <button type="button" class="eye-btn pt-4 me-2"
                                                 onclick="toggleEye('currentPassword', this)">
                                                 <i class="fas fa-eye"></i>
                                             </button>
@@ -619,7 +684,7 @@
                                             <label class="form-label">SANDI BARU</label>
                                             <input id="newPassword" name="new_password" type="password"
                                                 class="form-control @error('new_password') is-invalid @enderror">
-                                            <button type="button" class="eye-btn"
+                                            <button type="button" class="eye-btn pt-4 me-2"
                                                 onclick="toggleEye('newPassword', this)">
                                                 <i class="fas fa-eye"></i>
                                             </button>
@@ -633,7 +698,7 @@
                                             <label class="form-label">KONFIRMASI SANDI BARU</label>
                                             <input id="confirmPassword" name="new_password_confirmation" type="password"
                                                 class="form-control @error('new_password_confirmation') is-invalid @enderror">
-                                            <button type="button" class="eye-btn"
+                                            <button type="button" class="eye-btn pt-4 me-2"
                                                 onclick="toggleEye('confirmPassword', this)">
                                                 <i class="fas fa-eye"></i>
                                             </button>
@@ -652,20 +717,15 @@
                                                     BATAL
                                                 </button>
                                             </div>
-
-
                                         </div>
                                     </div>
 
-
                                     {{-- Tombol Edit / Save --}}
                                     <div class="d-flex flex-column align-items-end mt-4">
-                                        {{-- Ubah Edit Profil menjadi teks klik dengan icon --}}
                                         <button id="btnEdit" type="button" class="btn-edit-text"
                                             aria-label="Edit Profil">
-                                            <i class="fas fa-pen" style="margin-right: 10px;"></i> EDIT PROFIL
-                                        </button> <!-- ubah disini -->
-
+                                            <i class="fas fa-pen" style="margin-right: 8px;"></i> EDIT PROFIL
+                                        </button>
                                     </div>
                                 </form>
                             </div>
@@ -676,13 +736,13 @@
 
                             {{-- Notifikasi --}}
                             <div class="tab-pane fade" id="pane-notif" role="tabpanel">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
                                     <h4 class="section-pill"
-                                        style="background-color: white; padding: 0 30px !important; margin-bottom:-20px !important">
+                                        style="background-color: white; padding: 0 24px !important; margin-bottom:-16px !important">
                                         Semua Notifikasi</h4>
                                     <form method="GET" action="{{ url()->current() }}#pane-notif">
                                         <select name="sort" onchange="this.form.submit()" class="form-select w-auto"
-                                            style="width:170px !important; height:40px !important; border-radius:70px; color:#888888; font-size:0.875rem; text-transform:uppercase; padding: 0 20px; appearance: none; background: url('data:image/svg+xml;charset=UTF-8,<svg fill=''%23333'' height=''<24>'' viewBox=''0 0 24 24'' width=''24'' xmlns=''http://www.w3.org/2000/svg''><path d=''M7 10l5 5 5-5z''/></svg>') no-repeat right 10px center; background-size: 16px;">
+                                            style="width:136px !important; height:32px !important; border-radius:56px; color:#888888; font-size:0.75rem; text-transform:uppercase; padding: 0 16px; appearance: none; background: url('data:image/svg+xml;charset=UTF-8,<svg fill=''%23333'' height=''<24>'' viewBox=''0 0 24 24'' width=''24'' xmlns=''http://www.w3.org/2000/svg''><path d=''M7 10l5 5 5-5z''/></svg>') no-repeat right 8px center; background-size: 14px;">
                                             <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>
                                                 Terbaru</option>
                                             <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>
@@ -691,7 +751,7 @@
                                     </form>
                                 </div>
                                 <p
-                                    style="font-size: 0.8rem !important; margin-top:-10px; font-weight: 600; padding: 15px 30px !important; color: #888888">
+                                    style="font-size: 0.7rem !important; margin-top:-8px; font-weight: 600; padding: 12px 24px !important; color: #888888">
                                     DATA PER HALAMAN 10</p>
 
                                 @php
@@ -715,8 +775,8 @@
                                             };
                                         @endphp
 
-                                        <div class="list-group-item mb-2 p-3 {{ $notif->notification_status ? 'notification-read' : 'notification-unread' }}"
-                                            style="border-radius: 10px; position: relative;"
+                                        <div class="list-group-item mb-2 p-2 {{ $notif->notification_status ? 'notification-read' : 'notification-unread' }}"
+                                            style="border-radius: 8px; position: relative;"
                                             data-id="{{ $notif->id }}" onclick="markNotificationRead(this)">
                                             <div class="mb-1">
                                                 @if ($notif->notification_type)
@@ -726,15 +786,15 @@
                                                 @endif
                                             </div>
                                             <h6 class="mb-1"
-                                                style="font-weight: 600; color:#000; font-family: 'Poppins', sans-serif; text-transform: uppercase; margin-bottom:16px !important; margin-top:16px !important;">
+                                                style="font-weight: 600; color:#000; font-family: 'Poppins', sans-serif; text-transform: uppercase; margin-bottom:12px !important; margin-top:12px !important; font-size: 0.8rem;">
                                                 {{ $notif->notification_head ?? 'Notifikasi' }}
                                             </h6>
                                             <p class="mb-2"
-                                                style="font-weight: 500; font-size: 0.9rem; color:#444; font-family: 'Poppins', sans-serif;">
+                                                style="font-weight: 500; font-size: 0.75rem; color:#444; font-family: 'Poppins', sans-serif;">
                                                 {{ $notif->notification_body }}</p>
                                             <div class="text-end">
                                                 <small class="text-muted"
-                                                    style="font-weight: 600; font-size: 0.9rem; color:#888888 !important; font-family: 'Poppins', sans-serif;">{{ $notif->created_at->format('d M Y') }}</small>
+                                                    style="font-weight: 600; font-size: 0.7rem; color:#888888 !important; font-family: 'Poppins', sans-serif;">{{ $notif->created_at->format('d M Y') }}</small>
                                             </div>
                                         </div>
                                     @endforeach
@@ -759,11 +819,18 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const hash = window.location.hash;
+            
             if (hash === '#pane-notif') {
                 document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('show', 'active'));
                 document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
                 document.getElementById('tab-notif')?.classList.add('active');
                 document.getElementById('pane-notif')?.classList.add('show', 'active');
+            }
+            else if (hash === '#pane-orders') {
+                document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('show', 'active'));
+                document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+                document.getElementById('tab-orders')?.classList.add('active');
+                document.getElementById('pane-orders')?.classList.add('show', 'active');
             }
 
             const btnEdit = document.getElementById('btnEdit');
@@ -773,8 +840,7 @@
             const viewPass = document.getElementById('viewPassword');
             const editPassFields = document.getElementById('editPasswordFields');
 
-            const formFields = form.querySelectorAll('input.form-control, select.form-control');
-
+            const formFields = form.querySelectorAll('input.form-control, select.form-control, textarea.form-control');
             const initialFormData = {};
             formFields.forEach(input => {
                 if (input.name) {
@@ -792,6 +858,15 @@
             }
 
             btnEdit?.addEventListener('click', () => setFormEditable(true));
+            document.addEventListener('DOMContentLoaded', function() {
+                const provinsiSelect = document.getElementById('provinsi');
+
+                if (provinsiSelect) { 
+                    provinsiSelect.addEventListener('focus', function() {
+                        loadProvinsi();
+                    });
+                }
+            });
 
             btnCancel?.addEventListener('click', () => {
                 formFields.forEach(input => {
@@ -816,40 +891,41 @@
                 setFormEditable(false);
             @endif
 
-            // Reset Password functionality
             const resetPasswordBtn = document.getElementById('resetPasswordBtn');
             const loadingSpinner = resetPasswordBtn.querySelector('.loading-spinner');
 
             resetPasswordBtn.addEventListener('click', async function() {
-                // Show loading
                 loadingSpinner.style.display = 'inline-block';
                 resetPasswordBtn.disabled = true;
 
+                const userEmail = '{{ Auth::user()->email }}'.toLowerCase().trim();
+                
                 try {
                     const response = await fetch('{{ route("password.email") }}', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'X-Requested-With': 'XMLHttpRequest'
                         },
-                        body: JSON.stringify({
-                            email: '{{ Auth::user()->email }}'
+                        body: new URLSearchParams({
+                            'email': userEmail
                         })
                     });
 
-                    const data = await response.json();
-
                     if (response.ok) {
+                        const data = await response.json();
                         swal({
                             title: "Berhasil!",
-                            text: "Link reset password telah dikirim ke email Anda. Silakan periksa kotak masuk atau folder spam.",
+                            text: data.message || "Link reset password telah dikirim ke email Anda.",
                             icon: "success",
                             button: "OK"
                         });
                     } else {
+                        const errorData = await response.json();
                         swal({
                             title: "Error!",
-                            text: data.message || "Terjadi kesalahan saat mengirim email reset password.",
+                            text: errorData.message || "Terjadi kesalahan saat mengirim email reset password.",
                             icon: "error",
                             button: "OK"
                         });
@@ -863,7 +939,6 @@
                         button: "OK"
                     });
                 } finally {
-                    // Hide loading
                     loadingSpinner.style.display = 'none';
                     resetPasswordBtn.disabled = false;
                 }
@@ -947,5 +1022,61 @@
                 }
             });
         }
+    </script>
+
+    <script>
+        function loadProvinsi() {
+            fetch('/api/provinsi')
+                .then(res => res.json())
+                .then(data => {
+                    let options = '<option value="">Pilih Provinsi</option>';
+                    data.result.forEach(p => {
+                        options += `<option value="${p.id}">${p.text}</option>`;
+                    });
+                    document.getElementById('provinsi').innerHTML = options;
+                })
+                .catch(error => console.error('Error saat memuat provinsi:', error));
+        }
+
+        document.getElementById('provinsi').addEventListener('change', function() {
+            const idProv = this.value;
+            fetch(`/api/kabkota?d_provinsi_id=${idProv}`)
+                .then(res => res.json())
+                .then(data => {
+                    let options = '<option value="">Pilih Kota</option>';
+                    data.result.forEach(k => {
+                        options += `<option value="${k.id}">${k.text}</option>`;
+                    });
+                    document.getElementById('kota').innerHTML = options;
+                });
+        });
+
+        document.getElementById('kota').addEventListener('change', function() {
+            selectedKabkotaId = this.value;
+            fetch(`/api/kecamatan?d_kabkota_id=${selectedKabkotaId}`)
+                .then(res => res.json())
+                .then(data => {
+                    let opt = '<option value="">Pilih Kecamatan</option>';
+                    data.result.forEach(kec => {
+                        opt += `<option value="${kec.id}">${kec.text}</option>`;
+                    });
+                    document.getElementById('kecamatan').innerHTML = opt;
+                });
+        });
+
+        document.getElementById('kecamatan').addEventListener('change', function() {
+            selectedKecId = this.value;
+            fetch(`/api/kodepos?d_kabkota_id=${selectedKabkotaId}&d_kecamatan_id=${selectedKecId}`)
+                .then(res => res.json())
+                .then(data => {
+                    let opt = '<option value="">Pilih Kode Pos</option>';
+                    data.result.forEach(pos => {
+                        opt += `<option value="${pos.text}">${pos.text}</option>`;
+                    });
+                    document.getElementById('kodepos').innerHTML = opt;
+                });
+        });
+
+
     </script>
 @endsection

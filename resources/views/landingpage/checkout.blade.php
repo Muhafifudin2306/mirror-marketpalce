@@ -275,7 +275,7 @@
 
     <main>
         <div class="container-fluid px-4">
-            <div class="container product-card" style="margin-top:-180px;">
+            <div class="container product-card" style="margin-top:-150px;">
                 <div class="row g-5" style="margin-top:5px;">
 
                     <div class="col-lg-8" style="margin-left:40px;">

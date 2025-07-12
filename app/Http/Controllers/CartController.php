@@ -401,12 +401,18 @@ class CartController extends Controller
                 'order_status'       => 1,
                 'payment_status'     => 1,
                 'paid_at'            => now(),
+                'status_pengerjaan'  => 'verif_pesanan',
+                'status_pembayaran'  => 2,
                 'transaction_id'     => $request->input('transaction_id'),
                 'transaction_method' => 1, //paid
+                'metode_transaksi'   => 3,
+                'metode_transaksi_paid'   => 3,
                 'notes'              => $request->input('notes'),
                 'kurir'    => $request->input('kurir'),
                 'ongkir'      => $request->input('ongkir', 0),
                 'promocode_deduct'   => $request->input('promo_discount', 0),
+                'payment_at'        => Carbon::now(),
+                'paid_at'           => Carbon::now(),
             ]);
 
             $invoiceNumber = $order->spk ?? 'SPK-' . str_pad($order->id, 4, '0', STR_PAD_LEFT);

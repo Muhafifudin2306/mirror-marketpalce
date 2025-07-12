@@ -6,6 +6,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PesananController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\AlamatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/send-message', [ChatController::class, 'sendMessage']);
 Route::post('/send-message-admin', [ChatController::class, 'sendMessageAdmin']);
 
+Route::get('/provinsi', [AlamatController::class, 'getProvinsi']);
+Route::get('/kabkota', [AlamatController::class, 'getKabKota']);
+Route::get('/kecamatan', [AlamatController::class, 'getKecamatan']);
+Route::get('/kodepos', [AlamatController::class, 'getKodePos']);
 
 //-------- Midtrans ----------
 //Route::post('/midtrans-callback', [PesananController::class, 'callback'])->name('midtrans_callback');

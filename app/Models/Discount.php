@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Discount extends Model
 {
@@ -18,8 +20,21 @@ class Discount extends Model
       'end_discount'   => 'datetime',
     ];
 
-    public function products()
+    public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class, 'discount_product')
+                    ->withTimestamps();
+    }
+
+    public function isActive(): bool
+    {
+        $now = now();
+        return $this->start_discount <= $now && $this->end_discount >= $now;
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('start_discount', '<=', now())
+                    ->where('end_discount', '>=', now());
     }
 }

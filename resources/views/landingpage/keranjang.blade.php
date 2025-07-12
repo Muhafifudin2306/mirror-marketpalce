@@ -2,138 +2,251 @@
 @section('content')
 <style>
   .btn-primary {
-  background-color: #0258d3;
-  color: #fff;
-  padding: 13px 20px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 50px;
-  font-weight: 500;
-  font-family: 'Poppins', sans-serif;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-.btn-primary:hover {
-  background-color: #0041a8;
-  color: #fff;
-}
+    background-color: #0258d3;
+    color: #fff;
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    border: none;
+    border-radius: 40px;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  .btn-primary:hover {
+    background-color: #0041a8;
+    color: #fff;
+  }
 
-.btn-link-style {
-  border: none;
-  background: none;
-  padding: 0;
-  font-size: 0.85rem;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 550;
-  color: #444444;
-  text-decoration: none;
-  cursor: pointer;
-}
-.btn-link-style.danger {
-  color: #fc2865;
-}
+  .btn-link-style {
+    border: none;
+    background: none;
+    padding: 0;
+    font-size: 0.75rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 550;
+    color: #444444;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .btn-link-style.danger {
+    color: #fc2865;
+  }
 
-.btn-outline-danger {
-  border: 1px solid #fc2865;
-  color: #fc2865;
-  background: transparent;
-}
-.btn-outline-danger:hover {
-  background: #fc2865;
-  color: #fff;
-}
+  .btn-outline-danger {
+    border: 1px solid #fc2865;
+    color: #fc2865;
+    background: transparent;
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    border-radius: 40px;
+    font-family: 'Poppins', sans-serif;
+  }
+  .btn-outline-danger:hover {
+    background: #fc2865;
+    color: #fff;
+  }
 
-.btn-outline-primary {
-  border: 1px solid #0258d3;
-  color: #0258d3;
-  background: transparent;
-}
-.btn-outline-primary:hover {
-  background: #0258d3;
-  color: #fff;
-}
+  .btn-outline-primary {
+    border: 1px solid #0258d3;
+    color: #0258d3;
+    background: transparent;
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    border-radius: 40px;
+    font-family: 'Poppins', sans-serif;
+  }
+  .btn-outline-primary:hover {
+    background: #0258d3;
+    color: #fff;
+  }
 
-/* Cart Item Listing Styles */
-.cart-item {
-  display: flex;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  margin-bottom: 1.5rem;
-  overflow: hidden;
-  position: relative;
-}
-.cart-item img {
-  margin-top: 10px;
-  margin-left: 15px;
-  width: 210px;
-  height: 210px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-.cart-item-body {
-  flex: 1;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.cart-item-body h5 {
-  font-family: 'Poppins';
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-.cart-item-body .details {
-  font-size: 0.85rem;
-  color: #555;
-  margin-bottom: 1rem;
-  list-style: none;
-  padding: 0;
-}
-.cart-item-body .details li {
-  margin-bottom: 0.25rem;
-  color: #777;
-}
-.cart-item-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-.cart-item-actions .btn {
-  font-family: 'Poppins', sans-serif;
-  font-size: 0.85rem;
-  border-radius: 50px;
-  padding: 0.4rem 0.8rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-.qty-input {
-  width: 60px;
-  padding: 0.3rem;
-  font-size: 0.85rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
+  .cart-item {
+    display: flex;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    margin-bottom: 1.2rem;
+    overflow: hidden;
+    position: relative;
+  }
+  main .cart-item img {
+    margin-top: 8px;
+    margin-left: 12px;
+    width: 168px;
+    height: 168px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  .cart-item-body {
+    flex: 1;
+    padding: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .cart-item-body h5 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    line-height: 1.3;
+  }
+  .cart-item-body .details {
+    font-size: 0.75rem;
+    color: #555;
+    margin-bottom: 0.8rem;
+    list-style: none;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+  }
+  .cart-item-body .details li {
+    margin-bottom: 0.2rem;
+    color: #777;
+    line-height: 1.4;
+  }
+  .cart-item-actions {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.4rem;
+    flex-wrap: wrap;
+  }
+  .cart-item-actions .btn {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.75rem;
+    border-radius: 40px;
+    padding: 0.3rem 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+  }
+  .qty-input {
+    width: 50px;
+    padding: 0.25rem;
+    font-size: 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-family: 'Poppins', sans-serif;
+  }
 
-/* Summary Card */
-.summary-card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  padding: 1rem;
-  border-left: 4px solid #0258d3;
-  position: sticky;
-  top: 150px;
-}
+  .summary-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    padding: 0.8rem;
+    position: sticky;
+    top: 120px;
+  }
+
+  .cart-header {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 550;
+    color: #fff;
+    margin-bottom: 0.8rem;
+  }
+
+  .subtotal-label {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #888;
+  }
+  .subtotal-amount {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 600;
+    color: #000;
+  }
+  .subtotal-item {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8rem;
+    color: #555;
+  }
+  .subtotal-item strong {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+  }
+
+  .cta-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.4rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0;
+  }
+  .cta-subtitle {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.4rem;
+    font-weight: 600;
+    color: #ffc74c;
+    margin-bottom: 1.5rem;
+  }
+
+  .file-link {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: #0258d3;
+    text-decoration: none;
+  }
+  .file-link:hover {
+    text-decoration: underline;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .cart-item {
+      flex-direction: column;
+    }
+    .cart-item img {
+      width: 100%;
+      height: 200px;
+      margin: 0;
+      border-radius: 10px 10px 0 0;
+    }
+    .cart-item-body {
+      padding: 1rem;
+    }
+    .cart-header {
+      font-size: 2.2rem;
+    }
+    .subtotal-amount {
+      font-size: 1.6rem;
+    }
+    .cta-title, .cta-subtitle {
+      font-size: 2rem;
+    }
+    .cart-item-actions {
+      justify-content: center;
+    }
+    .summary-card {
+      position: static;
+      margin-top: 1rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .cart-item img {
+      width: calc(100% - 24px);
+      margin: 12px;
+      height: 180px;
+    }
+    .cart-item-body h5 {
+      font-size: 0.9rem;
+    }
+    .cart-item-actions .btn {
+      font-size: 0.7rem;
+      padding: 0.25rem 0.5rem;
+    }
+  }
 </style>
 
 <div class="container-fluid footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
   <div class="position-relative mb-0">
     <img class="w-100 rounded" src="{{ asset('landingpage/img/blue_bg.png') }}" alt="CTA Image">
     <div class="position-absolute start-0 translate-middle-y cta-overlay" style="left: 5%;">
-      <h3 class="mb-2" style="font-family: 'Poppins'; font-size:3.5rem; font-weight:550; color:#fff;">
+      <h3 class="cart-header">
         Keranjang <span style="color:#ffc74c;">Belanjamu</span>
       </h3>
     </div>
@@ -141,14 +254,12 @@
 </div>
 
 <main class="container-fluid px-4">
-  <div class="container product-card" style="margin-top:-180px;">
-    <div class="row g-5">
-
-      {{-- Items --}}
+  <div class="container product-card" style="margin-top:-144px;">
+    <div class="row g-4">
       <div class="col-lg-8">
         @if($items->isEmpty())
-          <div class="alert alert-info">
-            Keranjang kamu masih kosong. <a href="{{ url('/products') }}">Belanja sekarang!</a>
+          <div class="alert alert-info" style="font-family: 'Poppins', sans-serif; font-size: 0.85rem;">
+            Keranjang kamu masih kosong. <a href="{{ url('/products') }}" style="color: #0258d3;">Belanja sekarang!</a>
           </div>
         @else
           @foreach($items as $item)
@@ -165,7 +276,12 @@
               </div>
               <div class="cart-item-body">
                 <div>
-                  <h5>{{ $item->product->label->name }} - {{ $item->product->name }}</h5>
+                  <h5>
+                    {{ Str::limit($item->product->name, 30) }}
+                    @if($item->product->additional_size && $item->product->additional_unit)
+                        {{ $item->product->additional_size }} {{ $item->product->additional_unit }}
+                    @endif
+                  </h5>
                   <ul class="details">
                     @if(in_array($item->product->additional_unit, ['cm','m']))
                       <li>Ukuran: {{ intval($item->length) }}x{{ intval($item->width) }} {{ $item->product->additional_unit }}</li>
@@ -174,8 +290,9 @@
                     @endif
                     <li>File desain: 
                       @if($item->order->order_design)
-                        <a href="{{ asset('landingpage/img/design/'.$item->order->order_design) }}" target="_blank" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#0258d3;">{{ $item->order->order_design }}</a>
-                      @else-
+                        <a href="{{ asset('landingpage/img/design/'.$item->order->order_design) }}" target="_blank" class="file-link">{{ $item->order->order_design }}</a>
+                      @else
+                        -
                       @endif
                     </li>
                     <li>Catatan: {{ $item->order->notes ?? '-' }}</li>
@@ -193,7 +310,7 @@
                         <i class="bi bi-trash"></i> Hapus
                       </button>
                     </form>
-                    <form action="{{ route('checkout.item', $item->id) }}" method="POST">
+                    <form action="{{ route('checkout.item', $item->id) }}" method="POST" style="display:inline">
                       @csrf
                       <button type="submit" class="btn btn-primary btn-sm">
                         <i class="bi bi-bag-check"></i> Checkout
@@ -201,8 +318,8 @@
                     </form>
                   </div>
                   <div>
-                    <span style="font-family:'Poppins'; font-size:0.9rem; color:#555;">Subtotal:</span>
-                    <strong style="font-family:'Poppins'; font-size:1rem;">Rp {{ number_format($item->subtotal,0,',','.') }}</strong>
+                    <span class="subtotal-item">Subtotal:</span>
+                    <strong class="subtotal-item">Rp {{ number_format($item->subtotal,0,',','.') }}</strong>
                   </div>
                 </div>
               </div>
@@ -211,18 +328,17 @@
         @endif
       </div>
 
-      {{-- Summary --}}
       <div class="col-lg-4">
-        <div class="p-4 border shadow-sm bg-white text-center summary-card" style="border-radius:16px;">
+        <div class="summary-card text-center" style="border-radius:12px;">
           <div class="mb-3">
-            <span style="font-family:'Poppins'; font-size:1rem; font-weight:500; color:#888;">Subtotal Keranjang</span>
+            <span class="subtotal-label">Subtotal Keranjang</span>
             <div>
-              <strong style="font-family:'Poppins'; font-size:2.4rem; font-weight:600; color:#000;">
+              <strong class="subtotal-amount" id="cart-summary">
                 Rp {{ number_format($subtotal,0,',','.') }}
               </strong>
             </div>
           </div>
-          <small style="color:#555; font-size:0.85rem;">Gunakan tombol Checkout di setiap produk</small>
+          <small style="color:#555; font-size:0.75rem; font-family: 'Poppins', sans-serif;">Gunakan tombol Checkout di setiap produk</small>
         </div>
       </div>
 
@@ -234,11 +350,11 @@
 <div class="container-fluid footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
   <div class="position-relative">
     <img class="w-100 rounded" src="{{ asset('landingpage/img/CTA.png') }}" alt="CTA Image">
-    <div class="position-absolute top-50 start-0 translate-middle-y cta-content">
-      <h3 class="mb-0" style="font-family:'Poppins'; font-size:3rem; font-weight:600; color:#fff;">
+    <div class="position-absolute top-50 start-0 translate-middle-y cta-content" style="padding-left: 2.4rem;">
+      <h3 class="cta-title">
         Masih Bingung Cari Apa?
       </h3>
-      <h3 class="mb-8" style="font-family:'Poppins'; font-size:3rem; font-weight:600; color:#ffc74c;">
+      <h3 class="cta-subtitle">
         Boleh Tanya Dulu!
       </h3>
       <a href="{{ url('/products') }}" class="btn-schedule">

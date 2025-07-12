@@ -8,10 +8,7 @@ use App\Models\Order;
 use App\Models\Banner;
 use App\Models\Product;
 use App\Models\Finishing;
-use App\Models\Pengarang;
 use App\Models\Newsletter;
-use Spatie\PdfToImage\Pdf;
-use App\Exports\BukuExport;
 use App\Models\Testimonial;
 use Illuminate\Support\Str;
 use App\Models\Notification;
@@ -19,15 +16,8 @@ use App\Models\OrderProduct;
 use Illuminate\Http\Request;
 use App\Models\SearchHistory;
 use App\Http\Controllers\Controller;
-use App\Models\Buku; //panggil model
-use Illuminate\Support\Facades\Auth;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Models\Pesanan; //panggil model
 use Illuminate\Support\Facades\Storage;
-use App\Models\Kategori; //panggil model
-use App\Models\Penerbit; //panggil model
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\DB; //jika pakai query builder
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -43,30 +33,82 @@ class ProductController extends Controller
     public function home(Request $request)
     {
         $banners   = Banner::orderBy('created_at', 'desc')->get();
-        $labels    = Label::with('products.images')->get();
+        
+        $labels    = Label::where('is_live', true)
+                        ->whereHas('products', function($q) {
+                            $q->where('is_live', true);
+                        })
+                        ->with(['products' => function($query) {
+                            $query->where('is_live', true)->with('images');
+                        }])
+                        ->get();
+        
         $filter    = $request->query('filter', 'all');
         $productId = $request->query('product');
         $sort      = $request->query('sort');
         $testimonials = Testimonial::orderBy('created_at', 'desc')->get();
         
         $latestBlogs = Blog::where('is_live', true)
-              ->orderBy('created_at', 'desc')
-              ->take(4)
-              ->get();
+            ->orderBy('created_at', 'desc')
+            ->take(4)
+            ->get();
 
         $query = $this->applyActiveDiscounts(Product::query());
+        
+        $query = $query->where('is_live', true)
+                    ->whereHas('label', function($q) {
+                        $q->where('is_live', true);
+                    });
+
+        $rollBannerProducts = Product::where('is_live', true)
+                            ->whereHas('label', function($q) {
+                                $q->where('is_live', true)
+                                ->whereIn('name', ['Print Outdoor', 'Print Indoor']);
+                            })
+                            ->with(['images', 'discounts' => function($q) {
+                                $q->where('start_discount', '<=', now())
+                                ->where('end_discount', '>=', now());
+                            }])
+                            ->get();
+
+        $promoProducts = Product::where('is_live', true)
+                            ->whereHas('label', function($q) {
+                                $q->where('is_live', true);
+                            })
+                            ->whereHas('discounts', function($q) {
+                                $q->where('start_discount', '<=', now())
+                                ->where('end_discount', '>=', now());
+                            })
+                            ->with(['images', 'discounts' => function($q) {
+                                $q->where('start_discount', '<=', now())
+                                ->where('end_discount', '>=', now());
+                            }])
+                            ->get();
+
+        $hasRollBannerProducts = $rollBannerProducts->count() > 0;
+        $hasPromoProducts = $promoProducts->count() > 0;
 
         if ($productId) {
             $query->where('id', $productId);
-            $pageTitle = Product::find($productId)?->name ?: 'Produk';
+            $product = Product::where('is_live', true)
+                            ->whereHas('label', function($q) {
+                                $q->where('is_live', true);
+                            })
+                            ->find($productId);
+            $pageTitle = $product?->name ?: 'Produk';
         }
-        elseif ($filter === 'promo') {
+        elseif ($filter == 'promo') {
             $query->whereHas('discounts');
             $pageTitle = 'Promo';
         }
         elseif (is_numeric($filter)) {
-            $query->where('label_id', $filter);
-            $pageTitle = Label::find($filter)?->name ?: 'Produk';
+            $label = Label::where('is_live', true)->find($filter);
+            if ($label) {
+                $query->where('label_id', $filter);
+                $pageTitle = $label->name;
+            } else {
+                $pageTitle = 'Semua Produk';
+            }
         }
         else {
             $pageTitle = 'Semua Produk';
@@ -77,25 +119,24 @@ class ProductController extends Controller
             $query->where('name', 'like', "%{$search}%");
         }
 
-        if ($sort === 'price-desc' || $sort === 'price-asc') {
-            $direction = $sort === 'price-desc' ? 'desc' : 'asc';
+        if ($sort == 'price-desc' || $sort == 'price-asc') {
+            $direction = $sort == 'price-desc' ? 'desc' : 'asc';
             $query->orderBy('price', $direction);
         }
-        elseif ($sort === 'best-selling') {
+        elseif ($sort == 'best-selling') {
             $query->withCount('orderProducts')->orderBy('order_products_count', 'desc');
         }
-        elseif ($sort === 'newest') {
+        elseif ($sort == 'newest') {
             $query->orderBy('created_at', 'desc');
         }
 
         $products = $query->paginate(20)->withQueryString();
 
         return view('landingpage.home', compact(
-            'labels','products','filter','productId','search','sort','pageTitle','banners','testimonials','latestBlogs'
+            'labels','products','promoProducts','rollBannerProducts','hasRollBannerProducts','hasPromoProducts','filter','productId','search','sort','pageTitle','banners','testimonials','latestBlogs'
         ));
     }
 
-    // NewsletterController.php
     public function subscribe(Request $request)
     {
         $request->validate([
@@ -114,77 +155,116 @@ class ProductController extends Controller
 
     public function filterProduk(Request $request)
     {
-        // Sama seperti home(), bisa refactor jadi satu method jika perlu
-        $labels    = Label::with('products.images')->get();
+        $labels    = Label::where('is_live', true)
+                        ->whereHas('products', function($q) {
+                            $q->where('is_live', true);
+                        })
+                        ->with(['products' => function($query) {
+                            $query->where('is_live', true)->with('images');
+                        }])
+                        ->get();
+        
         $filter    = $request->query('filter', 'all');
         $productId = $request->query('product');
         $sort      = $request->query('sort');
+        $search    = $request->query('search');
 
         $query = $this->applyActiveDiscounts(Product::query());
+        
+        $query = $query->where('is_live', true)
+                    ->whereHas('label', function($q) {
+                        $q->where('is_live', true);
+                    });
 
         if ($productId) {
             $query->where('id', $productId);
-            $pageTitle = Product::find($productId)?->name ?: 'Produk';
+            $product = Product::where('is_live', true)
+                            ->whereHas('label', function($q) {
+                                $q->where('is_live', true);
+                            })
+                            ->find($productId);
+            $pageTitle = $product?->name ?: 'Produk';
         }
-        elseif ($filter === 'promo') {
-            $query->whereHas('discounts');
+        elseif ($filter == 'promo') {
+            $query->whereHas('discounts', function($q) {
+                $q->where('start_discount', '<=', now())
+                ->where('end_discount', '>=', now());
+            });
             $pageTitle = 'Promo';
         }
         elseif (is_numeric($filter)) {
-            $query->where('label_id', $filter);
-            $pageTitle = Label::find($filter)?->name ?: 'Produk';
+            $label = Label::where('is_live', true)
+                        ->whereHas('products', function($q) {
+                            $q->where('is_live', true);
+                        })
+                        ->find($filter);
+            if ($label) {
+                $query->where('label_id', $filter);
+                $pageTitle = $label->name;
+            } else {
+                $pageTitle = 'Semua Produk';
+            }
         }
         else {
             $pageTitle = 'Semua Produk';
         }
 
-        if ($search = $request->query('search')) {
+        if ($search) {
             SearchHistory::create(['term' => $search]);
             $query->where('name', 'like', "%{$search}%");
         }
 
-        if ($sort === 'price-desc' || $sort === 'price-asc') {
-            $direction = $sort === 'price-desc' ? 'desc' : 'asc';
+        if ($sort == 'price-desc' || $sort == 'price-asc') {
+            $direction = $sort == 'price-desc' ? 'desc' : 'asc';
             $query->orderBy('price', $direction);
         }
-        elseif ($sort === 'best-selling') {
+        elseif ($sort == 'best-selling') {
             $query->withCount('orderProducts')->orderBy('order_products_count', 'desc');
         }
-        elseif ($sort === 'newest') {
+        elseif ($sort == 'newest') {
             $query->orderBy('created_at', 'desc');
         }
 
-        $products = $query->paginate(20)->withQueryString();
+        $products = $query->paginate(12)->withQueryString();
 
         return view('landingpage.product_all', compact(
             'labels','products','filter','productId','search','sort','pageTitle'
         ));
     }
 
-    /**
-     * Detail buku landingpage
-     */
     public function detailProduk(Product $product, Request $request)
     {
+        if (!$product->is_live || !$product->label->is_live) {
+            abort(404, 'Produk tidak ditemukan atau tidak tersedia.');
+        }
+
         $orderProduct = null;
         $isEdit = false;
 
         $product->loadCount('orderProducts')
-                ->load('label.finishings', 'images', 'discounts');
+                ->load([
+                    'label.finishings', 
+                    'images', 
+                    'discounts' => function($q) {
+                        $q->where('start_discount', '<=', now())
+                        ->where('end_discount', '>=', now());
+                    }
+                ]);
 
-        $disc = $product->discounts->first(); 
-        $base = $product->price;
-        $finalBase = $base;
+        $finalBase = $product->getDiscountedPrice();
+        $bestDiscount = $product->getBestDiscount();
 
-        if ($disc) {
-            if ($disc->discount_percent) {
-                $finalBase -= $base * ($disc->discount_percent / 100);
-            } elseif ($disc->discount_fix) {
-                $finalBase -= $disc->discount_fix;
-            }
-        }
-
-        $bestProducts = Product::with('images')
+        $bestProducts = Product::where('is_live', true)
+            ->whereHas('label', function($q) {
+                $q->where('is_live', true);
+            })
+            ->with([
+                'images',
+                'discounts' => function($q) {
+                    $q->where('start_discount', '<=', now())
+                    ->where('end_discount', '>=', now());
+                }
+            ])
             ->withCount('orderProducts')
             ->orderByDesc('order_products_count')
             ->limit(4)
@@ -195,6 +275,7 @@ class ProductController extends Controller
             'orderProduct',
             'finalBase',
             'bestProducts',
+            'bestDiscount',
             'isEdit'
         ));
     }
@@ -274,10 +355,13 @@ class ProductController extends Controller
         try {
             $product = Product::with(['label.finishings', 'discounts'])->findOrFail($validated['product_id']);
 
-            $discount = $product->discounts
-                ->where('start_discount', '<=', now())
-                ->where('end_discount', '>=', now())
-                ->first();
+            if (!$product->is_live) {
+                return back()->withErrors(['error' => 'Produk tidak tersedia untuk pemesanan.'])->withInput();
+            }
+
+            if (!$product->label->is_live) {
+                return back()->withErrors(['error' => 'Kategori produk tidak tersedia untuk pemesanan.'])->withInput();
+            }
 
             $today        = now();
             $dailyCount   = Order::whereDate('created_at', $today->toDateString())->count() + 1;
@@ -300,17 +384,19 @@ class ProductController extends Controller
                 $file->storeAs('landingpage/img/order_design', $previewFileName, 'public');
             }
 
+            $bestDiscount = $product->getBestDiscount();
             $basePrice = $product->price;
+
             $discountPercent = null;
             $discountFix = null;
 
-            if ($discount) {
-                if ($discount->discount_percent) {
-                    $discountPercent = $discount->discount_percent;
-                    $basePrice -= $basePrice * ($discountPercent / 100);
-                } elseif ($discount->discount_fix) {
-                    $discountFix = $discount->discount_fix;
-                    $basePrice -= $discountFix;
+            if ($bestDiscount) {
+                if ($bestDiscount->discount_percent) {
+                    $discountPercent = $bestDiscount->discount_percent;
+                    $basePrice = $basePrice - ($basePrice * ($discountPercent / 100));
+                } elseif ($bestDiscount->discount_fix) {
+                    $discountFix = $bestDiscount->discount_fix;
+                    $basePrice = max(0, $basePrice - $discountFix);
                 }
             }
 
@@ -325,7 +411,7 @@ class ProductController extends Controller
             if (in_array($product->additional_unit, ['cm', 'm']) && $validated['length'] && $validated['width']) {
                 $l = $validated['length'];
                 $w = $validated['width'];
-                $area = $product->additional_unit === 'cm'
+                $area = $product->additional_unit == 'cm'
                     ? ($l / 100) * ($w / 100)
                     : $l * $w;
             }
@@ -338,9 +424,18 @@ class ProductController extends Controller
                 $subtotal *= 1.5;
             }
 
+            $calculatedDeadline = null;
+
+            if (isset($validated['waktu_deadline'])) {
+                $calculatedDeadline = $today->copy()->addDays(7)->toDateString();
+            }
+
             $order = Order::create([
                 'spk'               => $spkNumber,
                 'user_id'           => $user->id,
+                'nama_pelanggan'    => $user->name ?? null,
+                'email_pelanggan'   => $user->email ?? null,
+                'kontak_pelanggan'  => $user->phone ?? null,
                 'order_design'      => $designFileName,
                 'preview_design'    => $previewFileName,
                 'transaction_type'  => 0,
@@ -351,22 +446,47 @@ class ProductController extends Controller
                 'diskon_persen'     => $discountPercent,
                 'potongan_rp'       => $discountFix,
                 'waktu_deadline'    => $validated['waktu_deadline'] ?? null,
+                'deadline'          => $calculatedDeadline ?? null,
                 'express'           => $validated['express'],
                 'kebutuhan_proofing'=> $validated['kebutuhan_proofing'],
                 'proof_qty'         => $validated['proof_qty'] ?? null,
                 'pickup_status'     => 0,
                 'notes'             => $validated['notes'] ?? null,
+                'jenis_transaksi'   => 2,
+                'tipe_pengambilan'  => 1,
+                'metode_pengiriman' => 1,
+                'alamat'            => $user->address ?? null,
+                'kode_pos'          => $user->postal_code ?? null,
+                'provinsi'          => $user->province ?? null,
+                'kota'              => $user->district ?? null,
+                'kecamatan'         => $user->city ?? null,
+                'berat'             => 1000,
+                'status_pengerjaan' => 'pending',
+                'proses_proofing'   => 0,
+                'proses_produksi'   => 0,
+                'proses_finishing'  => 0,
+                'quality_control'   => 0,
+                'tanggal'           => $today->toDateString(),
+                'waktu'             => $today->toTimeString(),
+                'dp'                 => round($subtotal),
+                'full_payment'       => round($subtotal)
             ]);
 
             OrderProduct::create([
                 'order_id'       => $order->id,
                 'product_id'     => $validated['product_id'],
+                'jenis_cetakan'  => $validated['product_id'],
                 'material_type'  => $product->name,
+                'jenis_bahan'    => $product->id,
                 'finishing_type' => $finishingName,
+                'jenis_finishing' => $validated['finishing_id'] ?? null,
                 'length'         => $validated['length'] ?? null,
                 'width'          => $validated['width'] ?? null,
                 'qty'            => $validated['qty'],
                 'subtotal'       => round($subtotal),
+                'desain'            => $designFileName ?? null,
+                'preview'           => $previewFileName ?? null,
+                'jumlah_pesanan'    => $validated['qty']
             ]);
 
             $this->createOrderNotification($order, 0, $spkNumber);
@@ -382,7 +502,6 @@ class ProductController extends Controller
         }
     }
 
-
     // ---- Adminpage (CMS)
     
     public function adminIndex(Request $request)
@@ -397,17 +516,17 @@ class ProductController extends Controller
 
     public function adminStore(Request $request)
     {
-        // dd($request->all(), $request->file('product_images'));
-        
         $request->validate([
             'name_label' => 'required|string',
             'size' => 'nullable|string',
             'unit' => 'nullable|string',
             'desc' => 'nullable|string',
+            'is_live_label' => 'nullable|boolean',
             'name.*' => 'required|string',
             'price.*' => 'nullable|numeric',
+            'is_live_product.*' => 'nullable|boolean',
             'product_images' => 'nullable|array',
-            'product_images.*' => 'nullable|array|max:4', // Maksimal 4 gambar per produk
+            'product_images.*' => 'nullable|array|max:4',
             'product_images.*.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
@@ -416,7 +535,8 @@ class ProductController extends Controller
             'size' => $request->size,
             'unit' => $request->unit,
             'desc' => $request->desc,
-            'type' => 'standart'
+            'type' => 'standart',
+            'is_live' => $request->boolean('is_live_label', true)
         ]);
 
         if ($request->has('name')) {
@@ -434,7 +554,9 @@ class ProductController extends Controller
                     'production_time' => $request->production_time[$index] ?? null,
                     'description' => $request->description[$index] ?? null,
                     'spesification_desc' => $request->spesification_desc[$index] ?? null,
+                    'is_live' => $request->boolean("is_live_product.{$index}", true)
                 ]);
+                
                 $product->slug = Str::slug($productName) . '-' . $product->id;
                 $product->save();
 
@@ -479,9 +601,11 @@ class ProductController extends Controller
             'size' => 'nullable|string',
             'unit' => 'nullable|string',
             'desc' => 'nullable|string',
+            'is_live_label' => 'nullable|boolean',
             'name' => 'required|array|min:1',
             'name.*' => 'required|string',
             'price.*' => 'nullable|numeric',
+            'is_live_product.*' => 'nullable|boolean',
             'product_images' => 'nullable|array',
             'product_images.*' => 'nullable|array|max:4',
             'product_images.*.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -495,6 +619,7 @@ class ProductController extends Controller
             'size' => $validated['size'],
             'unit' => $request->input('unit'),
             'desc' => $validated['desc'],
+            'is_live' => $request->boolean('is_live_label', true)
         ]);
 
         $existingProductIds = $label->products()->pluck('id')->toArray();
@@ -514,7 +639,8 @@ class ProductController extends Controller
                 'production_time' => $request->production_time[$i] ?? null,
                 'description' => $request->description[$i] ?? null,
                 'spesification_desc' => $request->spesification_desc[$i] ?? null,
-                'slug' => Str::slug($nm)
+                'slug' => Str::slug($nm),
+                'is_live' => $request->boolean("is_live_product.{$i}", true)
             ];
 
             $product = $label->products()->updateOrCreate(['id' => $productId], $productData);
@@ -598,6 +724,57 @@ class ProductController extends Controller
         Finishing::where('label_id', $label->id)->delete();
 
         return redirect()->route('admin.product.index')->with('success', 'Data berhasil dihapus.');
+    }
+
+    public function toggleLabelLive(Label $label)
+    {
+        $label->update([
+            'is_live' => !$label->is_live
+        ]);
+
+        $status = $label->is_live ? 'ditampilkan' : 'disembunyikan';
+        $message = "Produk {$label->name} berhasil {$status} dari website.";
+        
+        if (!$label->is_live) {
+            $message .= " Semua sub produk dalam kategori ini juga tidak akan tampil.";
+        }
+
+        return redirect()->back()->with('success', $message);
+    }
+
+    public function toggleProductLive(Product $product)
+    {
+        $product->update([
+            'is_live' => !$product->is_live
+        ]);
+
+        $status = $product->is_live ? 'ditampilkan' : 'disembunyikan';
+        $message = "Sub produk {$product->name} berhasil {$status} dari website.";
+        
+        if ($product->is_live && !$product->label->is_live) {
+            $message .= " Namun produk ini tetap tidak akan tampil karena kategori utama ({$product->label->name}) sedang disembunyikan.";
+        }
+
+        return redirect()->back()->with('success', $message);
+    }
+
+    public function bulkToggleProducts(Request $request)
+    {
+        $request->validate([
+            'product_ids' => 'required|array',
+            'product_ids.*' => 'exists:products,id',
+            'action' => 'required|in:show,hide'
+        ]);
+
+        $isLive = $request->action == 'show';
+        
+        Product::whereIn('id', $request->product_ids)
+            ->update(['is_live' => $isLive]);
+
+        $action = $isLive ? 'ditampilkan' : 'disembunyikan';
+        $count = count($request->product_ids);
+        
+        return redirect()->back()->with('success', "{$count} produk berhasil {$action}.");
     }
     
 }

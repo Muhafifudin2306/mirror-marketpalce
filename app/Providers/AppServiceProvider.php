@@ -2,11 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Chat;
 use App\Models\Label;
 use App\Models\Order;
 use App\Models\Notification;
+use App\Models\OrderProduct;
 use App\Models\SearchHistory;
-use App\Models\Chat;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
@@ -118,6 +119,42 @@ class AppServiceProvider extends ServiceProvider
             } else {
                 $view->with('cartItems', collect());
                 $view->with('cartCount', 0);
+            }
+        });
+        view()->composer('*', function ($view) {
+            if (Auth::check()) {
+                $cartItems = OrderProduct::with([
+                    'product.images',
+                    'product.discounts' => function($q) {
+                        $q->where('start_discount', '<=', now())
+                        ->where('end_discount', '>=', now());
+                    },
+                    'order'
+                ])
+                ->whereHas('order', function($q) {
+                    $q->where('user_id', Auth::id())
+                    ->where('order_status', 0);
+                })
+                ->get();
+
+                $cartCount = $cartItems->count();
+                
+                // Hitung subtotal dengan best price
+                $subtotal = $cartItems->sum(function($item) {
+                    $basePrice = $item->product->getDiscountedPrice(); // Gunakan harga terbaik
+                    
+                    // Hitung area jika ada dimensi
+                    $area = 1;
+                    if (in_array($item->product->additional_unit, ['cm', 'm']) && $item->length && $item->width) {
+                        $area = $item->product->additional_unit == 'cm'
+                            ? ($item->length / 100) * ($item->width / 100)
+                            : $item->length * $item->width;
+                    }
+                    
+                    return $basePrice * $area * $item->qty;
+                });
+
+                $view->with(compact('cartItems', 'cartCount', 'subtotal'));
             }
         });
     }

@@ -401,101 +401,109 @@
     </div>
 
     <div class="container-xl">
-        <div class="title-up pt-4">
-            <h3 class="mb-0 mt-4" style="font-family: 'Poppins'; font-size:2.5rem; font-weight:600; color:#000;">Pilih Sendiri</h3>
-            <h3 class="mb-4" style="font-family: 'Poppins'; font-size:2.5rem; font-weight:600; color:#0439a0;">Kebutuhanmu!</h3>
-        </div>
-        <div id="labelsCarousel" class="carousel slide" data-bs-ride="carousel">
-          <div class="carousel-inner">
-              @foreach ($labels->chunk(4) as $index => $chunk)
-                  <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                      <div class="row g-4">
-                          @foreach ($chunk as $label)
-                              <div class="col-lg-3 col-md-6 col-sm-12">
-                                  <a href="{{ route('landingpage.products', array_merge(request()->all(), ['filter' => $label->id, 'product' => null])) }}"
-                                      class="text-decoration-none">
-                                      <div class="product-item shadow-sm bg-white h-100"
-                                          style="border-radius:10px;">
-                                          <div class="position-relative bg-light overflow-hidden"
-                                              style="border-radius:10px; height:290px;">
-                                              @php
-                                                  $firstProduct = $label->products->first();
-                                                  $image = $firstProduct ? $firstProduct->images->first() : null;
-                                              @endphp
-                                              @if($image && $image->image_product && file_exists(storage_path('app/public/' . $image->image_product)))
-                                                  <img src="{{ asset('storage/' . $image->image_product) }}"
-                                                      class="img-fluid w-100 h-100" style="object-fit:cover;" 
-                                                      alt="{{ $label->name }}">
-                                              @else
-                                                  <img src="{{ asset('landingpage/img/nophoto.png') }}"
-                                                      class="img-fluid w-100 h-100" style="object-fit:cover;"
-                                                      alt="No Image">
-                                              @endif
-                                              <div class="position-absolute bottom-0 start-0 w-100 p-3" 
-                                                  style="background: linear-gradient(transparent, rgba(0,0,0,0.7)); border-radius: 0 0 10px 10px;">
-                                                  <h5 class="text-white mb-0 fw-bold" style="font-family: 'Poppins'; font-size: 1.1rem; font-weight:550 !important;">
-                                                      {{ Str::limit($label->name, 35) }}
-                                                  </h5>
-                                              </div>
-                                          </div>
-                                      </div>
-                                  </a>
-                              </div>
-                          @endforeach
-                      </div>
-                  </div>
-              @endforeach
-          </div>
-
-          <!-- Controls tetap sama -->
-          <div class="carousel-controls-container">
-              <div class="carousel-controls">
-                  <!-- Prev tombol -->
-                  <button class="carousel-control-prev" type="button" data-bs-target="#labelsCarousel"
-                      data-bs-slide="prev">
-                      <span class="btn-arrow-carousel">
-                          <span class="arrow-out">&#8592;</span>
-                          <span class="arrow-in">&#8592;</span>
-                      </span>
-                      <span class="visually-hidden">Previous</span>
-                  </button>
-
-                  <!-- Next tombol -->
-                  <button class="carousel-control-next" type="button" data-bs-target="#labelsCarousel"
-                      data-bs-slide="next">
-                      <span class="btn-arrow-carousel">
-                          <span class="arrow-out">&#8594;</span>
-                          <span class="arrow-in">&#8594;</span>
-                      </span>
-                      <span class="visually-hidden">Next</span>
-                  </button>
-              </div>
-
-              <div class="carousel-indicators-custom" id="labelsIndicators">
-                  @foreach ($labels->chunk(4) as $index => $chunk)
-                      <div class="indicator-line {{ $index == 0 ? 'active' : '' }}" data-bs-target="#labelsCarousel"
-                          data-bs-slide-to="{{ $index }}">
-                      </div>
-                  @endforeach
-              </div>
-          </div>
-      </div>
-        <br>
-        <div class="row align-items-center">
-          <div class="col-md-12 position-relative">
-              <div class="diamond-accent"></div>
-              <div class="step-content">
-                  <h4 style="font-family: 'Poppins'; font-size:0.8rem; font-weight:600; color:#444444;">X DAN ROLL BANNER</h4>
-                    </h4>
-                    <h3 class="mb-4" style="margin-top:-5px !important; font-family: 'Poppins'; font-size:2.5rem; font-weight:600;"><span class="mt-0"
-                            style="color:#000;">Cetak Roll Banner</span><span class="mt-0" style="color:#0258d3;">
-                            Berkualitas</span></h3>
+    <div class="title-up pt-4">
+        <h3 class="mb-0 mt-4" style="font-family: 'Poppins'; font-size:2.5rem; font-weight:600; color:#000;">Pilih Sendiri</h3>
+        <h3 class="mb-4" style="font-family: 'Poppins'; font-size:2.5rem; font-weight:600; color:#0439a0;">Kebutuhanmu!</h3>
+    </div>
+    
+    <!-- Labels Carousel -->
+    <div id="labelsCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            @foreach ($labels->chunk(4) as $index => $chunk)
+                <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                    <div class="row g-4">
+                        @foreach ($chunk as $label)
+                            <div class="col-lg-3 col-md-6 col-sm-12">
+                                <a href="{{ route('landingpage.products', array_merge(request()->all(), ['filter' => $label->id, 'product' => null])) }}"
+                                    class="text-decoration-none">
+                                    <div class="product-item shadow-sm bg-white h-100"
+                                        style="border-radius:10px;">
+                                        <div class="position-relative bg-light overflow-hidden"
+                                            style="border-radius:10px; height:290px;">
+                                            @php
+                                                $firstProduct = $label->products->first();
+                                                $image = $firstProduct ? $firstProduct->images->first() : null;
+                                            @endphp
+                                            @if($image && $image->image_product && file_exists(storage_path('app/public/' . $image->image_product)))
+                                                <img src="{{ asset('storage/' . $image->image_product) }}"
+                                                    class="img-fluid w-100 h-100" style="object-fit:cover;" 
+                                                    alt="{{ $label->name }}">
+                                            @else
+                                                <img src="{{ asset('landingpage/img/nophoto.png') }}"
+                                                    class="img-fluid w-100 h-100" style="object-fit:cover;"
+                                                    alt="No Image">
+                                            @endif
+                                            <div class="position-absolute bottom-0 start-0 w-100 p-3" 
+                                                style="background: linear-gradient(transparent, rgba(0,0,0,0.7)); border-radius: 0 0 10px 10px;">
+                                                <h5 class="text-white mb-0 fw-bold" style="font-family: 'Poppins'; font-size: 1.1rem; font-weight:550 !important;">
+                                                    {{ Str::limit($label->name, 35) }}
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
+            @endforeach
+        </div>
+
+        <!-- Controls for Labels Carousel -->
+        <div class="carousel-controls-container">
+            <div class="carousel-controls">
+                <!-- Prev tombol -->
+                <button class="carousel-control-prev" type="button" data-bs-target="#labelsCarousel"
+                    data-bs-slide="prev">
+                    <span class="btn-arrow-carousel">
+                        <span class="arrow-out">&#8592;</span>
+                        <span class="arrow-in">&#8592;</span>
+                    </span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+
+                <!-- Next tombol -->
+                <button class="carousel-control-next" type="button" data-bs-target="#labelsCarousel"
+                    data-bs-slide="next">
+                    <span class="btn-arrow-carousel">
+                        <span class="arrow-out">&#8594;</span>
+                        <span class="arrow-in">&#8594;</span>
+                    </span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+
+            <div class="carousel-indicators-custom" id="labelsIndicators">
+                @foreach ($labels->chunk(4) as $index => $chunk)
+                    <div class="indicator-line {{ $index == 0 ? 'active' : '' }}" data-bs-target="#labelsCarousel"
+                        data-bs-slide-to="{{ $index }}">
+                    </div>
+                @endforeach
             </div>
         </div>
-        <div id="rollBannerCarousel" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                @foreach ($products->chunk(4) as $index => $chunk)
+    </div>
+
+    <br>
+
+    <!-- Roll Banner Section -->
+    <div class="row align-items-center">
+        <div class="col-md-12 position-relative">
+            <div class="diamond-accent"></div>
+            <div class="step-content">
+                <h4 style="font-family: 'Poppins'; font-size:0.8rem; font-weight:600; color:#444444;">X DAN ROLL BANNER</h4>
+                <h3 class="mb-4" style="margin-top:-5px !important; font-family: 'Poppins'; font-size:2.5rem; font-weight:600;">
+                    <span class="mt-0" style="color:#000;">Cetak Roll Banner</span>
+                    <span class="mt-0" style="color:#0258d3;"> Berkualitas</span>
+                </h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Roll Banner Carousel -->
+    <div id="rollBannerCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            @if($hasRollBannerProducts)
+                @foreach ($rollBannerProducts->chunk(4) as $index => $chunk)
                     <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
                         <div class="row g-4">
                             @foreach ($chunk as $prod)
@@ -521,7 +529,10 @@
                                             <div class="content p-3 d-flex flex-column" style="min-height:140px;">
                                                 <div class="title text-dark mb-0"
                                                     style="font-family: 'Poppins'; font-size:1.1rem; font-weight:600;">
-                                                    {{ Str::limit($prod->name, 35) }}
+                                                    {{ Str::limit($prod->name, 30) }}
+                                                    @if($prod->additional_size && $prod->additional_unit)
+                                                        {{ $prod->additional_size }} {{ $prod->additional_unit }}
+                                                    @endif
                                                 </div>
                                                 <div class="title mb-4" style="font-family: 'Poppins'; font-size:0.7rem; font-weight:400;">
                                                     Ukuran
@@ -530,205 +541,253 @@
                                                 </div>
                                                 @php
                                                     $base = $prod->price;
-                                                    $final = $base;
-                                                    $disc = $prod->discounts->first();
+                                                    $final = $prod->getDiscountedPrice();
+                                                    $bestDiscount = $prod->getBestDiscount();
+                                                @endphp
 
-                          if ($disc) {
-                            if ($disc->discount_percent) {
-                              $amount = $base * ($disc->discount_percent / 100);
-                            } else {
-                              $amount = $disc->discount_fix;
-                            }
-                            $final = max(0, $base - $amount);
-                          }
-                        @endphp
-                        @if($final < $base)
-                          <div class="title mb-0 mt-1" style="font-size:0.6rem; font-weight:600; color:#888;">
-                            MULAI DARI
-                          </div>
-                          <div class="price-container d-flex align-items-center" style="gap:8px;">
-                            <span class="discount-price text-decoration-line-through">
-                              Rp {{ number_format($base,0,',','.') }}
-                            </span>
-                            <img src="{{ asset('landingpage/img/discount_logo.png') }}" alt="Diskon" style="width:14px;">
-                            <span class="price fw-bold"
-                                  style="font-family: 'Poppins'; font-size:1.1rem; color:#fc2865;">
-                              Rp {{ number_format($final,0,',','.') }}
-                            </span>
-                          </div>
-                        @else
-                          <div class="title mb-0 mt-1" style="font-size:0.6rem; font-weight:600; color:#888;">
-                            MULAI DARI
-                          </div>
-                          <div class="price-container mt-0">
-                            <span class="fw-bold" style="font-family: 'Poppins'; font-size:1.1rem; color:#444444;">Rp {{ number_format($base,0,',','.') }}</span>
-                          </div>
-                        @endif
-                      </div>
+                                                @if($final < $base)
+                                                    <div class="title mb-0 mt-1" style="font-size:0.6rem; font-weight:600; color:#888;">
+                                                        MULAI DARI
+                                                    </div>
+                                                    <div class="price-container d-flex align-items-center" style="gap:8px;">
+                                                        <span class="discount-price text-decoration-line-through">
+                                                            Rp {{ number_format($base,0,',','.') }}
+                                                        </span>
+                                                        <img src="{{ asset('landingpage/img/discount_logo.png') }}" alt="Diskon" style="width:14px;">
+                                                        <span class="price fw-bold" style="font-family: 'Poppins'; font-size:1.1rem; color:#fc2865;">
+                                                            Rp {{ number_format($final,0,',','.') }}
+                                                        </span>
+                                                    </div>
+                                                @else
+                                                    <div class="title mb-0 mt-1" style="font-size:0.6rem; font-weight:600; color:#888;">
+                                                        MULAI DARI
+                                                    </div>
+                                                    <div class="price-container mt-0">
+                                                        <span class="fw-bold" style="font-family: 'Poppins'; font-size:1.1rem; color:#444444;">
+                                                            Rp {{ number_format($base,0,',','.') }}
+                                                        </span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
-                  </a>
+                @endforeach
+            @else
+                <div class="carousel-item active">
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="text-center py-5">
+                                <img src="{{ asset('landingpage/img/no-products.png') }}" 
+                                    alt="Tidak ada produk" 
+                                    class="img-fluid mb-3" 
+                                    style="max-width: 200px; opacity: 0.6;"
+                                    onerror="this.style.display='none'">
+                                <h5 class="text-muted mb-2" style="font-family: 'Poppins'; font-weight: 500;">
+                                    Belum Ada Produk Roll Banner
+                                </h5>
+                                <p class="text-muted" style="font-family: 'Poppins'; font-size: 0.9rem;">
+                                    Produk Print Outdoor dan Print Indoor sedang dalam persiapan
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              @endforeach
-            </div>
-          </div>
-        @endforeach
-      </div>
-
-      <div class="carousel-controls-container">
-        <div class="carousel-controls">
-          <!-- Prev tombol -->
-          <button class="carousel-control-prev" type="button"
-                  data-bs-target="#rollBannerCarousel" data-bs-slide="prev">
-            <span class="btn-arrow-carousel">
-              <span class="arrow-out">&#8592;</span>
-              <span class="arrow-in">&#8592;</span>
-            </span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-
-          <!-- Next tombol -->
-          <button class="carousel-control-next" type="button"
-                  data-bs-target="#rollBannerCarousel" data-bs-slide="next">
-            <span class="btn-arrow-carousel">
-              <span class="arrow-out">&#8594;</span>
-              <span class="arrow-in">&#8594;</span>
-            </span>
-            <span class="visually-hidden">Next</span>
-          </button>
+            @endif
         </div>
 
-        <div class="carousel-indicators-custom" id="rollBannerIndicators">
-          @foreach($products->chunk(4) as $index => $chunk)
-            <div class="indicator-line {{ $index == 0 ? 'active' : '' }}"
-                data-bs-target="#rollBannerCarousel"
-                data-bs-slide-to="{{ $index }}">
+        <!-- Controls for Roll Banner Carousel -->
+        @if($hasRollBannerProducts)
+            <div class="carousel-controls-container">
+                <div class="carousel-controls">
+                    <!-- Prev tombol -->
+                    <button class="carousel-control-prev" type="button"
+                            data-bs-target="#rollBannerCarousel" data-bs-slide="prev">
+                        <span class="btn-arrow-carousel">
+                            <span class="arrow-out">&#8592;</span>
+                            <span class="arrow-in">&#8592;</span>
+                        </span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+
+                    <!-- Next tombol -->
+                    <button class="carousel-control-next" type="button"
+                            data-bs-target="#rollBannerCarousel" data-bs-slide="next">
+                        <span class="btn-arrow-carousel">
+                            <span class="arrow-out">&#8594;</span>
+                            <span class="arrow-in">&#8594;</span>
+                        </span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+
+                <div class="carousel-indicators-custom" id="rollBannerIndicators">
+                    @foreach($rollBannerProducts->chunk(4) as $index => $chunk)
+                        <div class="indicator-line {{ $index == 0 ? 'active' : '' }}"
+                            data-bs-target="#rollBannerCarousel"
+                            data-bs-slide-to="{{ $index }}">
+                        </div>
+                    @endforeach
+                </div>
             </div>
-          @endforeach
-        </div>
-      </div>
+        @endif
     </div>
+
     <br>
+
+    <!-- Promo Section -->
     <div class="row align-items-center">
-      <div class="col-md-12 position-relative">
-          <div class="diamond-accent"></div>
-          <div class="step-content">
-              <h4 style="font-family: 'Poppins'; font-size:0.8rem; font-weight:600; color:#444444;">PRODUK PROMO</h4>
-          <h3 class="mb-4" style="margin-top:-5px !important; font-family: 'Poppins'; font-size:2.5rem; font-weight:600;"><span class="mt-0" style="color:#000;">Lagi Promo Bulan Ini!</span></h3>
+        <div class="col-md-12 position-relative">
+            <div class="diamond-accent"></div>
+            <div class="step-content">
+                <h4 style="font-family: 'Poppins'; font-size:0.8rem; font-weight:600; color:#444444;">PRODUK PROMO</h4>
+                <h3 class="mb-4" style="margin-top:-5px !important; font-family: 'Poppins'; font-size:2.5rem; font-weight:600;">
+                    <span class="mt-0" style="color:#000;">Lagi Promo Bulan Ini!</span>
+                </h3>
+            </div>
         </div>
-      </div>
     </div>
+
+    <!-- Promo Carousel -->
     <div id="promoCarousel" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-inner">
-        @foreach($products->chunk(4) as $index => $chunk)
-          <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-            <div class="row g-4">
-              @foreach($chunk as $prod)
-                <div class="col-lg-3 col-md-6 col-sm-12">
-                  <a href="{{ route('landingpage.produk_detail', $prod->slug) }}" class="text-decoration-none">
-                    <div class="product-item shadow-sm bg-white h-100" style="border-radius:10px;">
-                      <div class="position-relative bg-light overflow-hidden" style="border-radius:10px; height:200px;">
-                        @php
-                            $image = $prod->images->first();
-                        @endphp
-                        @if($image && $image->image_product && file_exists(storage_path('app/public/' . $image->image_product)))
-                            <img src="{{ asset('storage/' . $image->image_product) }}"
-                                class="img-fluid w-100 h-100" style="object-fit:cover;" 
-                                alt="{{ $prod->name }}">
-                        @else
-                            <img src="{{ asset('landingpage/img/nophoto.png') }}"
-                                class="img-fluid w-100 h-100" style="object-fit:cover;"
-                                alt="No Image">
-                        @endif
-                      </div>
-                      <div class="content p-3 d-flex flex-column" style="min-height:140px;">
-                        <div class="title text-dark mb-0"
-                            style="font-family: 'Poppins'; font-size:1.1rem; font-weight:600;">
-                          {{ Str::limit($prod->name, 35) }}
-                        </div>
-                        <div class="title mb-4"
-                            style="font-family: 'Poppins'; font-size:0.7rem;">
-                          Ukuran {{ intval($prod->long_product) }}x{{ intval($prod->width_product) }} {{ $prod->additional_unit }}
-                        </div>
-                        @php
-                          $base  = $prod->price;
-                          $final = $base;
-                          $disc = $prod->discounts->first();
+        <div class="carousel-inner">
+            @if($hasPromoProducts)
+                @foreach($promoProducts->chunk(4) as $index => $chunk)
+                    <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                        <div class="row g-4">
+                            @foreach($chunk as $prod)
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <a href="{{ route('landingpage.produk_detail', $prod->slug) }}" class="text-decoration-none">
+                                        <div class="product-item shadow-sm bg-white h-100" style="border-radius:10px;">
+                                            <div class="position-relative bg-light overflow-hidden" style="border-radius:10px; height:200px;">
+                                                @php
+                                                    $image = $prod->images->first();
+                                                @endphp
+                                                @if($image && $image->image_product && file_exists(storage_path('app/public/' . $image->image_product)))
+                                                    <img src="{{ asset('storage/' . $image->image_product) }}"
+                                                        class="img-fluid w-100 h-100" style="object-fit:cover;" 
+                                                        alt="{{ $prod->name }}">
+                                                @else
+                                                    <img src="{{ asset('landingpage/img/nophoto.png') }}"
+                                                        class="img-fluid w-100 h-100" style="object-fit:cover;"
+                                                        alt="No Image">
+                                                @endif
+                                            </div>
+                                            <div class="content p-3 d-flex flex-column" style="min-height:140px;">
+                                                <div class="title text-dark mb-0"
+                                                    style="font-family: 'Poppins'; font-size:1.1rem; font-weight:600;">
+                                                    {{ Str::limit($prod->name, 30) }}
+                                                    @if($prod->additional_size && $prod->additional_unit)
+                                                        {{ $prod->additional_size }} {{ $prod->additional_unit }}
+                                                    @endif
+                                                </div>
+                                                <div class="title mb-4"
+                                                    style="font-family: 'Poppins'; font-size:0.7rem;">
+                                                    Ukuran {{ intval($prod->long_product) }}x{{ intval($prod->width_product) }} {{ $prod->additional_unit }}
+                                                </div>
+                                                @php
+                                                    $base = $prod->price;
+                                                    $final = $prod->getDiscountedPrice();
+                                                    $bestDiscount = $prod->getBestDiscount();
+                                                @endphp
 
-                          if ($disc) {
-                            if ($disc->discount_percent) {
-                              $amount = $base * ($disc->discount_percent / 100);
-                            } else {
-                              $amount = $disc->discount_fix;
-                            }
-                            $final = max(0, $base - $amount);
-                          }
-                        @endphp
-                        @if($final < $base)
-                          <div class="title mb-0 mt-1" style="font-size:0.6rem; font-weight:600; color:#888;">
-                            MULAI DARI
-                          </div>
-                          <div class="price-container d-flex align-items-center" style="gap:8px;">
-                            <span class="discount-price text-decoration-line-through">
-                              Rp {{ number_format($base,0,',','.') }}
-                            </span>
-                            <img src="{{ asset('landingpage/img/discount_logo.png') }}" alt="Diskon" style="width:14px;">
-                            <span class="price fw-bold"
-                                  style="font-family: 'Poppins'; font-size:1.1rem; color:#fc2865;">
-                              Rp {{ number_format($final,0,',','.') }}
-                            </span>
-                          </div>
-                        @else
-                          <div class="title mb-0 mt-1" style="font-size:0.6rem; font-weight:600; color:#888;">
-                            Mulai Dari
-                          </div>
-                          <div class="price-container mt-0">
-                            <span class="fw-bold" style="font-family: 'Poppins'; font-size:1.1rem; color:#444444;">Rp {{ number_format($base,0,',','.') }}</span>
-                          </div>
-                        @endif
-                      </div>
+                                                @if($final < $base)
+                                                    <div class="title mb-0 mt-1" style="font-size:0.6rem; font-weight:600; color:#888;">
+                                                        MULAI DARI
+                                                    </div>
+                                                    <div class="price-container d-flex align-items-center" style="gap:8px;">
+                                                        <span class="discount-price text-decoration-line-through">
+                                                            Rp {{ number_format($base,0,',','.') }}
+                                                        </span>
+                                                        <img src="{{ asset('landingpage/img/discount_logo.png') }}" alt="Diskon" style="width:14px;">
+                                                        <span class="price fw-bold" style="font-family: 'Poppins'; font-size:1.1rem; color:#fc2865;">
+                                                            Rp {{ number_format($final,0,',','.') }}
+                                                        </span>
+                                                    </div>
+                                                @else
+                                                    <div class="title mb-0 mt-1" style="font-size:0.6rem; font-weight:600; color:#888;">
+                                                        MULAI DARI
+                                                    </div>
+                                                    <div class="price-container mt-0">
+                                                        <span class="fw-bold" style="font-family: 'Poppins'; font-size:1.1rem; color:#444444;">
+                                                            Rp {{ number_format($base,0,',','.') }}
+                                                        </span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
-                  </a>
+                @endforeach
+            @else
+                <div class="carousel-item active">
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="text-center py-5">
+                                <img src="{{ asset('landingpage/img/no-promo.png') }}" 
+                                    alt="Tidak ada promo" 
+                                    class="img-fluid mb-3" 
+                                    style="max-width: 200px; opacity: 0.6;"
+                                    onerror="this.style.display='none'">
+                                <h5 class="text-muted mb-2" style="font-family: 'Poppins'; font-weight: 500;">
+                                    Belum Ada Promo Aktif
+                                </h5>
+                                <p class="text-muted" style="font-family: 'Poppins'; font-size: 0.9rem;">
+                                    Pantau terus untuk mendapatkan promo menarik bulan ini!
+                                </p>
+                                <a href="{{ url('/products') }}" class="btn btn-outline-primary mt-2" style="border-radius: 25px; padding: 8px 20px; font-size: 0.9rem;">
+                                    Lihat Semua Produk
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              @endforeach
-            </div>
-          </div>
-        @endforeach
-      </div>
-
-      <div class="carousel-controls-container">
-        <div class="carousel-controls">
-          <!-- Prev -->
-          <button class="carousel-control-prev" type="button"
-                  data-bs-target="#promoCarousel" data-bs-slide="prev">
-            <span class="btn-arrow-carousel">
-              <span class="arrow-out">&#8592;</span>
-              <span class="arrow-in">&#8592;</span>
-            </span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-
-          <!-- Next -->
-          <button class="carousel-control-next" type="button"
-                  data-bs-target="#promoCarousel" data-bs-slide="next">
-            <span class="btn-arrow-carousel">
-              <span class="arrow-out">&#8594;</span>
-              <span class="arrow-in">&#8594;</span>
-            </span>
-            <span class="visually-hidden">Next</span>
-          </button>
+            @endif
         </div>
 
-        <div class="carousel-indicators-custom" id="promoIndicators">
-          @foreach($products->chunk(4) as $index => $chunk)
-            <div class="indicator-line {{ $index == 0 ? 'active' : '' }}"
-                data-bs-target="#promoCarousel"
-                data-bs-slide-to="{{ $index }}">
+        <!-- Controls for Promo Carousel -->
+        @if($hasPromoProducts)
+            <div class="carousel-controls-container">
+                <div class="carousel-controls">
+                    <!-- Prev -->
+                    <button class="carousel-control-prev" type="button"
+                            data-bs-target="#promoCarousel" data-bs-slide="prev">
+                        <span class="btn-arrow-carousel">
+                            <span class="arrow-out">&#8592;</span>
+                            <span class="arrow-in">&#8592;</span>
+                        </span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+
+                    <!-- Next -->
+                    <button class="carousel-control-next" type="button"
+                            data-bs-target="#promoCarousel" data-bs-slide="next">
+                        <span class="btn-arrow-carousel">
+                            <span class="arrow-out">&#8594;</span>
+                            <span class="arrow-in">&#8594;</span>
+                        </span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+
+                <div class="carousel-indicators-custom" id="promoIndicators">
+                    @foreach($promoProducts->chunk(4) as $index => $chunk)
+                        <div class="indicator-line {{ $index == 0 ? 'active' : '' }}"
+                            data-bs-target="#promoCarousel"
+                            data-bs-slide-to="{{ $index }}">
+                        </div>
+                    @endforeach
+                </div>
             </div>
-          @endforeach
-        </div>
-      </div>
+        @endif
     </div>
-  </div>
+</div>
 
   <!-- PRODUK PILIHAN Vertical Carousel -->
   <div class="container-fluid footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
@@ -875,42 +934,26 @@
                 Kata Mereka <span style="color:#ffc74c;">Tentang Sinau Print</span>
             </h3>
 
-            {{-- Swiper Container --}}
-            <div class="swiper feedback-swiper">
-                <div class="swiper-wrapper">
+            {{-- Testimonial Container --}}
+            <div class="testimonial-infinite-scroll" id="testimonialScroll">
+                <div class="testimonial-track" id="testimonialTrack">
                     @if($testimonials->count() > 0)
-                        {{-- Duplicate testimonials untuk seamless loop --}}
-                        @php
-                            $totalSlides = $testimonials->count();
-                            $duplicateCount = max(15, ceil(15 / $totalSlides) * $totalSlides);
-                        @endphp
-                        
-                        @for($i = 0; $i < $duplicateCount; $i++)
+                        @foreach($testimonials as $testimonial)
                             @php
-                                $testimonial = $testimonials[$i % $totalSlides];
-                                // Check if photo exists in storage
-                                $photoPath = $testimonial->photo 
-                                    ? 'storage/' . $testimonial->photo 
-                                    : null;
+                                $photoPath = $testimonial->photo ? 'storage/' . $testimonial->photo : null;
                                 $photoExists = $photoPath && file_exists(public_path($photoPath));
-                                $photoUrl = $photoExists 
-                                    ? asset($photoPath) 
-                                    : asset('landingpage/img/no-photo-icon.jpg');
+                                $photoUrl = $photoExists ? asset($photoPath) : asset('landingpage/img/no-photo-icon.jpg');
                             @endphp
                             
-                            <div class="swiper-slide">
+                            <div class="testimonial-item">
                                 <div class="testimonial-card">
                                     <div class="quote-mark">"</div>
                                     <div class="testimonial-text">
                                         {{ $testimonial->feedback }}
                                     </div>
                                     <div class="testimonial-author">
-                                        <img
-                                            src="{{ $photoUrl }}"
-                                            alt="{{ $testimonial->name }}"
-                                            class="author-photo"
-                                            onerror="this.src='{{ asset('landingpage/img/no-photo-icon.jpg') }}'"
-                                        />
+                                        <img src="{{ $photoUrl }}" alt="{{ $testimonial->name }}" class="author-photo"
+                                            onerror="this.src='{{ asset('landingpage/img/no-photo-icon.jpg') }}'">
                                         <div class="author-info">
                                             <div class="author-name">{{ $testimonial->name }}</div>
                                             <div class="author-location">{{ $testimonial->location }}</div>
@@ -918,43 +961,53 @@
                                     </div>
                                 </div>
                             </div>
-                        @endfor
+                        @endforeach
+
+                        @foreach($testimonials as $testimonial)
+                            @php
+                                $photoPath = $testimonial->photo ? 'storage/' . $testimonial->photo : null;
+                                $photoExists = $photoPath && file_exists(public_path($photoPath));
+                                $photoUrl = $photoExists ? asset($photoPath) : asset('landingpage/img/no-photo-icon.jpg');
+                            @endphp
+                            
+                            <div class="testimonial-item">
+                                <div class="testimonial-card">
+                                    <div class="quote-mark">"</div>
+                                    <div class="testimonial-text">
+                                        {{ $testimonial->feedback }}
+                                    </div>
+                                    <div class="testimonial-author">
+                                        <img src="{{ $photoUrl }}" alt="{{ $testimonial->name }}" class="author-photo"
+                                            onerror="this.src='{{ asset('landingpage/img/no-photo-icon.jpg') }}'">
+                                        <div class="author-info">
+                                            <div class="author-name">{{ $testimonial->name }}</div>
+                                            <div class="author-location">{{ $testimonial->location }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     @else
-                        {{-- Fallback testimonials --}}
                         @php
                             $dummyTestimonials = [
-                                ['text' => "Pelayanan yang sangat ramah\ndibantu sampai selesai", 'name' => 'Andi', 'location' => 'Jakarta'],
+                                ['text' => "Pelayanan yang sangat ramah dibantu sampai selesai", 'name' => 'Andi', 'location' => 'Jakarta'],
                                 ['text' => "Cepat sekali pengerjaannya!", 'name' => 'Budi', 'location' => 'Bandung'],
-                                ['text' => "Mau online atau offline,\nmudah banget dan cepat!", 'name' => 'Citra', 'location' => 'Surabaya'],
+                                ['text' => "Mau online atau offline, mudah banget dan cepat!", 'name' => 'Citra', 'location' => 'Surabaya'],
                                 ['text' => "Warna nya bagus banget!", 'name' => 'Dewi', 'location' => 'Yogyakarta'],
                                 ['text' => "Kualitas cetak juara!", 'name' => 'Eka', 'location' => 'Medan'],
                             ];
                         @endphp
                         
-                        @for($i = 0; $i < 15; $i++)
-                            @php
-                                $dummy = $dummyTestimonials[$i % count($dummyTestimonials)];
-                                $photoIndex = ($i % 5) + 1;
-                                $photoPath = 'landingpage/img/testimonial' . $photoIndex . '.jpg';
-                                $photoExists = file_exists(public_path($photoPath));
-                                $photoUrl = $photoExists 
-                                    ? asset($photoPath) 
-                                    : asset('landingpage/img/no-photo-icon.jpg');
-                            @endphp
-                            
-                            <div class="swiper-slide">
+                        @foreach($dummyTestimonials as $dummy)
+                            <div class="testimonial-item">
                                 <div class="testimonial-card">
                                     <div class="quote-mark">"</div>
                                     <div class="testimonial-text">
                                         {{ $dummy['text'] }}
                                     </div>
                                     <div class="testimonial-author">
-                                        <img
-                                            src="{{ $photoUrl }}"
-                                            alt="{{ $dummy['name'] }}"
-                                            class="author-photo"
-                                            onerror="this.src='{{ asset('landingpage/img/no-photo-icon.jpg') }}'"
-                                        />
+                                        <img src="{{ asset('landingpage/img/no-photo-icon.jpg') }}" 
+                                            alt="{{ $dummy['name'] }}" class="author-photo">
                                         <div class="author-info">
                                             <div class="author-name">{{ $dummy['name'] }}</div>
                                             <div class="author-location">{{ $dummy['location'] }}</div>
@@ -962,7 +1015,26 @@
                                     </div>
                                 </div>
                             </div>
-                        @endfor
+                        @endforeach
+                        
+                        @foreach($dummyTestimonials as $dummy)
+                            <div class="testimonial-item">
+                                <div class="testimonial-card">
+                                    <div class="quote-mark">"</div>
+                                    <div class="testimonial-text">
+                                        {{ $dummy['text'] }}
+                                    </div>
+                                    <div class="testimonial-author">
+                                        <img src="{{ asset('landingpage/img/no-photo-icon.jpg') }}" 
+                                            alt="{{ $dummy['name'] }}" class="author-photo">
+                                        <div class="author-info">
+                                            <div class="author-name">{{ $dummy['name'] }}</div>
+                                            <div class="author-location">{{ $dummy['location'] }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     @endif
                 </div>
             </div>
@@ -1046,7 +1118,7 @@
         <div class="position-absolute top-50 start-0 translate-middle-y cta-content">
             <h3 class="mb-0" style="font-family: 'Poppins'; font-size:2.6rem !important; font-weight:550; color:#fff;">Mau Cetak Keperluan Kantor?</h3>
             <h3 class="mb-8" style="font-family: 'Poppins'; font-size:2.6rem !important; font-weight:550; color:#ffc74c; margin-top:-4px;">Boleh Tanya Dulu!</h3>
-            <a href="{{ url('/products') }}" class="btn-schedule">
+            <a href="https://wa.me/6281952764747?text=Halo%20Admin%20Sinau%20Print%21%20Saya%20ingin%20mengajukan%20pertanyaan%20terkait%20produk%20yang%20ada%20di%20sinau%20print" target="_blank" class="btn-schedule">
             <span class="btn-text">JADWALKAN KONSULTASI</span>
             <span class="btn-arrow">
                 <i class="bi bi-arrow-right-short arrow-out"></i>
@@ -1110,27 +1182,51 @@
 </div>
 
 <style>
-.feedback-swiper {
+.testimonial-infinite-scroll {
     width: 100%;
-    height: auto;
     overflow: hidden;
+    position: relative;
+    mask: linear-gradient(90deg, transparent, white 5%, white 95%, transparent);
+    -webkit-mask: linear-gradient(90deg, transparent, white 5%, white 95%, transparent);
 }
 
-.swiper-wrapper {
-    transition-timing-function: linear !important;
+.testimonial-track {
+    display: flex;
+    gap: 30px;
+    animation: scroll-testimonial var(--scroll-duration, 60s) linear infinite;
+    width: max-content;
+}
+
+@keyframes scroll-testimonial {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(calc((430px * {{ $testimonials->count() > 0 ? $testimonials->count() : 5 }}) * -1));
+    }
+}
+
+.testimonial-item {
+    flex: 0 0 400px;
+    user-select: none;
+}
+
+.feedback-container {
+    position: relative;
 }
 
 .testimonial-card {
     position: relative;
-    max-width: 400px;
     height: 230px;
-    margin: 0 auto;
     padding: 30px;
     border-radius: 10px;
     background-color: #4a87dd;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    pointer-events: none;
+    user-select: none;
+    transition: transform 0.3s ease;
 }
 
 .quote-mark {
@@ -1140,6 +1236,7 @@
     font-size: 4rem;
     line-height: 1;
     color: rgba(255, 255, 255, 0.3);
+    font-family: serif;
 }
 
 .testimonial-text {
@@ -1149,10 +1246,10 @@
     justify-content: center;
     padding: 20px 10px;
     font-family: 'Barlow', sans-serif;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     color: white;
-    white-space: pre-line;
     text-align: center;
+    line-height: 1.4;
 }
 
 .testimonial-author {
@@ -1168,6 +1265,7 @@
     border-radius: 50%;
     object-fit: cover;
     flex-shrink: 0;
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .author-info {
@@ -1178,40 +1276,83 @@
     color: #ffc74c;
     font-weight: bold;
     line-height: 1.2;
+    font-size: 0.95rem;
 }
 
 .author-location {
     color: white;
     font-size: 0.875rem;
     line-height: 1.2;
+    opacity: 0.9;
 }
 
-/* Responsive adjustments */
+/* Responsive */
+@media (max-width: 1024px) {
+    .testimonial-item {
+        flex: 0 0 350px;
+    }
+    
+    @keyframes scroll-testimonial {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(calc((380px * {{ $testimonials->count() > 0 ? $testimonials->count() : 5 }}) * -1));
+        }
+    }
+}
+
 @media (max-width: 768px) {
+    .testimonial-item {
+        flex: 0 0 320px;
+    }
+    
     .testimonial-card {
-        max-width: 350px;
-        height: 150px;
+        height: 200px;
         padding: 25px;
     }
     
     .testimonial-text {
-        font-size: 1.1rem;
+        font-size: 1rem;
+        padding: 15px 8px;
+    }
+    
+    @keyframes scroll-testimonial {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(calc((350px * {{ $testimonials->count() > 0 ? $testimonials->count() : 5 }}) * -1));
+        }
     }
 }
 
 @media (max-width: 576px) {
+    .testimonial-item {
+        flex: 0 0 280px;
+    }
+    
     .testimonial-card {
-        max-width: 300px;
         height: 220px;
         padding: 20px;
     }
     
     .testimonial-text {
-        font-size: 1rem;
+        font-size: 0.95rem;
+        padding: 15px 5px;
     }
     
     .quote-mark {
         font-size: 3rem;
+    }
+    
+    @keyframes scroll-testimonial {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(calc((310px * {{ $testimonials->count() > 0 ? $testimonials->count() : 5 }}) * -1));
+        }
     }
 }
 </style>
@@ -1295,64 +1436,13 @@ updateCustomIndicators('#promoCarousel', 'promoIndicators');
 updateCustomIndicators('#produkPilihanCarousel', 'produkPilihanIndicators');
 
 </script>
-{{-- Include Swiper JS/CSS di <head> atau sebelum </body> seperti ini: --}}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
-<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    let swiper = new Swiper('.feedback-swiper', {
-        slidesPerView: 'auto',
-        spaceBetween: 30,
-        speed: 5000,
-        autoplay: {
-            delay: 0,
-            disableOnInteraction: false,
-            pauseOnMouseEnter: false,
-        },
-        loop: true,
-        loopAdditionalSlides: 10,
-        allowTouchMove: false,
-        freeMode: {
-            enabled: true,
-            sticky: false,
-            momentum: false,
-        },
-        breakpoints: {
-            320: {
-                slidesPerView: 1,
-                spaceBetween: 20
-            },
-            640: {
-                slidesPerView: 2,
-                spaceBetween: 20
-            },
-            1024: {
-                slidesPerView: 3,
-                spaceBetween: 30
-            }
-        },
-        on: {
-            init: function() {
-                // Ensure continuous animation
-                this.el.addEventListener('mouseenter', () => {
-                    this.autoplay.stop();
-                });
-                
-                this.el.addEventListener('mouseleave', () => {
-                    this.autoplay.start();
-                });
-            }
-        }
-    });
-
-    // Restart animation if it stops
-    setInterval(() => {
-        if (swiper && swiper.autoplay && !swiper.autoplay.running) {
-            swiper.autoplay.start();
-        }
-    }, 1000);
+    const testimonialCount = {{ $testimonials->count() > 0 ? $testimonials->count() : 5 }};
+    const baseSpeed = 3;
+    const totalDuration = testimonialCount * baseSpeed;
+    
+    document.documentElement.style.setProperty('--scroll-duration', `${totalDuration}s`);
 });
 </script>
-
 @endsection

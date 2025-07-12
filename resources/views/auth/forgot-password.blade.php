@@ -64,17 +64,23 @@
         font-weight: 200;
     }
 
-    .forgot-password-link {
+    .alert {
+        border-radius: 8px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.875rem;
+    }
+
+    .back-link {
         color: #0439a0;
         text-decoration: none;
         font-size: 0.75rem;
         font-weight: 500;
         font-family: 'Poppins', sans-serif;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
         display: inline-block;
     }
 
-    .forgot-password-link:hover {
+    .back-link:hover {
         color: #0258d3;
         text-decoration: underline;
     }
@@ -95,15 +101,22 @@
     <div class="row w-100">
         <div class="col-md-6 d-flex align-items-center justify-content-center login-left px-4">
             <div>
-                <h1>Yuk Login Dulu</h1>
-                <h1 style="color:#ffc74c; text-align: left;">untuk Checkout!</h1>
-                <p>Butuh bantuan? <a href="#">Baca FAQ</a> atau <a href="#">Hubungi Kami</a></p>
+                <h1>Lupa Password?</h1>
+                <h1 style="color:#ffc74c; text-align: left;">Jangan Khawatir!</h1>
+                <p>Masukkan email Anda dan kami akan mengirimkan link untuk reset password.</p>
             </div>
         </div>
         <div class="col-md-6 d-flex align-items-center justify-content-center">
             <div class="card p-3 shadow" style="width: 100%; max-width: 440px;">
                 <div class="card-body">
-                    <form method="POST" action="{{ route('login') }}">
+
+                    @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('password.email') }}">
                         @csrf
                         <div class="mb-3">
                             <label for="email" class="form-label text-start w-100">EMAIL ANDA</label>
@@ -118,35 +131,16 @@
                             @enderror
                         </div>
 
-                        <div class="mb-3">
-                            <label for="password" class="form-label text-start w-100">PASSWORD</label>
-                            <input id="password" type="password"
-                                   placeholder="masukkan password anda"
-                                   class="form-control @error('password') is-invalid @enderror"
-                                   name="password" required>
-                            @error('password')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        <!-- Forgot Password Link -->
-                        <div class="text-start mb-2">
-                            <a href="{{ route('password.request') }}" class="forgot-password-link">
-                                Lupa Password?
-                            </a>
-                        </div>
-
                         <div class="d-grid mb-3" style="height: 48px;">
                             <button type="submit" class="btn btn-primary" style="background-color: #0258d3;">
-                                MASUK
+                                KIRIM LINK RESET
                             </button>
                         </div>
                     </form>
+                    
                     <div class="text-center">
-                        <span style="font-size: 0.875rem;">Belum punya akun?</span>
-                        <a class="btn btn-link" href="{{ route('register') }}">Buat dulu sekarang!</a>
+                        <span style="font-size: 0.875rem;">Ingat password Anda?</span>
+                        <a class="btn btn-link" href="{{ route('login') }}">Login di sini</a>
                     </div>
                 </div>
             </div>

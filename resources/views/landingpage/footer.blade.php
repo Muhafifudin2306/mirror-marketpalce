@@ -6,10 +6,20 @@
         <div class="row g-4">
             <div class="col-lg-6 col-md-6 text-center text-md-start">
                 <img src="{{ asset('landingpage/img/footer_logo.png') }}" alt="Logo" style="max-width:85%;">
+                @php
+                    $socials = [
+                        'instagram'  => 'https://www.instagram.com/sinauprint?igsh=a3d5aWVtczRiejc=',
+                        'facebook-f' => 'https://www.facebook.com/profile.php?id=61569943126701',
+                        'tiktok'     => 'https://www.tiktok.com/@sinauprint?_t=ZS-8xmeE1lRULC&_r=1',
+                        // 'linkedin'   => '#',
+                    ];
+                @endphp
+
                 <div class="d-flex mt-3 gap-2 justify-content-center justify-content-md-start">
-                    @foreach(['instagram','facebook-f','tiktok','linkedin'] as $social)
-                        <a href="#" class="d-inline-flex align-items-center justify-content-center text-decoration-none"
-                           style="width:48px; height:48px; border:1px solid #ddd; border-radius:50%; color:#666; transition: all 0.3s ease;">
+                    @foreach($socials as $social => $url)
+                        <a href="{{ $url }}" target="_blank"
+                        class="d-inline-flex align-items-center justify-content-center text-decoration-none"
+                        style="width:48px; height:48px; border:1px solid #ddd; border-radius:50%; color:#666; transition: all 0.3s ease;">
                             <i class="fab fa-{{ $social }}" style="font-size: 18px;"></i>
                         </a>
                     @endforeach
@@ -61,8 +71,8 @@
     <div class="container">
         <div class="row align-items-center justify-content-between text-white">
             <div class="col-md-auto">
-                <a href="#" class="text-white text-decoration-none me-4" style="font-size: 0.85rem;">Kebijakan Privasi</a>
-                <a href="#" class="text-white text-decoration-none" style="font-size: 0.85rem;">Syarat Penggunaan</a>
+                <a href="{{ url('/kebijakan-privasi') }}" class="text-white text-decoration-none me-4" style="font-size: 0.85rem;">Kebijakan Privasi</a>
+                <a href="{{ url('/syarat-penggunaan') }}" class="text-white text-decoration-none" style="font-size: 0.85rem;">Syarat Penggunaan</a>
             </div>
             <div class="col-md-auto text-end">
                 <span style="font-size: 0.85rem;">&copy; 2025 PT Sinau Grafika</span>

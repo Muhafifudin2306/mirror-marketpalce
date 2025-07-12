@@ -1,3 +1,4 @@
+CMS CRUD PRODUK SPA
 @extends('adminpage.index')
 
 @php
@@ -259,6 +260,50 @@
                 height: 35px;
             }
         }
+        .badge {
+            font-size: 0.7rem;
+            padding: 0.25em 0.5em;
+        }
+
+        .table-secondary {
+            opacity: 0.7;
+        }
+
+        .header-actions {
+            gap: 8px;
+        }
+
+        .header-actions .btn {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+        .header-actions .btn:hover {
+            transform: scale(1.1);
+        }
+        .form-check-input:checked {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+
+        .form-check-input:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+        }
+
+        .form-switch .form-check-input {
+            width: 2.5em;
+            height: 1.25em;
+        }
+
+        .toggle-icon {
+            transition: all 0.3s ease;
+        }
     </style>
 
     <!-- Content -->
@@ -398,6 +443,20 @@
                                     <textarea name="desc" class="form-control" rows="3" 
                                               placeholder="Jelaskan produk secara umum...">{{ old('desc', $editingLabel->desc ?? '') }}</textarea>
                                 </div>
+                                <div class="col-12">
+                                    <div class="form-check form-switch" style="background-color: #e8f5e8; padding: 15px; border-radius: 8px; border: 1px solid #c3e6cb;">
+                                        <input class="form-check-input" type="checkbox" role="switch" 
+                                            id="is_live_label" name="is_live_label" value="1" 
+                                            {{ old('is_live_label', $editingLabel->is_live ?? true) ? 'checked' : '' }}>
+                                        <label class="form-check-label fw-semibold" for="is_live_label">
+                                            <i class="bx bx-show me-2 text-success toggle-icon"></i>
+                                            Tampilkan Kategori Produk di Website
+                                        </label>
+                                        <small class="text-muted d-block mt-1">
+                                            Jika dinonaktifkan, seluruh kategori produk ini tidak akan tampil di website
+                                        </small>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -521,6 +580,21 @@
                                                             Gunakan ";" untuk enter, "*" untuk bullet points
                                                         </div>
                                                     </div>
+                                                    <div class="col-12">
+                                                        <div class="form-check form-switch" style="background-color: #f8f9fa; padding: 12px; border-radius: 6px; border: 1px solid #e9ecef;">
+                                                            <input class="form-check-input" type="checkbox" role="switch" 
+                                                                id="is_live_product_{{ $i }}" 
+                                                                name="is_live_product[{{ $i }}]" value="1" 
+                                                                {{ old("is_live_product.{$i}", $prod->is_live ?? true) ? 'checked' : '' }}>
+                                                            <label class="form-check-label fw-semibold" for="is_live_product_{{ $i }}">
+                                                                <i class="bx bx-show me-2 text-success toggle-icon"></i>
+                                                                Tampilkan Sub Produk di Website
+                                                            </label>
+                                                            <small class="text-muted d-block mt-1">
+                                                                Nonaktifkan untuk menyembunyikan sub produk ini dari website
+                                                            </small>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         @endforeach
@@ -608,6 +682,20 @@
                                                     <div class="helper-text">
                                                         <i class="bx bx-info-circle me-1"></i>
                                                         Gunakan ";" untuk enter, "*" untuk bullet points
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="form-check form-switch" style="background-color: #f8f9fa; padding: 12px; border-radius: 6px; border: 1px solid #e9ecef;">
+                                                        <input class="form-check-input" type="checkbox" role="switch" 
+                                                            id="is_live_product_0" 
+                                                            name="is_live_product[0]" value="1" checked>
+                                                        <label class="form-check-label fw-semibold" for="is_live_product_0">
+                                                            <i class="bx bx-show me-2 text-success toggle-icon"></i>
+                                                            Tampilkan Sub Produk di Website
+                                                        </label>
+                                                        <small class="text-muted d-block mt-1">
+                                                            Nonaktifkan untuk menyembunyikan sub produk ini dari website
+                                                        </small>
                                                     </div>
                                                 </div>
                                             </div>
@@ -737,6 +825,16 @@
                                         <h5 class="mb-1 fw-bold">
                                             <i class="bx bx-package me-2"></i>
                                             {{ $label->name }}
+
+                                            @if($label->is_live)
+                                                <span class="badge bg-success ms-2">
+                                                    <i class="bx bx-show me-1"></i>Live
+                                                </span>
+                                            @else
+                                                <span class="badge bg-danger ms-2">
+                                                    <i class="bx bx-hide me-1"></i>Hidden
+                                                </span>
+                                            @endif
                                         </h5>
                                         <p class="mb-0 text-light opacity-75">
                                             @if($label->size)
@@ -752,9 +850,21 @@
                                                     @case(8) pcs @break
                                                 @endswitch
                                             @endif
+                                            <span class="ms-3">
+                                                <i class="bx bx-info-circle me-1"></i>
+                                                {{ $label->products->where('is_live', true)->count() }}/{{ $label->products->count() }} produk aktif
+                                            </span>
                                         </p>
                                     </div>
                                     <div class="header-actions">
+                                        <form method="POST" action="{{ route('admin.product.toggle-live', $label->id) }}" class="d-inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="btn btn-sm {{ $label->is_live ? 'btn-warning' : 'btn-success' }}" 
+                                                    title="{{ $label->is_live ? 'Sembunyikan' : 'Tampilkan' }}">
+                                                <i class="bx {{ $label->is_live ? 'bx-hide' : 'bx-show' }}"></i>
+                                            </button>
+                                        </form>
                                         <a href="{{ route('admin.product.index', ['edit' => $label->id]) }}" 
                                            class="text-white" title="Edit Produk">
                                             <i class="bx bx-edit fs-4"></i>
@@ -785,6 +895,7 @@
                                             <thead class="table-primary">
                                                 <tr>
                                                     <th><i class="bx bx-cube me-1"></i> Sub Produk</th>
+                                                    <th><i class="bx bx-show me-1"></i> Status</th>
                                                     <th><i class="bx bx-ruler me-1"></i> Spesifikasi</th>
                                                     <th><i class="bx bx-expand-horizontal me-1"></i> P×L (cm)</th>
                                                     <th><i class="bx bx-package me-1"></i> Unit</th>
@@ -796,8 +907,24 @@
                                             </thead>
                                             <tbody>
                                                 @foreach ($label->products as $product)
-                                                    <tr>
-                                                        <td class="fw-semibold">{{ $product->name }}</td>
+                                                    <tr class="{{ !$product->is_live ? 'table-secondary' : '' }}">
+                                                        <td class="fw-semibold">
+                                                            {{ $product->name }}
+                                                            @if(!$product->is_live)
+                                                                <span class="badge bg-secondary ms-1">Hidden</span>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            @if($product->is_live)
+                                                                <span class="badge bg-success">
+                                                                    <i class="bx bx-show me-1"></i>Live
+                                                                </span>
+                                                            @else
+                                                                <span class="badge bg-danger">
+                                                                    <i class="bx bx-hide me-1"></i>Hidden
+                                                                </span>
+                                                            @endif
+                                                        </td>
                                                         <td>{{ $product->additional_size ?: '-' }}</td>
                                                         <td>
                                                             @if($product->long_product && $product->width_product)
@@ -829,8 +956,8 @@
                                                                 <div class="d-flex gap-1">
                                                                     @foreach($product->images->take(4) as $image)
                                                                         <img src="{{ asset('storage/' . $image->image_product) }}" 
-                                                                             class="rounded" 
-                                                                             style="width: 30px; height: 30px; object-fit: cover;">
+                                                                            class="rounded" 
+                                                                            style="width: 30px; height: 30px; object-fit: cover;">
                                                                     @endforeach
                                                                     @if($product->images->count() > 4)
                                                                         <span class="badge bg-primary">+{{ $product->images->count() - 3 }}</span>
@@ -839,6 +966,17 @@
                                                             @else
                                                                 <span class="text-muted">-</span>
                                                             @endif
+                                                        </td>
+                                                        <td>
+                                                            <!-- Quick Toggle untuk Product -->
+                                                            <form method="POST" action="{{ route('admin.product.toggle-product-live', $product->id) }}" class="d-inline">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <button type="submit" class="btn btn-sm {{ $product->is_live ? 'btn-warning' : 'btn-success' }}" 
+                                                                        title="{{ $product->is_live ? 'Sembunyikan dari Website' : 'Tampilkan di Website' }}">
+                                                                    <i class="bx {{ $product->is_live ? 'bx-hide' : 'bx-show' }}"></i>
+                                                                </button>
+                                                            </form>
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -1046,6 +1184,20 @@
                             <div class="helper-text">
                                 <i class="bx bx-info-circle me-1"></i>
                                 Gunakan ";" untuk enter, "*" untuk bullet points
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check form-switch" style="background-color: #f8f9fa; padding: 12px; border-radius: 6px; border: 1px solid #e9ecef;">
+                                <input class="form-check-input" type="checkbox" role="switch" 
+                                    id="is_live_product_${productIndex}" 
+                                    name="is_live_product[${productIndex}]" value="1" checked>
+                                <label class="form-check-label fw-semibold" for="is_live_product_${productIndex}">
+                                    <i class="bx bx-show me-2 text-success toggle-icon"></i>
+                                    Tampilkan Sub Produk di Website
+                                </label>
+                                <small class="text-muted d-block mt-1">
+                                    Nonaktifkan untuk menyembunyikan sub produk ini dari website
+                                </small>
                             </div>
                         </div>
                     </div>
@@ -1561,5 +1713,17 @@
         });
 
         console.log('✅ Product Management System loaded successfully!');
+        document.addEventListener('change', function(e) {
+            if (e.target.type === 'checkbox' && e.target.name && 
+                (e.target.name === 'is_live_label' || e.target.name.includes('is_live_product'))) {
+                
+                const icon = e.target.closest('.form-check').querySelector('.toggle-icon');
+                if (e.target.checked) {
+                    icon.className = 'bx bx-show me-2 text-success toggle-icon';
+                } else {
+                    icon.className = 'bx bx-hide me-2 text-danger toggle-icon';
+                }
+            }
+        });
         </script>
 @endsection

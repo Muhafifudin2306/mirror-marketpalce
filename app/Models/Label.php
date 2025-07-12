@@ -17,6 +17,7 @@ class Label extends Model
         'desc',
         'size',
         'unit',
+        'is_live',
     ];
 
     /**

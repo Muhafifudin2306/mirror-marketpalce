@@ -60,20 +60,36 @@
         
         .reset-button {
             display: inline-block;
-            background: linear-gradient(135deg, #0258d3 0%, #0439a0 100%);
-            color: white;
-            text-decoration: none;
+            background: linear-gradient(135deg, #0258d3 0%, #0439a0 100%) !important;
+            color: white !important;
+            text-decoration: none !important;
             padding: 16px 32px;
             border-radius: 8px;
             font-weight: 600;
             font-size: 16px;
             margin: 20px 0;
             transition: all 0.3s ease;
+            border: none !important;
+            -webkit-text-fill-color: white !important;
+            mso-line-height-rule: exactly;
         }
         
         .reset-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(2, 88, 211, 0.3);
+            color: white !important;
+            text-decoration: none !important;
+        }
+
+        .reset-button:visited {
+            color: white !important;
+        }
+        .reset-button:active {
+            color: white !important;
+        }
+        
+        .reset-button span {
+            color: white !important;
         }
         
         .security-info {

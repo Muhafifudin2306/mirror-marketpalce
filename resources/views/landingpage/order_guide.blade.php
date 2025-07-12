@@ -99,7 +99,7 @@
         <div class="position-absolute top-50 start-0 translate-middle-y cta-content">
             <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:600; color:#fff;">Udah Paham Cara Pesan?</h3>
             <h3 class="mb-8" style="font-family: 'Poppins'; font-size:3rem; font-weight:600; color:#ffc74c;">Gas Order Sekarang!</h3>
-            <a href="{{ url('/products') }}" class="btn-schedule">
+            <a href="https://wa.me/6281952764747?text=Halo%20Admin%20Sinau%20Print%21%20Saya%20ingin%20mengajukan%20pertanyaan%20terkait%20produk%20yang%20ada%20di%20sinau%20print" target="_blank" class="btn-schedule">
             <span class="btn-text">KONSULTASI DULU</span>
             <a href="{{ url('/products') }}" class="btn-schedule">
             <span class="btn-text">SEMUA PRODUK</span>

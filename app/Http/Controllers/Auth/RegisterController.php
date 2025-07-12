@@ -53,11 +53,11 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name'  => ['required', 'string', 'max:255'],
-            'hp'         => ['required', 'regex:/^08[0-9]{8,11}$/'],
+            'phone'         => ['required', 'regex:/^08[0-9]{8,11}$/'],
             'email'      => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password'   => ['required', 'string', 'min:8', 'confirmed'],
         ], [
-            'hp.regex' => 'Nomor telepon harus dimulai dengan 08 dan terdiri dari 10-13 digit angka.',
+            'phone.regex' => 'Nomor telepon harus dimulai dengan 08 dan terdiri dari 10-13 digit angka.',
         ]);
     }
 
@@ -71,7 +71,7 @@ class RegisterController extends Controller
     {
         return User::create([
             'name'     => trim($data['first_name'].' '.$data['last_name']),
-            'hp'       => $data['hp'],
+            'phone'       => $data['phone'],
             'email'    => $data['email'],
             'password' => Hash::make($data['password']),
         ]);

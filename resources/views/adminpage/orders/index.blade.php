@@ -12,10 +12,8 @@
                 <li class="breadcrumb-item active">Kelola Pesanan</li>
             </ol>
 
-            <!-- Alert Messages -->
             <div id="alertContainer"></div>
 
-            <!-- Filter Status Cards - FIXED -->
             <div class="row mb-4">
                 <div class="col-xl-2 col-md-4">
                     <div class="card bg-secondary text-white mb-4">
@@ -105,7 +103,7 @@
                             Data Pesanan
                             <span class="badge bg-secondary ms-2" id="totalCount">{{ $orders->count() }} total</span>
                         </div>
-                        <div class="btn-group" role="group">
+                        {{-- <div class="btn-group" role="group">
                             <input type="radio" class="btn-check" name="statusFilter" id="all" value="all" checked>
                             <label class="btn btn-outline-primary btn-sm" for="all">Semua</label>
 
@@ -126,7 +124,7 @@
 
                             <input type="radio" class="btn-check" name="statusFilter" id="cancelled" value="9">
                             <label class="btn btn-outline-danger btn-sm" for="cancelled">Cancel</label>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
                 <div class="card-body">
@@ -191,17 +189,11 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if($order->deadline)
+                                        @if($order->waktu_deadline)
                                             <div>
                                                 <i class="fas fa-calendar-alt me-1"></i>
-                                                {{ \Carbon\Carbon::parse($order->deadline)->format('d/m/Y') }}
+                                                {{ \Carbon\Carbon::parse($order->waktu_deadline)->format('H:i') }}
                                             </div>
-                                            @if($order->waktu_deadline)
-                                                <small class="text-muted">
-                                                    <i class="fas fa-clock me-1"></i>
-                                                    {{ \Carbon\Carbon::parse($order->waktu_deadline)->format('H:i') }}
-                                                </small>
-                                            @endif
                                         @else
                                             <span class="text-muted">-</span>
                                         @endif
@@ -264,7 +256,6 @@
                                                 </button>
                                             @endif
 
-                                            <!-- Tombol Edit -->
                                             <button type="button"
                                                     class="btn btn-primary btn-sm me-1 edit-btn"
                                                     data-order-id="{{ $order->id }}"
@@ -273,7 +264,6 @@
                                                 <i class="fa fa-edit"></i>
                                             </button>
 
-                                            <!-- Tombol Delete -->
                                             <button type="button"
                                                     class="btn btn-danger btn-sm delete-btn"
                                                     data-order-id="{{ $order->id }}"
@@ -336,11 +326,8 @@
                                     <tr>
                                         <td>Deadline</td>
                                         <td>: 
-                                            @if($order->deadline)
-                                                {{ \Carbon\Carbon::parse($order->deadline)->format('d/m/Y') }}
-                                                @if($order->waktu_deadline)
-                                                    {{ \Carbon\Carbon::parse($order->waktu_deadline)->format('H:i') }}
-                                                @endif
+                                            @if($order->waktu_deadline)
+                                                {{ \Carbon\Carbon::parse($order->waktu_deadline)->format('H:i') }} WIB
                                             @else
                                                 -
                                             @endif
@@ -453,41 +440,47 @@
                     <h5 class="modal-title" id="editModalLabel">Edit Pesanan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="editForm">
+                <form id="editForm" novalidate>
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="edit_spk" class="form-label">SPK</label>
-                                    <input type="text" class="form-control" id="edit_spk" name="spk">
+                                    <label for="edit_spk" class="form-label">SPK <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="edit_spk" name="spk" required>
+                                    <div class="invalid-feedback">SPK wajib diisi</div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="edit_customer" class="form-label">Customer</label>
+                                    <label for="edit_customer" class="form-label">Customer <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="edit_customer_display" readonly 
                                         style="background-color: #f8f9fa; cursor: not-allowed;">
                                     <input type="hidden" id="edit_user_id" name="user_id">
                                     <small class="form-text text-muted">Customer tidak dapat diubah setelah pesanan dibuat</small>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="edit_subtotal" class="form-label">Subtotal</label>
-                                    <input type="number" class="form-control" id="edit_subtotal" name="subtotal" required>
+                                    <label for="edit_subtotal" class="form-label">Subtotal <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" id="edit_subtotal" name="subtotal" required min="0">
+                                    <div class="invalid-feedback">Subtotal wajib diisi</div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="edit_ongkir" class="form-label">Biaya Kirim</label>
-                                    <input type="number" class="form-control" id="edit_ongkir" name="ongkir">
+                                    <label for="edit_ongkir" class="form-label">Biaya Kirim <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" id="edit_ongkir" name="ongkir" required min="0" value="0">
+                                    <div class="invalid-feedback">Biaya kirim wajib diisi (minimal 0)</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="edit_payment_status" class="form-label">Status Pembayaran</label>
+                                    <label for="edit_payment_status" class="form-label">Status Pembayaran <span class="text-danger">*</span></label>
                                     <select class="form-select" id="edit_payment_status" name="payment_status" required>
+                                        <option value="">Pilih status pembayaran</option>
                                         <option value="0">Belum Bayar</option>
                                         <option value="1">Sudah Bayar</option>
                                     </select>
+                                    <div class="invalid-feedback">Status pembayaran wajib dipilih</div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="edit_order_status" class="form-label">Status Order</label>
+                                    <label for="edit_order_status" class="form-label">Status Order <span class="text-danger">*</span></label>
                                     <select class="form-select" id="edit_order_status" name="order_status" required>
+                                        <option value="">Pilih status order</option>
                                         <option value="0">Belum Bayar</option>
                                         <option value="1">Sudah Bayar</option>
                                         <option value="2">Pengerjaan</option>
@@ -495,14 +488,20 @@
                                         <option value="4">Selesai</option>
                                         <option value="9">Cancel</option>
                                     </select>
+                                    <div class="invalid-feedback">Status order wajib dipilih</div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="edit_deadline" class="form-label">Tanggal Deadline</label>
-                                    <input type="date" class="form-control" id="edit_deadline" name="deadline">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="edit_express" name="express" value="1">
+                                        <label class="form-check-label" for="edit_express">
+                                            Express Order
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="edit_waktu_deadline" class="form-label">Waktu Deadline</label>
+                                <div class="mb-3" id="deadline_container" style="display: none;">
+                                    <label for="edit_waktu_deadline" class="form-label">Waktu Deadline <span class="text-danger">*</span></label>
                                     <input type="time" class="form-control" id="edit_waktu_deadline" name="waktu_deadline">
+                                    <div class="invalid-feedback">Waktu deadline wajib diisi untuk order express</div>
                                 </div>
                             </div>
                         </div>
@@ -625,30 +624,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 order_status: newStatus
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 showAlert(data.message, 'success');
                 
-                const row = document.querySelector(`tr[data-order-id="${orderId}"]`);
-                const statusCell = row.querySelector('.status-cell');
-                const actionCell = row.querySelector('.action-cell');
-                
-                const statusBadges = {
-                    0: '<span class="badge bg-secondary">Belum Bayar</span>',
-                    1: '<span class="badge bg-success">Sudah Bayar</span>',
-                    2: '<span class="badge bg-info">Pengerjaan</span>',
-                    3: '<span class="badge bg-warning">Pengiriman</span>',
-                    4: '<span class="badge bg-primary">Selesai</span>',
-                    9: '<span class="badge bg-danger">Cancel</span>'
-                };
-                statusCell.innerHTML = statusBadges[newStatus];
-                
-                row.setAttribute('data-status', newStatus);
-                
-                updateActionButtons(orderId, newStatus, actionCell);
-                
-                updateCounters();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
                 
             } else {
                 showAlert(data.message || 'Gagal mengubah status', 'danger');
@@ -664,76 +652,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
     
-    function updateActionButtons(orderId, newStatus, actionCell) {
-        let buttonsHtml = '';
+    document.getElementById('edit_express').addEventListener('change', function() {
+        const deadlineContainer = document.getElementById('deadline_container');
+        const deadlineInput = document.getElementById('edit_waktu_deadline');
         
-        if (newStatus == 1) {
-            buttonsHtml += `
-                <button type="button" class="btn btn-warning btn-sm me-1 status-btn"
-                        data-order-id="${orderId}" data-new-status="2"
-                        onclick="updateStatus(${orderId}, 2)" title="Mulai Pengerjaan">
-                    <i class="fa fa-play"></i> Mulai
-                </button>
-            `;
-        } else if (newStatus == 2) {
-            buttonsHtml += `
-                <button type="button" class="btn btn-warning btn-sm me-1 status-btn"
-                        data-order-id="${orderId}" data-new-status="3"
-                        onclick="updateStatus(${orderId}, 3)" title="Kirim">
-                    <i class="fa fa-truck"></i> Kirim
-                </button>
-            `;
-        } else if (newStatus == 3) {
-            buttonsHtml += `
-                <button type="button" class="btn btn-success btn-sm me-1 status-btn"
-                        data-order-id="${orderId}" data-new-status="4"
-                        onclick="updateStatus(${orderId}, 4)" title="Selesaikan">
-                    <i class="fa fa-check"></i> Selesai
-                </button>
-            `;
+        if (this.checked) {
+            deadlineContainer.style.display = 'block';
+            deadlineInput.setAttribute('required', 'required');
+        } else {
+            deadlineContainer.style.display = 'none';
+            deadlineInput.removeAttribute('required');
+            deadlineInput.value = '';
         }
-        
-        if (newStatus != 9 && newStatus != 4) {
-            buttonsHtml += `
-                <button type="button" class="btn btn-danger btn-sm me-1 status-btn"
-                        data-order-id="${orderId}" data-new-status="9"
-                        onclick="updateStatus(${orderId}, 9)" title="Cancel">
-                    <i class="fa fa-times"></i> Cancel
-                </button>
-            `;
-        }
-        
-        buttonsHtml += `
-            <button type="button" class="btn btn-primary btn-sm me-1 edit-btn"
-                    data-order-id="${orderId}" onclick="editOrder(${orderId})" title="Edit">
-                <i class="fa fa-edit"></i>
-            </button>
-            <button type="button" class="btn btn-danger btn-sm delete-btn"
-                    data-order-id="${orderId}" onclick="deleteOrder(${orderId})" title="Hapus">
-                <i class="fa fa-trash"></i>
-            </button>
-        `;
-        
-        actionCell.querySelector('.btn-group').innerHTML = buttonsHtml;
-    }
-    
-    function updateCounters() {
-        const counts = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 9: 0};
-        
-        tableRows.forEach(row => {
-            const status = parseInt(row.getAttribute('data-status'));
-            if (counts.hasOwnProperty(status)) {
-                counts[status]++;
-            }
-        });
-        
-        Object.keys(counts).forEach(status => {
-            const countElement = document.getElementById(`count-${status}`);
-            if (countElement) {
-                countElement.textContent = counts[status];
-            }
-        });
-    }
+    });
     
     window.editOrder = function(orderId) {
         fetch(`{{ url('admin/orders') }}/${orderId}/edit`, {
@@ -748,12 +679,36 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 document.getElementById('edit_spk').value = data.order.spk || '';
                 document.getElementById('edit_subtotal').value = data.order.subtotal || 0;
-                document.getElementById('edit_ongkir').value = data.order.ongkir || '';
+                document.getElementById('edit_ongkir').value = data.order.ongkir || 0;
                 document.getElementById('edit_payment_status').value = data.order.payment_status;
                 document.getElementById('edit_order_status').value = data.order.order_status;
-                document.getElementById('edit_deadline').value = data.order.deadline || '';
-                document.getElementById('edit_waktu_deadline').value = data.order.waktu_deadline || '';
                 document.getElementById('edit_notes').value = data.order.notes || '';
+                
+                const expressCheckbox = document.getElementById('edit_express');
+                const deadlineContainer = document.getElementById('deadline_container');
+                const deadlineInput = document.getElementById('edit_waktu_deadline');
+                
+                if (data.order.express == 1) {
+                    expressCheckbox.checked = true;
+                    deadlineContainer.style.display = 'block';
+                    deadlineInput.setAttribute('required', 'required');
+                    
+                    if (data.order.waktu_deadline) {
+                        if (data.order.waktu_deadline.length === 5) {
+                            deadlineInput.value = data.order.waktu_deadline;
+                        } else {
+                            const date = new Date('2000-01-01 ' + data.order.waktu_deadline);
+                            const hours = date.getHours().toString().padStart(2, '0');
+                            const minutes = date.getMinutes().toString().padStart(2, '0');
+                            deadlineInput.value = `${hours}:${minutes}`;
+                        }
+                    }
+                } else {
+                    expressCheckbox.checked = false;
+                    deadlineContainer.style.display = 'none';
+                    deadlineInput.removeAttribute('required');
+                    deadlineInput.value = '';
+                }
                 
                 const customerDisplay = `${data.order.user.name} (${data.order.user.email})`;
                 document.getElementById('edit_customer_display').value = customerDisplay;
@@ -761,6 +716,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('edit_user_id').value = data.order.user_id;
                 
                 document.getElementById('editForm').setAttribute('data-order-id', orderId);
+                
+                document.getElementById('editForm').classList.remove('was-validated');
                 
                 new bootstrap.Modal(document.getElementById('editModal')).show();
             } else {
@@ -775,10 +732,23 @@ document.addEventListener('DOMContentLoaded', function() {
     
     document.getElementById('editForm').addEventListener('submit', function(e) {
         e.preventDefault();
+        e.stopPropagation();
+        
+        if (!this.checkValidity()) {
+            this.classList.add('was-validated');
+            return;
+        }
         
         const orderId = this.getAttribute('data-order-id');
         const formData = new FormData(this);
         const data = Object.fromEntries(formData.entries());
+        
+        if (!document.getElementById('edit_express').checked) {
+            data.express = 0;
+            delete data.waktu_deadline;
+        } else {
+            data.express = 1;
+        }
         
         const submitBtn = this.querySelector('button[type="submit"]');
         const originalText = submitBtn.innerHTML;
@@ -836,19 +806,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 showAlert(data.message, 'success');
                 
-                const row = document.querySelector(`tr[data-order-id="${orderId}"]`);
-                row.remove();
-                
-                updateCounters();
-                updateRowNumbers();
-                
-                const remainingRows = document.querySelectorAll('#datatablesSimple tbody tr').length;
-                document.getElementById('totalCount').textContent = remainingRows + ' total';
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
                 
             } else {
                 showAlert(data.message || 'Gagal menghapus pesanan', 'danger');

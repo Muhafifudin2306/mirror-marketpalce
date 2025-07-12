@@ -25,6 +25,7 @@ use App\Http\Controllers\{
     TestimonialController,
     BannerController,
     BlogController,
+    SettingController,
     Auth\PasswordResetController,
 };
 
@@ -32,13 +33,14 @@ use App\Http\Controllers\{
 // Public Pages (Landing)
 // ----------------------------------
 Route::get('/', [ProductController::class, 'home'])->name('landingpage.home');
-Route::get('/about', function () {
-    return view('landingpage.about');
-})->name('landingpage.about');
+Route::get('/about', [TestimonialController::class, 'about'])->name('landingpage.about');
 Route::get('/faq', [FaqController::class, 'landingpage'])->name('landingpage.faq');
 Route::get('/order-guide', function () {
     return view('landingpage.order_guide');
 })->name('landingpage.order_guide');
+
+Route::get('/kebijakan-privasi', [SettingController::class, 'kebijakanIndex'])->name('kebijakan_index');
+Route::get('/syarat-penggunaan', [SettingController::class, 'penggunaanIndex'])->name('penggunaan_index');
 
 Route::get('/articles', [BlogController::class, 'articles'])->name('landingpage.article_index');
 Route::get('/article/{slug}', [BlogController::class, 'show'])->name('landingpage.article_show');
@@ -110,6 +112,9 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::post('/',         [ProductController::class, 'adminStore'])->name('store');
         Route::put('{label}',    [ProductController::class, 'adminUpdate'])->name('update');
         Route::delete('{label}', [ProductController::class, 'adminDestroy'])->name('destroy');
+
+        Route::patch('{label}/toggle-live', [ProductController::class, 'toggleLabelLive'])->name('toggle-live');
+        Route::patch('product/{product}/toggle-live', [ProductController::class, 'toggleProductLive'])->name('toggle-product-live');
     });
     // CMS Users
     Route::resource('user', UserController::class);
@@ -134,7 +139,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     Route::resource('discount', DiscountController::class);
 
-    Route::get('admin/discount/products/{labelId}', [DiscountController::class, 'productsByLabel'])->name('discount.products');
+    Route::get('discount/products/{labelId}', [DiscountController::class, 'productsByLabel'])->name('discount.products');
 
     Route::prefix('article')->group(function () {
         Route::get('/',               [BlogController::class,'index'])->name('blog.index');
@@ -144,11 +149,22 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::PUT('update/{item}',  [BlogController::class,'update'])->name('blog.update');
         Route::delete('remove/{item}',[BlogController::class,'destroy'])->name('blog.destroy');
     });
+
+    Route::prefix('setting')->group(function () {
+        Route::get('/',               [SettingController::class,'index'])->name('setting.index');
+        Route::get('/add',            [SettingController::class,'create'])->name('setting.create');
+        Route::post('/store',         [SettingController::class,'store'])->name('setting.store');
+        Route::get('/edit/{item}',  [SettingController::class,'edit'])->name('setting.edit');
+        Route::PUT('update/{item}',  [SettingController::class,'update'])->name('setting.update');
+        Route::delete('remove/{item}',[SettingController::class,'destroy'])->name('setting.destroy');
+    });
 });
 
+Route::get('/password/request', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('/password/email', [PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
 Route::get('/password/reset/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
 Route::post('/password/reset', [PasswordResetController::class, 'reset'])->name('password.update');
+Route::get('/password/success', [PasswordResetController::class, 'showSuccessPage'])->name('password.success');
 
 // ----------------------------------
 // Deprecated / Unused Routes

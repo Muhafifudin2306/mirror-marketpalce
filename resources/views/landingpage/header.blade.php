@@ -83,9 +83,8 @@
                                 AKUN ANDA
                             </a>
 
-                            <a href="{{ url('/chats') }}"
-                                class="nav-item nav-link d-inline d-xl-none font-first fw-600 fs-13-px d-flex align-items-center "
-                                href="#"
+                            <a href="#"
+                                class="nav-item nav-link d-inline d-xl-none font-first fw-600 fs-13-px d-flex align-items-center"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 LOGOUT
                             </a>
@@ -222,35 +221,62 @@
                                         $prod = $item->product;
                                         $hasNote = !empty($item->order->notes);
                                         $image = $prod->images->first();
-                                    @endphp
-                                    <div class="cart-item">
-                                        <div class="cart-item-image">
-                                            @if($image && $image->image_product && file_exists(storage_path('app/public/' . $image->image_product)))
-                                                <img src="{{ asset('storage/' . $image->image_product) }}" 
-                                                    alt="{{ $prod->name }}">
-                                            @else
-                                                <img src="{{ asset('landingpage/img/nophoto.png') }}" 
-                                                    alt="No Image">
-                                            @endif
-                                        </div>
                                         
-                                        <div class="cart-item-content">
-                                            <h6 class="cart-item-title">{{ Str::limit($prod->name, 30) }}</h6>
-                                            <p class="cart-item-size">
-                                                @if($prod->long_product && $prod->width_product)
-                                                    {{ intval($prod->long_product) }}×{{ intval($prod->width_product) }}{{ $prod->additional_unit }}
+                                        // Gunakan best price
+                                        $basePrice = $prod->getDiscountedPrice();
+                                        $area = 1;
+                                        if (in_array($prod->additional_unit, ['cm', 'm']) && $item->length && $item->width) {
+                                            $area = $prod->additional_unit == 'cm'
+                                                ? ($item->length / 100) * ($item->width / 100)
+                                                : $item->length * $item->width;
+                                        }
+                                        $finalPrice = $basePrice * $area;
+                                    @endphp
+                                    
+                                    {{-- Buat seluruh cart-item sebagai link --}}
+                                    <a href="javascript:void(0)" 
+                                    class="cart-item-link text-decoration-none" 
+                                    onclick="checkoutItem({{ $item->id }})"
+                                    style="color: inherit; display: block;">
+                                        <div class="cart-item">
+                                            <div class="cart-item-image">
+                                                @if($image && $image->image_product && file_exists(storage_path('app/public/' . $image->image_product)))
+                                                    <img src="{{ asset('storage/' . $image->image_product) }}" 
+                                                        alt="{{ $prod->name }}">
                                                 @else
-                                                    {{ $prod->additional_size }} {{ $prod->additional_unit }}
+                                                    <img src="{{ asset('landingpage/img/nophoto.png') }}" 
+                                                        alt="No Image">
                                                 @endif
-                                            </p>
-                                            @if ($hasNote)
-                                                <p class="cart-item-note">{{ Str::limit($item->order->notes, 25) }}</p>
-                                            @endif
-                                            <div class="cart-item-price">
-                                                {{ $item->qty }} × Rp {{ number_format($item->product->price, 0, ',', '.') }}
+                                            </div>
+                                            
+                                            <div class="cart-item-content">
+                                                <h6 class="cart-item-title">
+                                                    {{ Str::limit($prod->name, 30) }}
+                                                    @if($prod->additional_size && $prod->additional_unit)
+                                                        {{ $prod->additional_size }} {{ $prod->additional_unit }}
+                                                    @endif
+                                                </h6>
+                                                <p class="cart-item-size">
+                                                    @if($prod->long_product && $prod->width_product)
+                                                        {{ intval($prod->long_product) }}×{{ intval($prod->width_product) }}{{ $prod->additional_unit }}
+                                                    @else
+                                                        {{ $prod->additional_size }} {{ $prod->additional_unit }}
+                                                    @endif
+                                                </p>
+                                                @if ($hasNote)
+                                                    <p class="cart-item-note">{{ Str::limit($item->order->notes, 25) }}</p>
+                                                @endif
+                                                <div class="cart-item-price">
+                                                    {{ $item->qty }} × Rp {{ number_format($finalPrice, 0, ',', '.') }}
+                                                    @if($prod->isOnSale())
+                                                        <small class="text-muted" style="text-decoration: line-through; font-size: 0.65rem;">
+                                                            Rp {{ number_format($prod->price * $area, 0, ',', '.') }}
+                                                        </small>
+                                                    @endif
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </a>
                                 @empty
                                     <div class="empty-state">
                                         <i class="fas fa-shopping-cart"></i>
@@ -381,6 +407,9 @@
             </div>
         </div>
     </nav>
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
 </div>
 
 <!-- Search Modal -->
@@ -505,7 +534,7 @@
                                 </ul>
                             </a>
                             <br><br>
-                            <a class="text-decoration-none" href="{{ url('/contact') }}">
+                            <a class="text-decoration-none" href="https://wa.me/6281952764747?text=Halo%20Admin%20Sinau%20Print%21%20Saya%20ingin%20mengajukan%20pertanyaan%20terkait%20produk%20yang%20ada%20di%20sinau%20print" target="_blank">
                                 <ul class="labels-list">
                                     <li>
                                         <h5 style="font-family: 'Poppins' !important; font-size: 0.75rem; color: #888888 !important; text-decoration: none !important;">Kontak Sinau Print</h5>
@@ -551,7 +580,7 @@
                                 </ul>
                             </a>
                             <br><br>
-                            <a class="text-decoration-none" href="{{ url('/consultation') }}">
+                            <a class="text-decoration-none" href="https://wa.me/6281952764747?text=Halo%20Admin%20Sinau%20Print%21%20Saya%20ingin%20mengajukan%20pertanyaan%20terkait%20produk%20yang%20ada%20di%20sinau%20print" target="_blank">
                                 <ul class="labels-list">
                                     <li>
                                         <h5 style="font-family: 'Poppins' !important; font-size: 0.75rem; color: #888888 !important; text-decoration: none !important;">Konsultasi</h5>
@@ -566,6 +595,24 @@
         </div>
     </div>
 </div>
+
+<script>
+    function checkoutItem(itemId) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/checkout/item/${itemId}`;
+        form.style.display = 'none';
+        
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = '_token';
+        csrfToken.value = '{{ csrf_token() }}';
+        form.appendChild(csrfToken);
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

@@ -20,6 +20,14 @@ class OrderProduct extends Model
         'width',
         'qty',
         'subtotal',
+        'jenis_cetakan',
+        'jenis_bahan',
+        'panjang',
+        'lebar',
+        'jumlah_pesanan',
+        'jenis_finishing',
+        'desain',
+        'preview'
     ];
     
     public function order()

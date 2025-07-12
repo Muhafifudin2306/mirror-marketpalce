@@ -2,14 +2,14 @@
 @section('content')
     <style>
         .form-control {
-            border-radius: 40px !important;
-            height: 44px;
+            border-radius: 50px !important;
+            height: 55px;
             font-family: 'Poppins', sans-serif;
             background-color: #fff;
         }
 
         .form-control::placeholder {
-            padding: 0 8px;
+            padding: 0 10px;
             color: #c3c3c3;
             opacity: 1;
         }
@@ -22,23 +22,23 @@
 
         .form-label {
             font-weight: 600;
-            font-size: 0.64rem;
+            font-size: 0.8rem;
             font-family: 'Poppins', sans-serif;
             color: #444;
         }
 
         .edit-btn {
-            border-radius: 0.2rem !important;
+            border-radius: 0.25rem !important;
         }
 
         #editPasswordFields .eye-btn {
             position: absolute;
             top: 50%;
-            right: 0.8rem;
+            right: 1rem;
             transform: translateY(-50%);
             background: none;
             border: none;
-            font-size: 0.88rem;
+            font-size: 1.1rem;
             cursor: pointer;
         }
 
@@ -47,9 +47,9 @@
             font-family: 'Poppins', sans-serif !important;
             background-color: #fff !important;
             color: #666 !important;
-            border-radius: 40px !important;
-            padding: 6px 16px !important;
-            margin-bottom: 6px !important;
+            border-radius: 50px !important;
+            padding: 8px 20px !important;
+            margin-bottom: 8px !important;
             position: relative !important;
             overflow: hidden !important;
             transition: all .3s !important;
@@ -60,8 +60,8 @@
         }
 
         .sidebar-filter a:hover {
-            padding-right: 32px !important;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1) !important;
+            padding-right: 40px !important;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
             color: #000 !important;
         }
 
@@ -73,11 +73,11 @@
         .sidebar-filter a.active::after {
             content: '' !important;
             position: absolute !important;
-            width: 8px !important;
-            height: 8px !important;
+            width: 10px !important;
+            height: 10px !important;
             background-color: #0439a0 !important;
             top: 50% !important;
-            right: 10px !important;
+            right: 12px !important;
             transform: translateY(-50%) rotate(45deg) !important;
         }
 
@@ -92,11 +92,11 @@
             font-family: 'Poppins', sans-serif !important;
             background-color: #f1f7ff;
             color: #0439a0;
-            border-radius: 40px;
-            padding: 12px 24px;
+            border-radius: 50px;
+            padding: 15px 30px;
             font-weight: 600;
-            font-size: 1.28rem;
-            margin-bottom: 13px;
+            font-size: 1.6rem;
+            margin-bottom: 16px;
         }
 
         .is-invalid {
@@ -106,14 +106,14 @@
         .invalid-feedback {
             display: block;
             color: #fc2865;
-            font-size: 0.64rem;
+            font-size: 0.8rem;
             font-weight: 200;
         }
 
         .btn-edit-text {
             display: inline-block;
-            padding: 5px 10px;
-            font-size: 13px;
+            padding: 6px 12px;
+            font-size: 16px;
             font-weight: 550;
             color: #444444;
             background-color: #fff;
@@ -131,11 +131,11 @@
         .btn-save {
             background-color: #0258d3;
             color: white;
-            padding: 10px 11px;
-            font-size: 14px;
-            margin-top: 19px;
+            padding: 13px 14px;
+            font-size: 18px;
+            margin-top: 24px;
             border: none;
-            border-radius: 40px;
+            border-radius: 50px;
             font-weight: 500;
             cursor: pointer;
             transition: background-color 0.2s ease;
@@ -151,8 +151,8 @@
             background: none;
             border: none;
             color: #888;
-            font-size: 10px;
-            margin-top: 14px;
+            font-size: 13px;
+            margin-top: 18px;
             text-decoration: underline;
             font-weight: 500;
             font-family: 'Poppins', sans-serif;
@@ -169,9 +169,9 @@
 
         .input-edit {
             border: 1px solid #ced4da;
-            border-radius: 3px;
-            padding: 5px 8px;
-            font-size: 11px;
+            border-radius: 4px;
+            padding: 6px 10px;
+            font-size: 14px;
             width: 100%;
             box-sizing: border-box;
             transition: border-color 0.2s ease;
@@ -184,12 +184,12 @@
 
         .field-label {
             font-weight: bold;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
             display: inline-block;
         }
 
         .form-group {
-            margin-bottom: 12px;
+            margin-bottom: 15px;
         }
 
         .password-wrapper {
@@ -197,17 +197,17 @@
         }
 
         .password-wrapper input.form-control {
-            padding-right: 36px !important;
+            padding-right: 45px !important;
         }
 
         .eye-btn {
             position: absolute;
             top: 50%;
-            right: 0.8rem;
+            right: 1rem;
             transform: translateY(-50%);
             background: none;
             border: none;
-            font-size: 0.96rem;
+            font-size: 1.2rem;
             color: #999;
             cursor: pointer;
             padding: 0;
@@ -215,9 +215,9 @@
         }
 
         .notification-badge {
-            font-size: 0.72rem;
-            padding: 3px 10px;
-            border-radius: 3px;
+            font-size: 0.9rem;
+            padding: 4px 12px;
+            border-radius: 4px;
             font-weight: 500;
             display: inline-block;
             text-transform: uppercase;
@@ -256,15 +256,15 @@
 
         .pagination {
             margin: 0;
-            gap: 0.4rem;
+            gap: 0.5rem;
         }
 
         .pagination .page-link {
             border-radius: 50% !important;
-            width: 32px;
-            height: 32px;
+            width: 40px;
+            height: 40px;
             padding: 0;
-            line-height: 30px;
+            line-height: 38px;
             text-align: center;
             font-weight: 500;
             color: #0258d3;
@@ -285,12 +285,12 @@
 
         .logout-button {
             border: none;
-            padding: 10px 52px;
+            padding: 12px 65px;
             background-color: transparent;
             color: white;
-            border-radius: 40px;
+            border-radius: 50px;
             border: 2px solid white;
-            font-size: 0.88rem;
+            font-size: 1.1rem;
             font-weight: 500;
             font-family: 'Poppins', sans-serif;
             transition: background-color 0.2s ease;
@@ -305,12 +305,12 @@
 
     <style>
         .chat-container {
-            height: 560px;
+            height: 700px;
             display: flex;
         }
 
         .chat-sidebar {
-            width: 160px;
+            width: 200px;
             background: white;
             border-right: 1px solid #dee2e6;
             display: flex;
@@ -318,7 +318,7 @@
         }
 
         .chat-header {
-            padding: 12px 16px;
+            padding: 15px 20px;
             border-bottom: 1px solid #dee2e6;
             background: #f8f9fa;
         }
@@ -335,7 +335,7 @@
         }
 
         .chat-item {
-            padding: 12px 16px;
+            padding: 15px 20px;
             border-bottom: 1px solid #f1f3f4;
             cursor: pointer;
             transition: background-color 0.2s;
@@ -349,12 +349,12 @@
 
         .chat-item.active {
             background-color: #e3f2fd;
-            border-right: 2px solid #2196f3;
+            border-right: 3px solid #2196f3;
         }
 
         .chat-avatar {
-            width: 36px;
-            height: 36px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             background: linear-gradient(45deg, #2196f3, #21cbf3);
             display: flex;
@@ -362,7 +362,7 @@
             justify-content: center;
             color: white;
             font-weight: bold;
-            margin-right: 10px;
+            margin-right: 12px;
             flex-shrink: 0;
         }
 
@@ -374,13 +374,13 @@
         .chat-name {
             font-weight: 600;
             color: #212529;
-            margin-bottom: 3px;
-            font-size: 11px;
+            margin-bottom: 4px;
+            font-size: 14px;
         }
 
         .chat-preview {
             color: #6c757d;
-            font-size: 10px;
+            font-size: 13px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -389,21 +389,21 @@
         .chat-meta {
             text-align: right;
             flex-shrink: 0;
-            margin-left: 8px;
+            margin-left: 10px;
         }
 
         .chat-time {
-            font-size: 10px;
+            font-size: 12px;
             color: #6c757d;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
         }
 
         .chat-badge {
             background: #28a745;
             color: white;
-            font-size: 9px;
-            padding: 2px 5px;
-            border-radius: 8px;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 10px;
         }
 
         .chat-main {
@@ -414,7 +414,7 @@
         }
 
         .chat-main-header {
-            padding: 12px 16px;
+            padding: 15px 20px;
             border-bottom: 1px solid #dee2e6;
             background: #f8f9fa;
             display: flex;
@@ -429,13 +429,13 @@
 
         .chat-messages {
             flex: 1;
-            padding: 16px;
+            padding: 20px;
             overflow-y: auto;
             background: #f8f9fa;
         }
 
         .message {
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             display: flex;
             align-items: flex-start;
         }
@@ -446,10 +446,10 @@
 
         .message-bubble {
             font-family: 'Barlow', sans-serif;
-            font-size: 0.96rem !important;
+            font-size: 1.2rem !important;
             max-width: 70%;
-            padding: 10px 13px;
-            border-radius: 14px;
+            padding: 12px 16px;
+            border-radius: 18px;
             position: relative;
             word-wrap: break-word;
         }
@@ -457,20 +457,20 @@
         .message.received .message-bubble {
             background: white;
             border: 1px solid #e9ecef;
-            min-width: 12rem;
-            /* margin-left: 36px; */
+            min-width: 15rem;
+            /* margin-left: 45px; */
         }
 
         .message.sent .message-bubble {
             background: #cfe0ee;
             color: rgb(22, 20, 20);
-            margin-right: 8px;
-            min-width: 12rem;
+            margin-right: 10px;
+            min-width: 15rem;
         }
 
         .message-time {
-            font-size: 9px;
-            margin-top: 4px;
+            font-size: 11px;
+            margin-top: 5px;
             opacity: 0.7;
         }
 
@@ -484,8 +484,8 @@
         }
 
         .message-avatar {
-            width: 28px;
-            height: 28px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             background: linear-gradient(45deg, #2196f3, #21cbf3);
             display: flex;
@@ -493,13 +493,13 @@
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 10px;
+            font-size: 12px;
             position: absolute;
-            /* left: 16px; */
+            /* left: 20px; */
         }
 
         .chat-input {
-            padding: 12px 16px;
+            padding: 15px 20px;
             border-top: 1px solid #dee2e6;
             background: white;
         }
@@ -511,17 +511,17 @@
 
         .send-btn {
             /* position: absolute; */
-            right: 6px;
+            right: 8px;
             background: #2196f3;
             border: none;
             border-radius: 50%;
-            width: 52px;
+            width: 65px;
             color: white;
             cursor: pointer;
-            padding-top: 0.56rem;
-            padding-right: 0.8rem;
-            padding-bottom: 0.56rem;
-            padding-left: 0.8rem;
+            padding-top: 0.7rem;
+            padding-right: 1rem;
+            padding-bottom: 0.7rem;
+            padding-left: 1rem;
             transition: background-color 0.2s;
         }
 
@@ -532,18 +532,18 @@
         .file-attachment {
             background: #e3f2fd;
             border: 1px solid #2196f3;
-            border-radius: 6px;
-            padding: 6px 10px;
-            margin: 4px 0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin: 5px 0;
             display: inline-flex;
             align-items: center;
-            font-size: 10px;
+            font-size: 13px;
             color: #1976d2;
         }
 
         .date-divider {
             text-align: center;
-            margin: 16px 0;
+            margin: 20px 0;
             position: relative;
         }
 
@@ -559,9 +559,9 @@
 
         .date-divider span {
             background: #f8f9fa;
-            padding: 0 12px;
+            padding: 0 15px;
             color: #6c757d;
-            font-size: 10px;
+            font-size: 12px;
         }
 
         @media (max-width: 768px) {
@@ -589,7 +589,7 @@
             <div class="position-absolute start-0 translate-middle-y cta-overlay" style="left: 5%; width: 90%;">
                 <!-- WRAPPER BARU untuk greeting + logout -->
                 <div class="d-flex align-items-center justify-content-between w-100 mb-2">
-                    <h3 class="mb-0" style="font-family:'Poppins'; font-size:2.64rem; font-weight:550; color:#fff;">
+                    <h3 class="mb-0" style="font-family:'Poppins'; font-size:3.3rem; font-weight:550; color:#fff;">
                         Halo, <span style="color:#ffc74c">{{ Auth::user()->name }}</span>
                     </h3>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="m-0">
@@ -600,7 +600,7 @@
 
                 <!-- Breadcrumb tetap di bawah -->
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-0" style="font-family:'Poppins'; font-size:0.8rem; font-weight:400;">
+                    <ol class="breadcrumb mb-0" style="font-family:'Poppins'; font-size:1rem; font-weight:400;">
                         <li class="breadcrumb-item"><a href="{{ url('/') }}">BERANDA</a></li>
                         <li class="breadcrumb-item active" aria-current="page">PROFIL</li>
                     </ol>
@@ -612,8 +612,8 @@
 
     <main>
         <div class="container-fluid px-4">
-            <div class="container product-card" style="margin-top:-144px;">
-                <div class="row g-5" style="margin-top:32px;">
+            <div class="container product-card" style="margin-top:-180px;">
+                <div class="row g-5" style="margin-top:40px;">
 
                     {{-- Sidebar Tabs --}}
                     <div class="col-lg-3">
@@ -681,37 +681,22 @@
                                                 {{-- Asumsi: Admin mengirim pesan dengan channel 'reply', customer mengirim dengan 'chat' --}}
                                                 <div
                                                     class="message {{ $msg->user_id == $currentAuthId ? 'sent' : 'received' }} my-2">
-                                                    @if ($msg->user_id == $currentAuthId)
-                                                        {{-- Pesan dari admin (sent) - bubble + avatar kanan --}}
-                                                        <div class="message-bubble">
-                                                            @if ($msg->message)
-                                                                {{ $msg->message }}<br>
-                                                            @endif
-                                                            @if ($msg->file_url)
-                                                                <a href="{{ $msg->file_url }}" target="_blank"
-                                                                    class="text-primary">📎Download File</a>
-                                                            @endif
-                                                            <div class="message-time">
-                                                                {{ \Carbon\Carbon::parse($msg->sent_at)->format('d M Y H:i') }}
-                                                            </div>
+                                                    <div class="chat-avatar">
+                                                        {{ $msg->user_id == $currentAuthId ? 'SP' : 'CS' }}
+                                                        {{-- SP for Sender (Admin), CS for Customer --}}
+                                                    </div>
+                                                    <div class="message-bubble">
+                                                        @if ($msg->message)
+                                                            {{ $msg->message }}<br>
+                                                        @endif
+                                                        @if ($msg->file_url)
+                                                            <a href="{{ $msg->file_url }}" target="_blank"
+                                                                class="text-primary">📎Download File</a>
+                                                        @endif
+                                                        <div class="message-time">
+                                                            {{ \Carbon\Carbon::parse($msg->sent_at)->format('d M Y H:i') }}
                                                         </div>
-                                                        <div class="chat-avatar">AD</div>
-                                                    @else
-                                                        {{-- Pesan dari customer (received) - avatar kiri + bubble --}}
-                                                        <div class="chat-avatar">CS</div>
-                                                        <div class="message-bubble">
-                                                            @if ($msg->message)
-                                                                {{ $msg->message }}<br>
-                                                            @endif
-                                                            @if ($msg->file_url)
-                                                                <a href="{{ $msg->file_url }}" target="_blank"
-                                                                    class="text-primary">📎Download File</a>
-                                                            @endif
-                                                            <div class="message-time">
-                                                                {{ \Carbon\Carbon::parse($msg->sent_at)->format('d M Y H:i') }}
-                                                            </div>
-                                                        </div>
-                                                    @endif
+                                                    </div>
                                                 </div>
                                             @endforeach
                                         @endif
@@ -784,15 +769,8 @@
                                     const channel = msg.channel;
                                     div.classList.add('message', msg.channel === 'reply' ? 'sent' : 'received', 'my-2');
 
-                                    let content = '';
-                                    
-                                    if (msg.channel === 'reply') {
-                                        // Pesan dari admin (sent) - bubble + avatar kanan
-                                        content = `<div class="message-bubble">`;
-                                    } else {
-                                        // Pesan dari customer (received) - avatar kiri + bubble
-                                        content = `<div class="chat-avatar">CS</div><div class="message-bubble">`;
-                                    }
+                                    let content =
+                                        `<div class="chat-avatar">${msg.channel === 'reply' ? 'CS' : 'SP'}</div><div class="message-bubble">`;
 
                                     if (msg.message) {
                                         content += `${msg.message}<br>`;
@@ -806,12 +784,8 @@
                                     const minutes = sentAt.getMinutes().toString().padStart(2, '0');
                                     const timeFormatted = `${hours}:${minutes}`;
 
-                                    content += `<div class="message-time">${timeFormatted}</div></div>`;
-                                    
-                                    if (msg.channel === 'reply') {
-                                        // Tambahkan avatar di kanan untuk pesan dari admin
-                                        content += `<div class="chat-avatar">AD</div>`;
-                                    }
+                                    content +=
+                                        `<div class="message-time">${timeFormatted}</div>`;
 
                                     div.innerHTML = content;
                                     chatBox.appendChild(div);
@@ -861,9 +835,9 @@
                                 if (file.type.startsWith('image/')) {
                                     const img = document.createElement('img');
                                     img.src = URL.createObjectURL(file);
-                                    img.style.maxWidth = '120px';
-                                    img.style.borderRadius = '6px';
-                                    img.style.boxShadow = '0 0 4px rgba(0,0,0,0.2)';
+                                    img.style.maxWidth = '150px';
+                                    img.style.borderRadius = '8px';
+                                    img.style.boxShadow = '0 0 5px rgba(0,0,0,0.2)';
                                     previewContainer.appendChild(img);
                                 } else {
                                     const fileInfo = document.createElement('div');
@@ -996,6 +970,376 @@
                                         }
                                     });
 
+                                    // 2. PERBAIKAN untuk sendMessage function di admin
+                                    function sendMessage() {
+                                        const message = messageInput.value.trim();
+                                        const file = fileInput.files[0];
+                                        const recipientUserId = currentRecipientIdInput.value;
+                                        const sendButton = document.querySelector('.send-btn');
+
+                                        if (!recipientUserId) {
+                                            alert('Pilih percakapan terlebih dahulu.');
+                                            return;
+                                        }
+
+                                        if (!message && !file) {
+                                            alert('Pesan atau file harus diisi.');
+                                            return;
+                                        }
+
+                                        const formData = new FormData();
+                                        formData.append('message', message);
+                                        if (file) {
+                                            formData.append('file', file);
+                                        }
+                                        formData.append('user', recipientUserId);
+
+                                        sendButton.disabled = true;
+
+                                        fetch('/api/send-message-admin', {
+                                                method: 'POST',
+                                                body: formData,
+                                                headers: {
+                                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                                }
+                                            })
+                                            .then(res => res.json())
+                                            .then(res => {
+                                                if (res.status === 'Message sent') {
+                                                    messageInput.value = '';
+                                                    fileInput.value = '';
+                                                    previewContainer.innerHTML = '';
+
+                                                    const chatObject = res.chat;
+                                                    if (chatObject && chatObject.recipient_user_id == recipientUserId) {
+                                                        // Tambahkan ke data lokal
+                                                        const newMessage = {
+                                                            message: chatObject.message,
+                                                            file_url: chatObject.file_url,
+                                                            sent_at: chatObject.sent_at,
+                                                            channel: 'reply', // Pesan dari admin selalu channel 'reply'
+                                                            user_id: chatObject.user_id,
+                                                            recipient_user_id: chatObject.recipient_user_id
+                                                        };
+
+                                                        addMessageToLocalData(recipientUserId, newMessage);
+
+                                                        // Tampilkan di UI - SENT karena admin yang mengirim
+                                                        const div = document.createElement('div');
+                                                        div.classList.add('message', 'sent', 'my-2');
+
+                                                        // Struktur untuk pesan SENT: bubble + avatar kanan
+                                                        let content = `<div class="message-bubble">`;
+                                                        if (chatObject.message) {
+                                                            content += `${chatObject.message}<br>`;
+                                                        }
+                                                        if (chatObject.file_url) {
+                                                            content +=
+                                                                `<a href="${chatObject.file_url}" target="_blank" class="text-primary">📎Download File</a>`;
+                                                        }
+
+                                                        const sentAt = new Date(chatObject.sent_at);
+                                                        const hours = sentAt.getHours().toString().padStart(2, '0');
+                                                        const minutes = sentAt.getMinutes().toString().padStart(2, '0');
+                                                        const timeFormatted = `${hours}:${minutes}`;
+
+                                                        content += `<div class="message-time">${timeFormatted}</div></div>`;
+                                                        content += `<div class="chat-avatar">AD</div>`; // Avatar di kanan
+
+                                                        div.innerHTML = content;
+                                                        chatBox.appendChild(div);
+                                                        scrollToBottom();
+
+                                                        // Update last message di sidebar
+                                                        updateLastMessageInSidebar(recipientUserId, chatObject.message, !!chatObject
+                                                            .file_url);
+                                                    }
+                                                } else {
+                                                    console.error('Gagal mengirim pesan:', res);
+                                                    alert('Gagal mengirim pesan.');
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error('Error:', error);
+                                                alert('Terjadi kesalahan saat mengirim pesan.');
+                                            })
+                                            .finally(() => {
+                                                sendButton.disabled = false;
+                                            });
+                                    }
+
+                                    // 3. PERBAIKAN untuk renderMessages function (yang dipanggil saat load awal)
+                                    function renderMessages(messages, currentUserId) {
+                                        chatBox.innerHTML = '';
+                                        if (messages.length === 0) {
+                                            noMessagesText.style.display = 'block';
+                                            return;
+                                        } else {
+                                            noMessagesText.style.display = 'none';
+                                        }
+
+                                        messages.forEach(msg => {
+                                            const div = document.createElement('div');
+
+                                            // PERBAIKAN: Gunakan channel untuk menentukan sent/received
+                                            // channel 'reply' = dari admin = SENT di sisi admin
+                                            // channel 'chat' = dari customer = RECEIVED di sisi admin
+                                            const isSent = msg.channel === 'reply';
+
+                                            div.classList.add('message', isSent ? 'sent' : 'received', 'my-2');
+
+                                            let content = '';
+
+                                            if (isSent) {
+                                                // Pesan SENT - struktur: bubble + avatar kanan
+                                                content = `<div class="message-bubble">`;
+                                            } else {
+                                                // Pesan RECEIVED - struktur: avatar kiri + bubble
+                                                content = `<div class="chat-avatar">CS</div><div class="message-bubble">`;
+                                            }
+
+                                            if (msg.message) {
+                                                content += `${msg.message}<br>`;
+                                            }
+                                            if (msg.file_url) {
+                                                content +=
+                                                    `<a href="${msg.file_url}" target="_blank" class="text-primary">📎Download File</a>`;
+                                            }
+
+                                            const sentAt = new Date(msg.sent_at);
+
+                                            // Get hours and minutes as before
+                                            const hours = sentAt.getHours().toString().padStart(2, '0');
+                                            const minutes = sentAt.getMinutes().toString().padStart(2, '0');
+                                            const timeFormatted = `${hours}:${minutes}`;
+
+                                            // Get day, month, and year for the date format
+                                            const day = sentAt.getDate().toString().padStart(2,
+                                                '0'); // Get the day of the month (1-31)
+                                            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
+                                                "Oct", "Nov", "Dec"
+                                            ];
+                                            const month = monthNames[sentAt.getMonth()]; // Get the month name
+                                            const year = sentAt.getFullYear(); // Get the full year
+
+                                            // Combine to create the full date and time string
+                                            const dateTimeFormatted = `${day} ${month} ${year} ${timeFormatted}`;
+
+                                            content += `<div class="message-time">${dateTimeFormatted}</div></div>`;
+
+                                            if (isSent) {
+                                                // Avatar di kanan untuk pesan SENT
+                                                content += `<div class="chat-avatar">AD</div>`;
+                                            }
+
+                                            div.innerHTML = content;
+                                            chatBox.appendChild(div);
+                                        });
+                                        scrollToBottom();
+                                    }
+
+                                    // PERBAIKAN JUGA untuk sendMessage function di admin (sekitar baris 220-280)
+                                    function sendMessage() {
+                                        const message = messageInput.value.trim();
+                                        const file = fileInput.files[0];
+                                        const recipientUserId = currentRecipientIdInput.value;
+                                        const sendButton = document.querySelector('.send-btn');
+
+                                        if (!recipientUserId) {
+                                            alert('Pilih percakapan terlebih dahulu.');
+                                            return;
+                                        }
+
+                                        if (!message && !file) {
+                                            alert('Pesan atau file harus diisi.');
+                                            return;
+                                        }
+
+                                        const formData = new FormData();
+                                        formData.append('message', message);
+                                        if (file) {
+                                            formData.append('file', file);
+                                        }
+                                        formData.append('user', recipientUserId);
+
+                                        sendButton.disabled = true;
+
+                                        fetch('/api/send-message-admin', {
+                                                method: 'POST',
+                                                body: formData,
+                                                headers: {
+                                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                                }
+                                            })
+                                            .then(res => res.json())
+                                            .then(res => {
+                                                if (res.status === 'Message sent') {
+                                                    messageInput.value = '';
+                                                    fileInput.value = '';
+                                                    previewContainer.innerHTML = '';
+
+                                                    const chatObject = res.chat;
+                                                    if (chatObject && chatObject.recipient_user_id == recipientUserId) {
+                                                        // PERBAIKAN: Tambahkan ke data lokal terlebih dahulu
+                                                        const newMessage = {
+                                                            message: chatObject.message,
+                                                            file_url: chatObject.file_url,
+                                                            sent_at: chatObject.sent_at,
+                                                            channel: 'reply', // Pesan dari admin
+                                                            user_id: chatObject.user_id,
+                                                            recipient_user_id: chatObject.recipient_user_id
+                                                        };
+
+                                                        addMessageToLocalData(recipientUserId, newMessage);
+
+                                                        // Baru tampilkan di UI
+                                                        const div = document.createElement('div');
+
+                                                        // PERBAIKAN: Pesan dari admin selalu SENT di sisi admin
+                                                        div.classList.add('message', 'sent', 'my-2');
+
+                                                        let content =
+                                                            `<div class="chat-avatar">AD</div><div class="message-bubble">`;
+                                                        if (chatObject.message) {
+                                                            content += `${chatObject.message}<br>`;
+                                                        }
+                                                        if (chatObject.file_url) {
+                                                            content +=
+                                                                `<a href="${chatObject.file_url}" target="_blank" class="text-primary">📎Download File</a>`;
+                                                        }
+
+                                                        const sentAt = new Date(chatObject.sent_at);
+                                                        const hours = sentAt.getHours().toString().padStart(2, '0');
+                                                        const minutes = sentAt.getMinutes().toString().padStart(2, '0');
+                                                        const timeFormatted = `${hours}:${minutes}`;
+
+                                                        content += `<div class="message-time">${timeFormatted}</div></div>`;
+
+                                                        div.innerHTML = content;
+                                                        chatBox.appendChild(div);
+                                                        scrollToBottom();
+
+                                                        // PERBAIKAN: Update last message di sidebar
+                                                        updateLastMessageInSidebar(recipientUserId, chatObject.message, !!chatObject
+                                                            .file_url);
+                                                    }
+                                                } else {
+                                                    console.error('Gagal mengirim pesan:', res);
+                                                    alert('Gagal mengirim pesan.');
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error('Error:', error);
+                                                alert('Terjadi kesalahan saat mengirim pesan.');
+                                            })
+                                            .finally(() => {
+                                                sendButton.disabled = false;
+                                            });
+                                    }
+
+                                    // PERBAIKAN JUGA untuk sendMessage function di admin (sekitar baris 220-280)
+                                    function sendMessage() {
+                                        const message = messageInput.value.trim();
+                                        const file = fileInput.files[0];
+                                        const recipientUserId = currentRecipientIdInput.value;
+                                        const sendButton = document.querySelector('.send-btn');
+
+                                        if (!recipientUserId) {
+                                            alert('Pilih percakapan terlebih dahulu.');
+                                            return;
+                                        }
+
+                                        if (!message && !file) {
+                                            alert('Pesan atau file harus diisi.');
+                                            return;
+                                        }
+
+                                        const formData = new FormData();
+                                        formData.append('message', message);
+                                        if (file) {
+                                            formData.append('file', file);
+                                        }
+                                        formData.append('user', recipientUserId);
+
+                                        sendButton.disabled = true;
+
+                                        fetch('/api/send-message-admin', {
+                                                method: 'POST',
+                                                body: formData,
+                                                headers: {
+                                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                                }
+                                            })
+                                            .then(res => res.json())
+                                            .then(res => {
+                                                if (res.status === 'Message sent') {
+                                                    messageInput.value = '';
+                                                    fileInput.value = '';
+                                                    previewContainer.innerHTML = '';
+
+                                                    const chatObject = res.chat;
+                                                    if (chatObject && chatObject.recipient_user_id == recipientUserId) {
+                                                        // PERBAIKAN: Tambahkan ke data lokal terlebih dahulu
+                                                        const newMessage = {
+                                                            message: chatObject.message,
+                                                            file_url: chatObject.file_url,
+                                                            sent_at: chatObject.sent_at,
+                                                            channel: 'reply', // Pesan dari admin
+                                                            user_id: chatObject.user_id,
+                                                            recipient_user_id: chatObject.recipient_user_id
+                                                        };
+
+                                                        addMessageToLocalData(recipientUserId, newMessage);
+
+                                                        // Baru tampilkan di UI
+                                                        const div = document.createElement('div');
+
+                                                        // PERBAIKAN: Pesan yang dikirim admin selalu SENT di sisi admin
+                                                        const currentAuthId = {{ $currentAuthId }};
+                                                        const isSent = chatObject.user_id ==
+                                                            currentAuthId; // Admin yang mengirim = SENT
+
+                                                        div.classList.add('message', isSent ? 'sent' : 'received', 'my-2');
+
+                                                        let content =
+                                                            `<div class="chat-avatar">${isSent ? 'AD' : 'CS'}</div><div class="message-bubble">`;
+                                                        if (chatObject.message) {
+                                                            content += `${chatObject.message}<br>`;
+                                                        }
+                                                        if (chatObject.file_url) {
+                                                            content +=
+                                                                `<a href="${chatObject.file_url}" target="_blank" class="text-primary">📎Download File</a>`;
+                                                        }
+
+                                                        const sentAt = new Date(chatObject.sent_at);
+                                                        const hours = sentAt.getHours().toString().padStart(2, '0');
+                                                        const minutes = sentAt.getMinutes().toString().padStart(2, '0');
+                                                        const timeFormatted = `${hours}:${minutes}`;
+
+                                                        content += `<div class="message-time">${timeFormatted}</div></div>`;
+
+                                                        div.innerHTML = content;
+                                                        chatBox.appendChild(div);
+                                                        scrollToBottom();
+
+                                                        // PERBAIKAN: Update last message di sidebar
+                                                        updateLastMessageInSidebar(recipientUserId, chatObject.message, !!chatObject
+                                                            .file_url);
+                                                    }
+                                                } else {
+                                                    console.error('Gagal mengirim pesan:', res);
+                                                    alert('Gagal mengirim pesan.');
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error('Error:', error);
+                                                alert('Terjadi kesalahan saat mengirim pesan.');
+                                            })
+                                            .finally(() => {
+                                                sendButton.disabled = false;
+                                            });
+                                    }
+
                                     if (window.innerWidth < 768) {
                                         toggleSidebar();
                                     }
@@ -1076,7 +1420,7 @@
                                                 const timeFormatted = `${hours}:${minutes}`;
 
                                                 content += `<div class="message-time">${timeFormatted}</div></div>`;
-                                                content += `<div class="chat-avatar">AD</div>`;
+                                                content += `<div class="chat-avatar">${isSent ? 'SP' : 'CS'}</div>`;
 
                                                 div.innerHTML = content;
                                                 chatBox.appendChild(div);
@@ -1161,7 +1505,7 @@
                                                             {{ $msg->created_at->format('d M Y H:i') }}
                                                         </div>
                                                     </div>
-                                                    <div class="chat-avatar">CS</div>
+                                                    <div class="chat-avatar">SP</div>
                                                 </div>
                                                 @if ($msg->file_url)
                                                     <div class="message sent my-2">
@@ -1171,12 +1515,12 @@
                                                             <div class="message-time">
                                                                 {{ $msg->created_at->format('d M Y H:i') }}</div>
                                                         </div>
-                                                        <div class="chat-avatar">CS</div>
+                                                        <div class="chat-avatar">SP</div>
                                                     </div>
                                                 @endif
                                             @elseif($msg->channel == 'reply')
                                                 <div class="message received my-2">
-                                                    <div class="chat-avatar">AD</div>
+                                                    <div class="chat-avatar">CS</div>
                                                     <div class="message-bubble">
                                                         @if ($msg->message)
                                                             {{ $msg->message }}<br>
@@ -1188,7 +1532,7 @@
                                                 </div>
                                                 @if ($msg->file_url)
                                                     <div class="message received my-2">
-                                                        <div class="chat-avatar">AD</div>
+                                                        <div class="chat-avatar">CS</div>
                                                         <div class="message-bubble">
                                                             <a href="{{ $msg->file_url }}" target="_blank"
                                                                 class="text-primary">📎Download File</a>
@@ -1249,9 +1593,9 @@
                                     if (file.type.startsWith('image/')) {
                                         const img = document.createElement('img');
                                         img.src = URL.createObjectURL(file);
-                                        img.style.maxWidth = '120px';
-                                        img.style.borderRadius = '6px';
-                                        img.style.boxShadow = '0 0 4px rgba(0,0,0,0.2)';
+                                        img.style.maxWidth = '150px';
+                                        img.style.borderRadius = '8px';
+                                        img.style.boxShadow = '0 0 5px rgba(0,0,0,0.2)';
                                         previewContainer.appendChild(img);
                                     } else {
                                         const fileInfo = document.createElement('div');
@@ -1261,8 +1605,11 @@
                                 });
 
                                 const chatBox = document.getElementById('chatMessages');
+                                // const input = document.getElementById('messageInput');
 
                                 // PERBAIKAN UNTUK SISI CUSTOMER
+                                // Ganti bagian Ably subscriber di sisi customer (sekitar baris 385-410)
+
                                 channel.subscribe('message', function(message) {
                                     const msg = message.data;
                                     const div = document.createElement('div');
@@ -1281,7 +1628,7 @@
                                         content = `<div class="message-bubble">`;
                                     } else {
                                         // Pesan dari admin (received) - avatar di kiri  
-                                        content = `<div class="chat-avatar">AD</div><div class="message-bubble">`;
+                                        content = `<div class="chat-avatar">CS</div><div class="message-bubble">`;
                                     }
 
                                     if (msg.message) {
@@ -1299,17 +1646,28 @@
                                     const timeWIB = `${hours}:${minutes}`;
 
                                     // --- New part for adding the date ---
+
+                                    // Get the day of the month (e.g., 22)
                                     const day = originalDate.getDate().toString().padStart(2, '0');
+
+                                    // Array of abbreviated month names
                                     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                                    // Get the month name from the array using the month index
                                     const month = monthNames[originalDate.getMonth()];
+
+                                    // Get the full year (e.g., 2025)
                                     const year = originalDate.getFullYear();
+
+                                    // Combine all parts into the desired "DD Mon YYYY HH:MM" format
                                     const dateTimeFormatted = `${day} ${month} ${year} ${timeWIB}`;
+
+                                    // --- End of new part ---
 
                                     content += `<div class="message-time">${dateTimeFormatted}</div></div>`;
 
                                     if (isSent) {
                                         // Tambahkan avatar di kanan untuk pesan sent
-                                        content += `<div class="chat-avatar">CS</div>`;
+                                        content += `<div class="chat-avatar">SP</div>`;
                                     }
 
                                     div.innerHTML = content;
@@ -1317,6 +1675,7 @@
                                     chatBox.scrollTop = chatBox.scrollHeight;
                                 });
 
+                                // PERBAIKAN untuk sendMessage function di customer - HAPUS DUPLICATE DISPLAY
                                 function sendMessage() {
                                     const input = document.getElementById('messageInput');
                                     const fileInput = document.getElementById('fileInput');
@@ -1351,6 +1710,133 @@
                                                 input.value = '';
                                                 fileInput.value = '';
                                                 previewContainer.innerHTML = '';
+
+                                                // TIDAK PERLU menampilkan pesan di sini karena akan ditampilkan oleh Ably subscriber
+                                                // yang akan menerima broadcast dengan channel 'chat'
+
+                                            } else {
+                                                console.error('Gagal mengirim pesan:', res);
+                                                alert('Gagal mengirim pesan.');
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Error:', error);
+                                            alert('Terjadi kesalahan saat mengirim pesan.');
+                                        })
+                                        .finally(() => {
+                                            sendButton.disabled = false;
+                                        });
+                                }
+
+                                // PERBAIKAN JUGA untuk sendMessage function di customer
+                                function sendMessage() {
+                                    const input = document.getElementById('messageInput');
+                                    const fileInput = document.getElementById('fileInput');
+                                    const previewContainer = document.getElementById('previewAttachment');
+                                    const sendButton = document.querySelector('.send-btn');
+
+                                    const message = input.value.trim();
+                                    const file = fileInput.files[0];
+
+                                    if (!message && !file) {
+                                        alert('Pesan atau file harus diisi.');
+                                        return;
+                                    }
+
+                                    const formData = new FormData();
+                                    formData.append('user', {{ Auth::id() }}); // pastikan Auth tersedia
+                                    formData.append('message', message);
+                                    if (file) {
+                                        formData.append('file', file);
+                                    }
+
+                                    // Disable tombol kirim saat proses
+                                    sendButton.disabled = true;
+
+                                    fetch('/api/send-message', {
+                                            method: 'POST',
+                                            body: formData
+                                        })
+                                        .then(res => res.json())
+                                        .then(res => {
+                                            if (res.status === 'Message sent') {
+                                                input.value = '';
+                                                fileInput.value = '';
+                                                previewContainer.innerHTML = '';
+
+                                                // OPSIONAL: Langsung tampilkan pesan yang dikirim tanpa menunggu Ably
+                                                // (karena kadang ada delay di Ably)
+                                                const chatBox = document.getElementById('chatMessages');
+                                                const div = document.createElement('div');
+                                                div.classList.add('message', 'sent', 'my-2');
+
+                                                let content = `<div class="message-bubble">`;
+                                                if (message) {
+                                                    content += message;
+                                                }
+                                                if (file) {
+                                                    content += `<br><a href="#" class="text-primary">📎${file.name}</a>`;
+                                                }
+
+                                                const now = new Date();
+                                                const hours = now.getHours().toString().padStart(2, '0');
+                                                const minutes = now.getMinutes().toString().padStart(2, '0');
+                                                const timeNow = `${hours}:${minutes}`;
+
+                                                content += `<div class="message-time">${timeNow}</div></div><div class="chat-avatar">ME</div>`;
+
+                                                div.innerHTML = content;
+                                                chatBox.appendChild(div);
+                                                chatBox.scrollTop = chatBox.scrollHeight;
+
+                                            } else {
+                                                console.error('Gagal mengirim pesan:', res);
+                                                alert('Gagal mengirim pesan.');
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Error:', error);
+                                            alert('Terjadi kesalahan saat mengirim pesan.');
+                                        })
+                                        .finally(() => {
+                                            sendButton.disabled = false;
+                                        });
+                                }
+
+                                function sendMessage() {
+                                    const input = document.getElementById('messageInput');
+                                    const fileInput = document.getElementById('fileInput');
+                                    const previewContainer = document.getElementById('previewAttachment');
+                                    const sendButton = document.querySelector('.send-btn');
+
+                                    const message = input.value.trim();
+                                    const file = fileInput.files[0];
+
+                                    if (!message && !file) {
+                                        alert('Pesan atau file harus diisi.');
+                                        return;
+                                    }
+
+                                    const formData = new FormData();
+                                    formData.append('user', {{ Auth::id() }}); // pastikan Auth tersedia
+                                    formData.append('message', message);
+                                    if (file) {
+                                        formData.append('file', file);
+                                    }
+
+                                    // Disable tombol kirim saat proses
+                                    sendButton.disabled = true;
+
+                                    fetch('/api/send-message', {
+                                            method: 'POST',
+                                            body: formData
+                                        })
+                                        .then(res => res.json())
+                                        .then(res => {
+                                            if (res.status === 'Message sent') {
+                                                input.value = '';
+                                                fileInput.value = '';
+                                                previewContainer.innerHTML = '';
                                             } else {
                                                 console.error('Gagal mengirim pesan:', res);
                                                 alert('Gagal mengirim pesan.');
@@ -1365,6 +1851,8 @@
                                         });
                                 }
                             </script>
+
+
 
                         </div>
                     @endif

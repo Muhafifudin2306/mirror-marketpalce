@@ -12,34 +12,69 @@ use Illuminate\Support\Facades\Validator;
 
 class PasswordResetController extends Controller
 {
-    /**
-     * Send a reset link to the given user.
-     */
+    public function showLinkRequestForm()
+    {
+        return view('auth.forgot-password');
+    }
+
     public function sendResetLinkEmail(Request $request)
     {
         $request->validate(['email' => 'required|email']);
 
-        // Send the password reset link
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        $email = strtolower(trim($request->email));
+        
+        $user = \App\Models\User::whereRaw('LOWER(email) = ?', [$email])->first();
+        
+        if (!$user) {
+            
+            $errorMessage = 'Email tidak ditemukan dalam sistem kami.';
+            
+            if ($request->ajax() || $request->expectsJson() || $request->wantsJson()) {
+                return response()->json([
+                    'message' => $errorMessage,
+                    'status' => 'error'
+                ], 422);
+            }
 
-        if ($status === Password::RESET_LINK_SENT) {
-            return response()->json([
-                'message' => 'Link reset password telah dikirim ke email Anda.',
-                'status' => 'success'
-            ], 200);
+            return back()->withErrors(['email' => $errorMessage]);
         }
 
-        return response()->json([
-            'message' => 'Tidak dapat mengirim link reset password. Email tidak ditemukan.',
-            'status' => 'error'
-        ], 400);
+        $actualEmail = $user->email;
+        
+        $status = Password::sendResetLink(['email' => $actualEmail]);
+
+
+        if ($status === Password::RESET_LINK_SENT) {
+            
+            $successMessage = 'Link reset password telah dikirim ke email Anda. Silakan periksa kotak masuk atau folder spam.';
+            
+            if ($request->ajax() || $request->expectsJson() || $request->wantsJson()) {
+                return response()->json([
+                    'message' => $successMessage,
+                    'status' => 'success'
+                ], 200);
+            }
+
+            return back()->with('status', $successMessage);
+        }
+
+        $errorMessage = match($status) {
+            Password::INVALID_USER => 'Email tidak ditemukan dalam sistem kami.',
+            Password::INVALID_TOKEN => 'Token reset password tidak valid.',
+            Password::RESET_THROTTLED => 'Terlalu banyak percobaan reset password. Silakan coba lagi dalam 1 menit.',
+            default => 'Terjadi kesalahan saat mengirim email reset password. Silakan coba lagi.'
+        };
+
+        if ($request->ajax() || $request->expectsJson() || $request->wantsJson()) {
+            return response()->json([
+                'message' => $errorMessage,
+                'status' => 'error'
+            ], 422);
+        }
+
+        return back()->withErrors(['email' => $errorMessage]);
     }
 
-    /**
-     * Display the password reset form.
-     */
     public function showResetForm($token)
     {
         return view('auth.reset-password', [
@@ -48,9 +83,11 @@ class PasswordResetController extends Controller
         ]);
     }
 
-    /**
-     * Reset the user's password.
-     */
+    public function showSuccessPage()
+    {
+        return view('auth.reset-success');
+    }
+
     public function reset(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -69,7 +106,6 @@ class PasswordResetController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        // Reset the user's password
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
@@ -84,7 +120,7 @@ class PasswordResetController extends Controller
         );
 
         if ($status === Password::PASSWORD_RESET) {
-            return redirect()->route('login')->with('status', 'Password berhasil direset. Silakan login dengan password baru Anda.');
+            return redirect()->route('password.success');
         }
 
         return back()->withErrors(['email' => 'Token reset password tidak valid atau sudah kadaluarsa.']);

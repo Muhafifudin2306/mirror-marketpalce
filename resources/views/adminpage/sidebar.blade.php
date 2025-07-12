@@ -25,6 +25,7 @@
                         <a class="nav-link {{ request()->is('admin/faq') ? 'active' : '' }}" href="{{ url('/admin/faq') }}">FAQ</a>
                         <a class="nav-link {{ request()->is('admin/testimonial') ? 'active' : '' }}" href="{{ url('/admin/testimonial') }}">Testimoni</a>
                         <a class="nav-link {{ request()->is('admin/customer') ? 'active' : '' }}" href="{{ url('/admin/customer') }}">Customer</a>
+                        <a class="nav-link {{ request()->is('admin/setting') ? 'active' : '' }}" href="{{ url('/admin/setting') }}">Setting</a>
                     </nav>
                 </div>
                 @if(Auth::user()->role == 'Admin')

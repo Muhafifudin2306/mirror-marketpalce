@@ -105,4 +105,9 @@ class TestimonialController extends Controller
         return redirect()->route('admin.testimonial.index')
                          ->with('success', 'Testimonial deleted successfully.');
     }
+
+    public function about() {
+        $testimonials = Testimonial::orderBy('created_at', 'desc')->get();
+        return view('landingpage.about', compact('testimonials'));
+    }
 }
