@@ -306,14 +306,14 @@
                           @endphp
 
                           <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                              <div class="slide w-100 p-xl-5 p-3 rounded"
+                              <div class="slide w-100 p-xl-5 p-2 rounded"
                                   style="background-image: url({{ $backgroundImage }}); height: 550px; background-size: cover;">
-                                  <div class="string-cover m-5">
+                                  <div class="string-cover m-3 m-md-5">
                                       @foreach($processedHeading as $i => $line)
                                           @if($i == 0)
-                                              <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:600; color:#fff;">{!! $line !!}</h1>
+                                              <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:600; color:#fff;">{!! $line !!}</h1>
                                           @else
-                                              <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:600; color:#fff;">{!! $line !!}</h1>
+                                              <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:600; color:#fff;">{!! $line !!}</h1>
                                           @endif
                                       @endforeach
 
