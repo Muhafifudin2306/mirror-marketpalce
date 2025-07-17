@@ -204,7 +204,7 @@
         
         <div class="email-footer">
             <p>Email ini dikirim secara otomatis, mohon jangan membalas email ini.</p>
-            <p>© {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
+            <p>© {{ date('Y') }} Sinau Print. All rights reserved.</p>
         </div>
     </div>
 </body>

@@ -341,7 +341,7 @@
                                             <label class="form-label">PROVINSI</label>
                                             <select name="province"
                                                 class="form-control @error('province') is-invalid @enderror" disabled>
-                                                <option value="{{ Auth::user()->province }}">{{ Auth::user()->province }}
+                                                <option value="{{ old('province', $provinceName ?? '-') }}">{{ old('province', $provinceName ?? '-') }}
                                                 </option>
                                             </select>
                                             @error('province')
@@ -354,7 +354,7 @@
                                             <label class="form-label">KECAMATAN/KOTA</label>
                                             <select name="city"
                                                 class="form-control @error('city') is-invalid @enderror" disabled>
-                                                <option value="{{ Auth::user()->city }}">{{ Auth::user()->city }}
+                                                <option value="{{ old('city', $cityName ?? '-') }}">{{ old('city', $cityName ?? '-') }}
                                                 </option>
                                             </select>
                                             @error('city')
@@ -389,17 +389,25 @@
                                         <div class="mb-3">
                                             <label class="form-label"><b>METODE PENGIRIMAN</b></label>
                                             @if (!$isset)
-                                                <select 
-                                                    id="deliveryMethod" 
-                                                    name="kurir" 
-                                                    class="form-select @error('kurir') is-invalid @enderror"
-                                                    style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;" 
-                                                    disabled>
-                                                    <option value="0" {{ old('kurir','0')=='0'?'selected':'' }}>
-                                                        LENGKAPI DATA ALAMAT ANDA DI MENU PROFIL!!!
-                                                    </option> 
-                                                </select>
+                                                <div class="mb-3">
+                                                    <select 
+                                                        id="deliveryMethod" 
+                                                        name="kurir" 
+                                                        class="form-select @error('kurir') is-invalid @enderror"
+                                                        style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;" 
+                                                        disabled>
+                                                        <option value="0" selected>
+                                                            Lengkapi data alamat Anda di menu Profil
+                                                        </option> 
+                                                    </select>
+                                                    <div class="mt-1">
+                                                        <a href="{{ url('/profile') }}" class="btn-cancel">
+                                                            <i class="bi bi-geo-alt-fill"></i> Lengkapi Alamat Anda
+                                                        </a>
+                                                    </div>
+                                                </div>
                                             @else
+
                                                 <select 
                                                     id="deliveryMethod" 
                                                     name="kurir" 

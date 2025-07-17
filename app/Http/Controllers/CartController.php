@@ -256,10 +256,19 @@ class CartController extends Controller
         $user = auth()->user();
         $isset = $user->province && $user->city && $user->address && $user->postal_code;
 
+        $provinceName = $user->province
+            ? DB::table('d_provinsi')->where('id', $user->province)->value('nama')
+            : null;
+        $cityName = $user->city
+            ? DB::table('d_kabkota')->where('id', $user->city)->value('nama')
+            : null;
+
         return view('landingpage.checkout', [
             'item'  => $item,
             'order' => $order,
             'isset' => $isset,
+            'provinceName' => $provinceName,
+            'cityName'     => $cityName,
         ]);
     }
 
@@ -276,8 +285,15 @@ class CartController extends Controller
         $user  = Auth::user();
         $isset = $user->province && $user->city && $user->address && $user->postal_code;
 
+        $provinceName = $user->province
+            ? DB::table('d_provinsi')->where('id', $user->province)->value('nama')
+            : null;
+        $cityName = $user->city
+            ? DB::table('d_kabkota')->where('id', $user->city)->value('nama')
+            : null;
+
         return view('landingpage.checkout', compact(
-            'order','items','subtotal','isset','item'
+            'order','items','subtotal','isset','item','provinceName', 'cityName'
         ));
     }
 

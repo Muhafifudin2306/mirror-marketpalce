@@ -274,42 +274,351 @@
     font-weight: bold;
     color: #fff;
   }
-
-  @media (max-width: 768px) {
-    .cta-overlay h3 {
-      font-size: 2rem;
-    }
-    .breadcrumb {
-      font-size: 0.65rem;
-    }
-    .price-main {
-      font-size: 1.4rem;
-    }
-    .total-price {
-      font-size: 1.5rem;
-    }
-    .btn-order {
-      width: 200px;
-      height: 36px;
-      font-size: 0.8rem;
-    }
-    .carousel-container {
-      max-height: 280px;
-    }
-    .thumbnail-img {
-      width: 64px;
-      height: 40px;
-    }
-    .thumb-img:first-child {
-      margin-left: 0;
-    }
+@media (max-width: 768px) {
+  .container-fluid.px-4 {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
   }
+  
+  .container.product-card {
+    margin-top: -120px !important;
+    padding: 0 16px !important;
+  }
+  
+  .cta-overlay {
+    left: -10% !important;
+    /* padding: 0 16px; */
+    top: 50% !important;
+  }
+  
+  .cta-overlay h3 {
+    font-size: 1.6rem !important;
+    line-height: 1.3;
+    margin-bottom: 0.6rem !important;
+    display: block !important;
+    visibility: visible !important;
+  }
+  
+  .row.g-5 {
+    gap: 2rem !important;
+    --bs-gutter-x: 1rem !important;
+    --bs-gutter-y: 2rem !important;
+  }
+  
+  .col-lg-7 {
+    order: 1;
+  }
+  
+  .sticky-left {
+    position: static !important;
+    top: auto !important;
+  }
+  
+  .carousel-container {
+    max-height: 240px !important;
+    margin-bottom: 12px;
+  }
+  
+  .thumb-container {
+    padding-left: 8px !important;
+    justify-content: center !important;
+  }
+  
+  .thumbnail-img {
+    width: 56px !important;
+    height: 36px !important;
+  }
+  
+  .thumb-img {
+    margin-left: 4px !important;
+  }
+  
+  .thumb-img:first-child {
+    margin-left: 0 !important;
+  }
+  
+  .col-lg-5 {
+    order: 2;
+    padding: 0 !important;
+  }
+  
+  .price-main {
+    font-size: 1.2rem !important;
+  }
+  
+  .price-discount {
+    font-size: 0.8rem !important;
+  }
+  .form-select, .form-control {
+    height: 44px !important;
+    font-size: 0.85rem !important;
+    padding: 0 16px !important;
+    border-radius: 8px !important;
+  }
+  
+  .form-label {
+    font-size: 0.8rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .input-group-text {
+    border-radius: 0 8px 8px 0 !important;
+    font-size: 0.8rem !important;
+    padding: 0 12px !important;
+  }
+  
+  .form-control[type="number"] {
+    padding: 0 16px !important;
+    border-radius: 8px 0 0 8px !important;
+  }
+  
+  .custom-file-input-fix {
+    height: 44px !important;
+    padding: 8px 12px !important;
+    font-size: 0.8rem !important;
+    border-radius: 8px !important;
+  }
+  
+  .custom-file-input-fix::file-selector-button {
+    padding: 8px 12px !important;
+    font-size: 0.75rem !important;
+    margin-right: 8px !important;
+  }
+  
+  .textarea-custom {
+    height: 60px !important;
+    padding: 10px 12px !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .row.g-2 {
+    gap: 0.75rem !important;
+  }
+  
+  .row.g-2 .col {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+  
+  .row.mb-3:last-of-type .col-auto:first-child,
+  .row.mb-3:last-of-type .col-12:first-child {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    margin-bottom: 1rem;
+  }
+  
+  .row.mb-3:last-of-type .col-auto:last-child,
+  .row.mb-3:last-of-type .col-12:last-child {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+  
+  #qty {
+    width: 100% !important;
+    padding: 0 16px !important;
+  }
+  
+  .btn-order {
+    width: 100% !important;
+    height: 48px !important;
+    font-size: 0.9rem !important;
+    border-radius: 8px !important;
+  }
+  
+  .total-container {
+    padding: 16px !important;
+    border-radius: 8px !important;
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 8px;
+  }
+  
+  .total-label {
+    font-size: 0.85rem !important;
+  }
+  
+  .total-price {
+    font-size: 1.6rem !important;
+  }
+  
+  .product-info-header {
+    font-size: 0.85rem !important;
+    padding: 12px 0 !important;
+  }
+  
+  .info-icon {
+    width: 14px !important;
+    height: 14px !important;
+    font-size: 0.65rem !important;
+    margin-right: 6px !important;
+  }
+  
+  .info-subtitle {
+    font-size: 0.8rem !important;
+    margin-top: 12px !important;
+    margin-bottom: 6px !important;
+  }
+  
+  .info-content {
+    font-size: 0.75rem !important;
+    line-height: 1.5 !important;
+    padding-right: 0 !important;
+  }
+  
+  .content {
+    overflow: visible !important;
+  }
+  
+  .col-6 {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+  .other-products-section {
+    display: none !important;
+  }
+  .breadcrumb {
+    display: none !important;
+  }
+  
+  .field-error-message {
+    font-size: 0.7rem !important;
+    margin-top: 3px !important;
+  }
+  
+  .invalid-feedback {
+    font-size: 0.7rem !important;
+  }
+  
+  .alert {
+    font-size: 0.75rem !important;
+    padding: 8px 12px !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .form-text {
+    font-size: 0.65rem !important;
+    line-height: 1.4 !important;
+  }
+  
+  .mb-3 {
+    margin-bottom: 1rem !important;
+  }
+  
+  .mt-4 {
+    margin-top: 1.5rem !important;
+  }
+  
+  .mt-5 {
+    margin-top: 2rem !important;
+  }
+  
+  .pt-5 {
+    padding-top: 2rem !important;
+  }
+  
+  .container-fluid.footer.mt-5.pt-5 {
+    margin-top: 3rem !important;
+    padding-top: 2rem !important;
+  }
+  
+  .row.g-4 {
+    gap: 1rem !important;
+  }
+.container-fluid.footer.mt-5.pt-5 .position-relative img {
+  height: 200px !important;
+  object-fit: cover !important;
+}
+
+.container-fluid.footer .position-absolute.cta-overlay {
+  top: 30% !important;
+  transform: translateY(-50%) !important;
+}
+}
+
+@media (max-width: 480px) {
+  .container.product-card {
+    margin-top: -100px !important;
+  }
+  
+  .cta-overlay h3 {
+    font-size: 1.4rem !important;
+  }
+  
+  .carousel-container {
+    max-height: 200px !important;
+  }
+  
+  .thumbnail-img {
+    width: 48px !important;
+    height: 32px !important;
+  }
+  
+  .price-main {
+    font-size: 1.1rem !important;
+  }
+  
+  .total-price {
+    font-size: 1.4rem !important;
+  }
+  
+  .other-products-title {
+    font-size: 1.1rem !important;
+  }
+  
+  .product-card-height {
+    height: 80px !important;
+  }
+  
+  .product-card-content {
+    min-height: 50px !important;
+    padding: 0.3rem !important;
+  }
+  
+  .product-card-title {
+    font-size: 0.65rem !important;
+    line-height: 1.0 !important;
+  }
+  
+  .product-card-size {
+    font-size: 0.5rem !important;
+    margin-bottom: 0.2rem !important;
+  }
+  
+  .product-card-price {
+    font-size: 0.7rem !important;
+  }
+  
+  .product-card-price-normal {
+    font-size: 0.7rem !important;
+  }
+}
 </style>
 
 <div class="container-fluid footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
   <div class="position-relative mb-0">
     <img class="w-100 rounded" src="{{ asset('landingpage/img/blue_bg.png') }}" alt="CTA Image">
-    <div class="position-absolute start-0 translate-middle-y cta-overlay" style="left: 5%;">
+    <div class="position-absolute start-0 translate-middle-y cta-overlay d-none d-md-block" style="left: 5%;">
+      <h3 class="mb-2">
+        {{ $product->label->name }} - {{ $product->name }}
+        @if($product->additional_size && $product->additional_unit)
+          {{ $product->additional_size }} {{ $product->additional_unit }}
+        @endif
+      </h3>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item">
+            <a href="{{ url('/') }}">Beranda</a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="{{ route('landingpage.products') }}">Semua Produk</a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">
+            {{ $product->name }}
+          </li>
+        </ol>
+      </nav>
+    </div>
+    <div class="position-absolute start-0 translate-middle-y cta-overlay d-block d-md-none" style="left: 3%; top: 20%;">
       <h3 class="mb-2">
         {{ $product->label->name }} - {{ $product->name }}
         @if($product->additional_size && $product->additional_unit)
@@ -335,13 +644,13 @@
 
 <main>
   <div class="container-fluid px-4">
-    <div class="container product-card" style="margin-top:-150px;">
+    <div class="container product-card mobile-spacing" style="margin-top:-150px;">
       @php
         $base = $product->price;
         $final = $product->getDiscountedPrice(); // Gunakan method dari model
         $bestDiscount = $product->getBestDiscount();
       @endphp
-      <div class="row g-5">
+      <div class="row g-5 g-md-5 g-2">
         <!-- Carousel and thumbnails -->
         @php $thumbs = $product->images->take(4); @endphp
         <div class="col-lg-7">
@@ -719,7 +1028,7 @@
 
             {{-- QTY & SUBMIT --}}
             <div class="row mb-3">
-              <div class="col-auto">
+              <div class="col-12 col-md-auto mb-2 mb-md-0">
                 <label class="form-label"><b>QTY</b><span class="required-asterisk">*</span></label>
                 <input
                   type="number"
@@ -737,7 +1046,7 @@
                 @enderror
                 <div class="field-error-message" id="qty_error">Qty minimal 1</div>
               </div>
-              <div class="col-auto d-flex align-items-end">
+              <div class="col-12 col-md-auto d-flex align-items-end">
                 <button type="submit" class="btn btn-order">
                   {{ $isEdit ? 'UBAH ORDER' : 'BELI PRODUK' }}
                 </button>
@@ -794,7 +1103,7 @@
     </div>
   </div>
   <!-- Produk Lainnya -->
-  <div class="container-fluid footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
+  <div class="container-fluid footer mt-5 pt-5 wow fadeIn other-products-section" data-wow-delay="0.1s">
     <div class="position-relative">
       <img
         class="w-100 rounded" style="max-height:480px"
@@ -808,7 +1117,7 @@
           </h3>
           <div class="row g-4">
             @foreach($bestProducts as $prod)
-              <div class="col-lg-3 col-md-6">
+              <div class="col-lg-3 col-md-6 col-6">
                 <a href="{{ route('landingpage.produk_detail', $prod->slug) }}" class="text-decoration-none">
                   <div class="product-item shadow-sm h-100" style="border-radius:8px; background: transparent;">
                     <div class="position-relative bg-light overflow-hidden product-card-height" style="border-radius:8px;">

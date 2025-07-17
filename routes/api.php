@@ -37,15 +37,6 @@ Route::post('/midtrans-callback', [CartController::class, 'paymentCallback'])->n
 // handle redirect dari Midtrans
 Route::get('/payment/finish', [CartController::class, 'paymentFinish'])->name('payment.finish');
 
-//-------- REST API ----------
-Route::middleware(["auth:sanctum"])->group(function(){
-    Route::get('/pesanan', [PesananController::class, 'index']);
-    Route::get('/pesanan/{id}', [PesananController::class, 'show']);
-    Route::post('/pesanan-create', [PesananController::class, 'store']);
-    Route::put('/pesanan/{id}', [PesananController::class, 'update']);
-    Route::delete('/pesanan/{id}', [PesananController::class, 'destroy']);
-});
-
 //-------- Auth User REST API ----------
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);

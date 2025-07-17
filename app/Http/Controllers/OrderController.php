@@ -17,6 +17,7 @@ class OrderController extends Controller
     public function index()
     {
         $orders = Order::with(['user', 'orderProducts.product'])
+            ->where('jenis_transaksi', 2)
             ->orderBy('created_at', 'desc')
             ->get();
 

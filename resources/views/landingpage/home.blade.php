@@ -227,45 +227,172 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .col-md-6.text-end {
-                text-align: center !important;
-                margin-top: 20px;
+            .string-cover {
+                margin: 1rem !important;
+                padding: 1rem !important;
             }
             
-            .btn-semua-artikel {
-                padding: 10px 25px;
+            .string-cover h3 {
+                font-size: 2rem !important;
+                line-height: 1.2 !important;
             }
             
-            .btn-semua-artikel .btn-text {
-                font-size: 12px;
+            .slide {
+                height: 400px !important;
+                padding: 1rem !important;
+            }
+            .carousel-item .row {
+                justify-content: center;
             }
             
-            .btn-semua-artikel .btn-arrow {
-                width: 28px;
-                height: 28px;
+            .carousel-item .col-12 {
+                max-width: 90%;
+                margin: 0 auto;
+            }
+            
+            .product-item {
+                max-width: 100%;
+                margin: 0 auto;
+            }
+            
+            .carousel-controls-container {
+                margin-top: 1.5rem !important;
+            }
+
+            .carousel-inner .row .col-lg-3,
+            .carousel-inner .row .col-md-6 {
+                flex: 0 0 100% !important;
+                max-width: 100% !important;
+            }
+            
+            .carousel-inner .row .col-lg-3:not(:first-child),
+            .carousel-inner .row .col-md-6:not(:first-child) {
+                display: none !important;
+            }
+
+            .cta-content {
+                padding: 1rem !important;
+                left: 1rem !important;
+                right: 1rem !important;
+                width: calc(100% - 2rem) !important;
+            }
+            
+            .cta-content h3 {
+                font-size: 1.8rem !important;
+                line-height: 1.3 !important;
+            }
+            
+            .cta-content h4 {
+                font-size: 0.7rem !important;
+            }
+            
+            .cta-content p {
+                font-size: 0.75rem !important;
+                line-height: 1.4 !important;
+            }
+
+            .step-content h4 {
+                font-size: 2rem !important;
+                line-height: 1.2 !important;
+                margin-bottom: 1rem !important;
+            }
+            
+            .step-desc {
+                font-size: 0.85rem !important;
+                line-height: 1.5 !important;
+                margin-bottom: 1.5rem !important;
+            }
+
+            .container-xl.py-5 {
+                padding-top: 2rem !important;
+                padding-bottom: 2rem !important;
             }
             
             .article-card-home {
-                margin-bottom: 20px;
+                margin-bottom: 1.5rem !important;
+            }
+
+            .cta-content h3 {
+                font-size: 1.6rem !important;
+                line-height: 1.3 !important;
+                margin-bottom: 1rem !important;
+            }
+            
+            .btn-schedule .btn-text {
+                font-size: 0.8rem !important;
+            }
+
+            .feedback-container h3 {
+                font-size: 2rem !important;
+                line-height: 0.3 !important;
+                margin-bottom: 2rem !important;
+            }
+
+            .container-xl, .container-lg {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            
+            .py-5 {
+                padding-top: 2rem !important;
+                padding-bottom: 2rem !important;
+            }
+            
+            .mt-5 {
+                margin-top: 2rem !important;
+            }
+            
+            .pt-5 {
+                padding-top: 2rem !important;
+            }
+            .discount-modal .modal-dialog {
+                margin: 1rem;
+                max-width: calc(100% - 2rem);
+            }
+            
+            .modal-content-section {
+                padding: 2rem 1.5rem !important;
+            }
+            
+            .modal-title {
+                font-size: 1.5rem !important;
+                line-height: 1.3 !important;
+            }
+            
+            .modal-subtitle {
+                font-size: 0.9rem !important;
+            }
+            
+            .email-input {
+                font-size: 1rem !important;
+                padding: 0.75rem !important;
+            }
+            
+            .submit-btn {
+                font-size: 0.9rem !important;
+                padding: 0.75rem 1.5rem !important;
             }
         }
 
         @media (max-width: 576px) {
-            .step-content h3 {
-                font-size: 2rem !important;
+            .string-cover h3 {
+                font-size: 1.5rem !important;
             }
             
-            .read-more-text-home {
-                font-size: 0.8rem;
+            .slide {
+                height: 350px !important;
             }
             
-            .arrow-circle-home {
-                width: 25px;
-                height: 25px;
+            .cta-content h3 {
+                font-size: 1.4rem !important;
             }
             
-            .arrow-circle-home i {
-                font-size: 12px;
+            .step-content h4 {
+                font-size: 1.8rem !important;
+            }
+            
+            .feedback-container h3 {
+                font-size: 1.8rem !important;
             }
         }
     </style>
@@ -306,14 +433,14 @@
                           @endphp
 
                           <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                              <div class="slide w-100 p-xl-5 p-2 rounded"
+                              <div class="slide w-100 p-xl-5 p-3 rounded"
                                   style="background-image: url({{ $backgroundImage }}); height: 550px; background-size: cover;">
-                                  <div class="string-cover m-3 m-md-5">
+                                  <div class="string-cover m-5">
                                       @foreach($processedHeading as $i => $line)
                                           @if($i == 0)
-                                              <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:600; color:#fff;">{!! $line !!}</h1>
+                                              <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:600; color:#fff;">{!! $line !!}</h1>
                                           @else
-                                              <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:600; color:#fff;">{!! $line !!}</h1>
+                                              <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:600; color:#fff;">{!! $line !!}</h1>
                                           @endif
                                       @endforeach
 
@@ -1443,6 +1570,76 @@ document.addEventListener('DOMContentLoaded', function() {
     const totalDuration = testimonialCount * baseSpeed;
     
     document.documentElement.style.setProperty('--scroll-duration', `${totalDuration}s`);
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function restructureCarouselForMobile() {
+        if (window.innerWidth <= 768) {
+            restructureCarousel('#labelsCarousel', '#labelsIndicators');
+            
+            restructureCarousel('#rollBannerCarousel', '#rollBannerIndicators');
+            
+            restructureCarousel('#promoCarousel', '#promoIndicators');
+        }
+    }
+    
+    function restructureCarousel(carouselSelector, indicatorsSelector) {
+        const carousel = document.querySelector(carouselSelector);
+        if (!carousel) return;
+        
+        const carouselInner = carousel.querySelector('.carousel-inner');
+        const indicatorsContainer = document.querySelector(indicatorsSelector);
+        
+        if (!carouselInner) return;
+        
+        const allItems = [];
+        const slides = carouselInner.querySelectorAll('.carousel-item');
+        
+        slides.forEach(slide => {
+            const items = slide.querySelectorAll('.col-lg-3, .col-md-6');
+            items.forEach(item => {
+                const clonedItem = item.cloneNode(true);
+                clonedItem.className = 'col-12';
+                allItems.push(clonedItem);
+            });
+        });
+        
+        carouselInner.innerHTML = '';
+        
+        allItems.forEach((item, index) => {
+            const newSlide = document.createElement('div');
+            newSlide.className = `carousel-item ${index === 0 ? 'active' : ''}`;
+            newSlide.innerHTML = `<div class="row g-4"></div>`;
+            newSlide.querySelector('.row').appendChild(item);
+            carouselInner.appendChild(newSlide);
+        });
+        
+        if (indicatorsContainer) {
+            indicatorsContainer.innerHTML = '';
+            allItems.forEach((_, index) => {
+                const indicator = document.createElement('div');
+                indicator.className = `indicator-line ${index === 0 ? 'active' : ''}`;
+                indicator.setAttribute('data-bs-target', carouselSelector);
+                indicator.setAttribute('data-bs-slide-to', index.toString());
+                indicatorsContainer.appendChild(indicator);
+            });
+        }
+        
+        const bsCarousel = new bootstrap.Carousel(carousel);
+        
+        updateCustomIndicators(carouselSelector, indicatorsSelector.replace('#', ''));
+    }
+    
+    restructureCarouselForMobile();
+    
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            location.reload();
+        }, 250);
+    });
 });
 </script>
 @endsection

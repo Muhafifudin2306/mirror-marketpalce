@@ -30,7 +30,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::composer('landingpage.header', function ($view) {
-            // load labels + produk untuk modal di header
             $labels = Label::with('products')->get();
             $view->with('labels', $labels);
         });
@@ -39,7 +38,6 @@ class AppServiceProvider extends ServiceProvider
             $view->with('search', $search);
         });
         View::composer('*', function ($view) {
-            // ambil 5 term terbanyak
             $topSearches = SearchHistory::select('term', DB::raw('count(*) as total'))
                 ->groupBy('term')
                 ->orderByDesc('total')
@@ -49,7 +47,6 @@ class AppServiceProvider extends ServiceProvider
 
             $view->with('topSearches', $topSearches);
         });
-        // Notifications for authenticated user
         View::composer('*', function ($view) {
             if (Auth::check()) {
                 $notifications = Notification::where(function($q) {
@@ -65,7 +62,6 @@ class AppServiceProvider extends ServiceProvider
             $view->with('notifications', $notifications);
         });
 
-        // Orders for profile page
         View::composer('landingpage.profile', function ($view) {
             if (Auth::check()) {
                 $orders = Order::with('orderProducts')
@@ -80,10 +76,9 @@ class AppServiceProvider extends ServiceProvider
 
         
         View::composer('*', function ($view) {
-            $relevantChats = collect(); // Inisialisasi koleksi kosong untuk chat yang relevan
-            // dd(Auth::user()->id);
+            $relevantChats = collect();
 
-            if (Auth::check()) { // Pastikan pengguna sudah login
+            if (Auth::check()) {
                 $user = Auth::user();
 
                 if ($user->role === 'Admin') {
@@ -102,11 +97,9 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
 
-            $view->with('chats', $relevantChats); // Mengirimkan chat yang sudah difilter ke view
+            $view->with('chats', $relevantChats);
         });
 
-
-        // keranjang
         View::composer('landingpage.header', function ($view) {
             if (Auth::check()) {
                 $orders = Order::with('orderProducts.product.images','orderProducts.product.label')
@@ -139,11 +132,9 @@ class AppServiceProvider extends ServiceProvider
 
                 $cartCount = $cartItems->count();
                 
-                // Hitung subtotal dengan best price
                 $subtotal = $cartItems->sum(function($item) {
-                    $basePrice = $item->product->getDiscountedPrice(); // Gunakan harga terbaik
+                    $basePrice = $item->product->getDiscountedPrice();
                     
-                    // Hitung area jika ada dimensi
                     $area = 1;
                     if (in_array($item->product->additional_unit, ['cm', 'm']) && $item->length && $item->width) {
                         $area = $item->product->additional_unit == 'cm'

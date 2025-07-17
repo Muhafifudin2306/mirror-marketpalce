@@ -7,168 +7,89 @@
                     style="max-height:55px; width:auto;">
             </a>
 
-            <!-- Mobile Header Actions -->
-            <div class="d-flex d-lg-none align-items-center mobile-header-actions">
-                <button class="btn btn-link p-0 text-secondary mobile-action-btn me-2" data-bs-toggle="modal"
-                    data-bs-target="#searchModal">
-                    <i class="fas fa-search" style="font-size: 18px; color: #888888"></i>
-                </button>
+            <!-- Burger Mobile -->
+            <button class="navbar-toggler m-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-                <button class="btn btn-link p-0 text-secondary position-relative mobile-action-btn me-2" id="mobileCartBtn"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-shopping-cart" style="font-size: 18px; color: #888888"></i>
-                    @if ($cartCount)
-                        <span class="mobile-cart-badge">{{ $cartCount }}</span>
-                    @endif
-                </button>
-
-                <div class="dropdown-menu modern-dropdown cart-dropdown mobile-cart-dropdown">
-                    <div class="dropdown-header">
-                        <h6 class="dropdown-title">Keranjang ({{ $cartCount }})</h6>
-                        <a href="{{ url('/keranjang') }}" class="view-all-link">LIHAT SEMUA</a>
-                    </div>
-                    <div class="dropdown-body">
-                        @forelse($cartItems->take(4) as $item)
-                        @empty
-                            <div class="empty-state">
-                                <i class="fas fa-shopping-cart"></i>
-                                <p>Keranjang masih kosong</p>
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
-
-                <button class="navbar-toggler mobile-burger-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
-                    <span class="burger-line"></span>
-                    <span class="burger-line"></span>
-                    <span class="burger-line"></span>
-                </button>
-            </div>
-
+            <!-- Sidebar Mobile -->
             <div class="offcanvas offcanvas-end" tabindex="-1" id="sidebar">
-                <div class="offcanvas-header mobile-sidebar-header">
-                    <div class="d-flex align-items-center">
-                        @if (Auth::check())
-                            @if (Auth::user()->foto)
-                                <img src="{{ url('landingpage/img/' . Auth::user()->foto) }}" class="rounded-circle me-2" style="width: 40px; height: 40px;" alt="avatar">
-                            @else
-                                <img src="{{ asset('landingpage/img/profil_login.png') }}" class="rounded-circle me-2" style="width: 40px; height: 40px;" alt="avatar">
-                            @endif
-                            <div>
-                                <h6 class="mb-0 sidebar-user-name">Hai, {{ Auth::user()->first_name }}!</h6>
-                                <small class="sidebar-user-status">{{ Auth::user()->role }}</small>
-                            </div>
-                        @else
-                            <img src="{{ asset('landingpage/img/profil_login.png') }}" class="rounded-circle me-2" style="width: 40px; height: 40px;" alt="avatar">
-                            <div>
-                                <h6 class="mb-0 sidebar-user-name">Hai, Guest!</h6>
-                                <small class="sidebar-user-status">Belum login</small>
-                            </div>
-                        @endif
-                    </div>
-                    <button type="button" class="btn-close mobile-close-btn" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                <div class="offcanvas-header p-4 border">
+                    <h5 id="offcanvasTopLabel" class="fw-bold fs-600 font-first">Menu Navigasi</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
                 </div>
-                <div class="offcanvas-body mobile-sidebar-body">
-                    @auth
-                        <div class="mobile-quick-actions mb-4">
-                            <div class="row g-2">
-                                <div class="col-5">
-                                    <a href="{{ url('/profile?#pane-notif') }}" class="quick-action-card">
-                                        <div class="quick-action-icon">
-                                            <i class="fas fa-bell"></i>
-                                            @if ($notifications->where('notification_status', false)->count())
-                                                <span class="quick-action-badge">{{ $notifications->where('notification_status', false)->count() }}</span>
-                                            @endif
-                                        </div>
-                                        <span class="quick-action-text">Notifikasi</span>
-                                    </a>
-                                </div>
-                                <div class="col-5">
-                                    <a href="{{ url('/chats') }}" class="quick-action-card">
-                                        <div class="quick-action-icon">
-                                            <i class="fas fa-comment"></i>
-                                            @if ($chats->count() > 0)
-                                                <span class="quick-action-badge">{{ $chats->count() }}</span>
-                                            @endif
-                                        </div>
-                                        <span class="quick-action-text">Chat Admin</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    @endauth
+                <div class="offcanvas-body p-4">
+                    <div class="navbar-nav ms-auto d-inline d-xl-none" style="">
+                        <a href="{{ url('/') }}"
+                            class="nav-item nav-link font-first fw-600 fs-13-px d-flex align-items-center {{ request()->is('/') ? 'active' : '' }}">
+                            BERANDA
+                        </a>
 
-                    <div class="mobile-nav-section">
-                        <h6 class="mobile-nav-heading">Menu Utama</h6>
-                        <div class="mobile-nav-items">
-                            <a href="{{ url('/') }}" class="mobile-nav-item {{ request()->is('/') ? 'active' : '' }}">
-                                <i class="fas fa-home mobile-nav-icon"></i>
-                                <span>Beranda</span>
+                        <!-- SEMUA PRODUK Trigger -->
+                        <a href="{{ url('/products') }}"
+                            class="nav-item nav-link font-first fw-600 fs-13-px d-flex align-items-center {{ request()->is('products*') ? 'active' : '' }}">
+                            SEMUA PRODUK
+                        </a>
+
+                        <a href="{{ url('/about') }}"
+                            class="nav-item nav-link font-first fw-600 fs-13-px d-flex align-items-center {{ request()->is('about*') ? 'active' : '' }}">
+                            TENTANG SINAU
+                        </a>
+
+                        <a class="nav-item nav-link font-first fw-600 fs-13-px d-flex align-items-center {{ request()->is('order-guide*') ? 'active' : '' }}"
+                            href="{{ url('/order-guide') }}">
+                            CARA PESAN
+                        </a>
+
+                        <a href="{{ url('/articles') }}"
+                            class="nav-item nav-link font-first fw-600 fs-13-px d-flex align-items-center {{ request()->is('articles') ? 'active' : '' }}">
+                            ARTIKEL
+                        </a>
+
+                        <a href="{{ url('/faq') }}"
+                            class="nav-item nav-link font-first fw-600 fs-13-px d-flex align-items-center {{ request()->is('faq') ? 'active' : '' }}">
+                            FAQ
+                        </a>
+
+                        <a href="{{ url('/profile?#pane-notif') }}"
+                            class="nav-item nav-link font-first d-inline d-xl-none fw-600 fs-13-px d-flex align-items-center ">
+                            NOTIFIKASI
+                        </a>
+
+                        <a href="{{ url('/keranjang') }}"
+                            class="nav-item nav-link font-first d-inline d-xl-none fw-600 fs-13-px d-flex align-items-center ">
+                            KERANJANG
+                        </a>
+
+                        <a href="{{ url('/chats') }}"
+                            class="nav-item nav-link d-inline d-xl-none font-first fw-600 fs-13-px d-flex align-items-center ">
+                            CHAT ADMIN
+                        </a>
+
+                        @guest
+                            <a href="{{ route('login') }}"
+                                class="nav-item nav-link font-first d-inline d-xl-none fw-600 fs-13-px d-flex align-items-center ">
+                                LOGIN
                             </a>
-                            <a href="{{ url('/products') }}" class="mobile-nav-item {{ request()->is('products*') ? 'active' : '' }}">
-                                <i class="fas fa-th-large mobile-nav-icon"></i>
-                                <span>Semua Produk</span>
+
+                            <a href="{{ route('register') }}"
+                                class="nav-item nav-link d-inline d-xl-none font-first fw-600 fs-13-px d-flex align-items-center ">
+                                REGISTER
                             </a>
-                            <a href="{{ url('/about') }}" class="mobile-nav-item {{ request()->is('about*') ? 'active' : '' }}">
-                                <i class="fas fa-info-circle mobile-nav-icon"></i>
-                                <span>Tentang Sinau</span>
+                        @else
+                            <a href="{{ url('/profile') }}"
+                                class="nav-item nav-link font-first d-inline d-xl-none fw-600 fs-13-px d-flex align-items-center ">
+                                AKUN ANDA
                             </a>
-                            <a href="{{ url('/order-guide') }}" class="mobile-nav-item {{ request()->is('order-guide*') ? 'active' : '' }}">
-                                <i class="fas fa-shopping-bag mobile-nav-icon"></i>
-                                <span>Cara Pesan</span>
+
+                            <a href="#"
+                                class="nav-item nav-link d-inline d-xl-none font-first fw-600 fs-13-px d-flex align-items-center"
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                LOGOUT
                             </a>
-                            <a href="{{ url('/articles') }}" class="mobile-nav-item {{ request()->is('articles') ? 'active' : '' }}">
-                                <i class="fas fa-newspaper mobile-nav-icon"></i>
-                                <span>Artikel</span>
-                            </a>
-                            <a href="{{ url('/faq') }}" class="mobile-nav-item {{ request()->is('faq') ? 'active' : '' }}">
-                                <i class="fas fa-question-circle mobile-nav-icon"></i>
-                                <span>FAQ</span>
-                            </a>
-                        </div>
+                        @endguest
                     </div>
-
-                    @auth
-                        <div class="mobile-nav-section">
-                            <h6 class="mobile-nav-heading">Akun</h6>
-                            <div class="mobile-nav-items">
-                                <a href="{{ url('/profile') }}" class="mobile-nav-item">
-                                    <i class="fas fa-user mobile-nav-icon"></i>
-                                    <span>Profil Saya</span>
-                                </a>
-                                <a href="{{ url('/keranjang') }}" class="mobile-nav-item">
-                                    <i class="fas fa-shopping-cart mobile-nav-icon"></i>
-                                    <span>Keranjang</span>
-                                </a>
-                                @if (Auth::user()->role != 'Customer')
-                                    <a href="{{ url('/admin') }}" class="mobile-nav-item">
-                                        <i class="fas fa-tachometer-alt mobile-nav-icon"></i>
-                                        <span>Dashboard</span>
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="mobile-logout-section">
-                            <a href="#" class="mobile-logout-btn" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                <i class="fas fa-sign-out-alt me-2"></i>
-                                Keluar
-                            </a>
-                        </div>
-                    @else
-                        <div class="mobile-auth-section">
-                            <div class="d-grid gap-2">
-                                <a href="{{ route('login') }}" class="btn mobile-login-btn">
-                                    <i class="fas fa-sign-in-alt me-2"></i>
-                                    Masuk
-                                </a>
-                                <a href="{{ route('register') }}" class="btn mobile-register-btn">
-                                    <i class="fas fa-user-plus me-2"></i>
-                                    Daftar
-                                </a>
-                            </div>
-                        </div>
-                    @endauth
                 </div>
             </div>
 
@@ -947,33 +868,6 @@ document.head.appendChild(style);
             });
         });
     });
-    const burgerBtn = document.querySelector('.mobile-burger-btn');
-    const sidebar = document.getElementById('sidebar');
-
-    if (burgerBtn && sidebar) {
-        sidebar.addEventListener('show.bs.offcanvas', function() {
-            burgerBtn.setAttribute('aria-expanded', 'true');
-        });
-        
-        sidebar.addEventListener('hide.bs.offcanvas', function() {
-            burgerBtn.setAttribute('aria-expanded', 'false');
-        });
-    }
-
-    const mobileCartBtn = document.getElementById('mobileCartBtn');
-    const mobileCartDropdown = document.querySelector('.mobile-cart-dropdown');
-
-    if (mobileCartBtn && mobileCartDropdown) {
-        mobileCartBtn.addEventListener('shown.bs.dropdown', function() {
-            const rect = mobileCartDropdown.getBoundingClientRect();
-            const viewportWidth = window.innerWidth;
-            
-            if (rect.right > viewportWidth - 20) {
-                mobileCartDropdown.style.right = '20px';
-                mobileCartDropdown.style.left = 'auto';
-            }
-        });
-    }
 </script>
 
 <style>
@@ -1456,6 +1350,68 @@ document.head.appendChild(style);
     transform: translateX(5px);
 }
 
+/* ===== RESPONSIVE STYLES ===== */
+@media (max-width: 768px) {
+    .modern-dropdown {
+        min-width: 260px;
+        transform: translateY(5px);
+    }
+    
+    .notification-dropdown,
+    .cart-dropdown {
+        min-width: 280px;
+    }
+    
+    .dropdown-menu.modern-dropdown {
+        left: 50% !important;
+        transform: translateX(-50%) translateY(5px) !important;
+    }
+    
+    .profile-dropdown {
+        right: 0 !important;
+        left: auto !important;
+        transform: translateY(5px) !important;
+        min-width: 200px;
+    }
+    
+    .dropdown-header {
+        padding: 14px 16px 10px;
+    }
+    
+    .dropdown-title {
+        font-size: 0.8rem;
+    }
+    
+    .view-all-link {
+        font-size: 0.7rem;
+    }
+    
+    .notification-item,
+    .cart-item {
+        padding: 10px 16px;
+    }
+    
+    .cart-item-image img {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .search-title-1,
+    .search-title-2 {
+        font-size: 2rem;
+    }
+    
+    .search-input {
+        font-size: 1rem;
+        padding: 10px 40px 10px 0;
+    }
+    
+    .popular-search-item {
+        padding: 8px 14px;
+        font-size: 0.8rem;
+    }
+}
+
 @media (max-width: 576px) {
     .modern-dropdown {
         min-width: 240px;
@@ -1556,376 +1512,5 @@ document.head.appendChild(style);
 
 .label-item-link:hover .label-desc {
     color: #888888 !important;
-}
-
-@media (min-width: 992px) {
-    .mobile-header-actions,
-    .mobile-burger-btn,
-    .mobile-sidebar-header,
-    .mobile-sidebar-body,
-    .mobile-quick-actions,
-    .mobile-nav-section,
-    .mobile-auth-section,
-    .mobile-logout-section,
-    .mobile-cart-dropdown {
-        display: none !important;
-    }
-}
-
-@media (max-width: 991px) {
-    .mobile-header-actions {
-        gap: 4px;
-    }
-
-    .mobile-action-btn {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
-        text-decoration: none !important;
-        transition: all 0.2s ease;
-        position: relative;
-    }
-
-    .mobile-action-btn:hover {
-        background-color: rgba(0, 0, 0, 0.05);
-        transform: scale(1.05);
-    }
-
-    .mobile-cart-badge {
-        position: absolute;
-        top: 2px;
-        right: 2px;
-        background: #e74c3c;
-        color: white;
-        border-radius: 50%;
-        min-width: 16px;
-        height: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.65rem;
-        font-weight: 600;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    .mobile-burger-btn {
-        width: 40px;
-        height: 40px;
-        border: none;
-        background: none;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 0;
-        transition: all 0.3s ease;
-    }
-
-    .mobile-burger-btn:focus {
-        box-shadow: none;
-    }
-
-    .burger-line {
-        width: 20px;
-        height: 2px;
-        background-color: #666;
-        margin: 2px 0;
-        transition: all 0.3s ease;
-        border-radius: 1px;
-    }
-
-    .mobile-burger-btn:hover .burger-line {
-        background-color: #0049a0;
-    }
-
-    .mobile-burger-btn[aria-expanded="true"] .burger-line:nth-child(1) {
-        transform: rotate(45deg) translate(4px, 4px);
-    }
-
-    .mobile-burger-btn[aria-expanded="true"] .burger-line:nth-child(2) {
-        opacity: 0;
-    }
-
-    .mobile-burger-btn[aria-expanded="true"] .burger-line:nth-child(3) {
-        transform: rotate(-45deg) translate(4px, -4px);
-    }
-    .mobile-sidebar {
-        width: 320px !important;
-        max-width: 85vw;
-    }
-
-    .mobile-sidebar-header {
-        background: linear-gradient(135deg, #0049a0, #005bbf);
-        color: white;
-        padding: 20px;
-        border-bottom: none;
-    }
-
-    .sidebar-user-name {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 600;
-        font-size: 1rem;
-        margin: 0;
-    }
-
-    .sidebar-user-status {
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.75rem;
-        opacity: 0.8;
-    }
-
-    .mobile-close-btn {
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 50%;
-        width: 28px;
-        height: 28px;
-        position: relative;
-        background-image: none !important;
-    }
-
-    .mobile-close-btn::before {
-        content: '×';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 24px;
-        color: #fff;
-        line-height: 1;
-    }
-
-    .mobile-sidebar-body {
-        padding: 0;
-        background: #f8f9fa;
-    }
-
-    .mobile-quick-actions {
-        padding: 20px;
-        background: white;
-        border-bottom: 1px solid #e9ecef;
-    }
-
-    .quick-action-card {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 16px 12px;
-        background: #f8f9fa;
-        border-radius: 12px;
-        text-decoration: none;
-        color: #666;
-        transition: all 0.3s ease;
-        position: relative;
-    }
-
-    .quick-action-card:hover {
-        background: #0049a0;
-        color: white;
-        text-decoration: none;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 73, 160, 0.2);
-    }
-
-    .quick-action-icon {
-        position: relative;
-        margin-bottom: 8px;
-    }
-
-    .quick-action-icon i {
-        font-size: 1.2rem;
-    }
-
-    .quick-action-badge {
-        position: absolute;
-        top: -6px;
-        right: -6px;
-        background: #e74c3c;
-        color: white;
-        border-radius: 50%;
-        min-width: 16px;
-        height: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.6rem;
-        font-weight: 600;
-    }
-
-    .quick-action-text {
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.75rem;
-        font-weight: 500;
-        text-align: center;
-    }
-
-    .mobile-nav-section {
-        padding: 20px;
-        background: white;
-        margin-bottom: 1px;
-    }
-
-    .mobile-nav-heading {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 600;
-        font-size: 0.8rem;
-        color: #666;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 16px;
-    }
-
-    .mobile-nav-items {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .mobile-nav-item {
-        display: flex;
-        align-items: center;
-        padding: 12px 16px;
-        border-radius: 8px;
-        text-decoration: none;
-        color: #333;
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.9rem;
-        font-weight: 500;
-        transition: all 0.2s ease;
-    }
-
-    .mobile-nav-item:hover {
-        background: #f0f7ff;
-        color: #0049a0;
-        text-decoration: none;
-        transform: translateX(4px);
-    }
-
-    .mobile-nav-item.active {
-        background: #0049a0;
-        color: white;
-    }
-
-    .mobile-nav-item.active:hover {
-        background: #003d8a;
-        color: white;
-    }
-
-    .mobile-nav-icon {
-        width: 20px;
-        margin-right: 12px;
-        font-size: 0.9rem;
-    }
-
-    .mobile-auth-section {
-        padding: 20px;
-        background: white;
-    }
-
-    .mobile-login-btn {
-        background: #0049a0;
-        border: 2px solid #0049a0;
-        color: white;
-        font-family: 'Poppins', sans-serif;
-        font-weight: 600;
-        font-size: 0.9rem;
-        padding: 12px 20px;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-    }
-
-    .mobile-login-btn:hover {
-        background: #003d8a;
-        border-color: #003d8a;
-        color: white;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 73, 160, 0.3);
-    }
-
-    .mobile-register-btn {
-        background: transparent;
-        border: 2px solid #0049a0;
-        color: #0049a0;
-        font-family: 'Poppins', sans-serif;
-        font-weight: 600;
-        font-size: 0.9rem;
-        padding: 12px 20px;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-    }
-
-    .mobile-register-btn:hover {
-        background: #0049a0;
-        color: white;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 73, 160, 0.3);
-    }
-
-    .mobile-logout-section {
-        padding: 20px;
-        background: white;
-        border-top: 1px solid #e9ecef;
-    }
-
-    .mobile-logout-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        padding: 12px 20px;
-        background: #dc3545;
-        color: white;
-        text-decoration: none;
-        border-radius: 8px;
-        font-family: 'Poppins', sans-serif;
-        font-weight: 500;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-    }
-
-    .mobile-logout-btn:hover {
-        background: #c82333;
-        color: white;
-        text-decoration: none;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-    }
-
-    .mobile-cart-dropdown {
-        position: fixed !important;
-        top: 80px !important;
-        right: 20px !important;
-        left: auto !important;
-        transform: none !important;
-        min-width: 280px;
-        max-width: calc(100vw - 40px);
-        z-index: 1060;
-    }
-
-    .d-lg-none {
-        display: flex !important;
-    }
-}
-
-@media (max-width: 768px) {
-    .navbar {
-        padding: 8px 0;
-    }
-    
-    .container {
-        padding: 0 16px;
-    }
-    
-    .mobile-sidebar {
-        width: 280px !important;
-    }
-    
-    .mobile-cart-dropdown {
-        right: 16px !important;
-        max-width: calc(100vw - 32px);
-    }
 }
 </style>

@@ -116,7 +116,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::patch('{label}/toggle-live', [ProductController::class, 'toggleLabelLive'])->name('toggle-live');
         Route::patch('product/{product}/toggle-live', [ProductController::class, 'toggleProductLive'])->name('toggle-product-live');
     });
-    // CMS Users
+    
     Route::resource('user', UserController::class);
 
     Route::resource('customer', CustomerController::class);
@@ -166,30 +166,6 @@ Route::get('/password/reset/{token}', [PasswordResetController::class, 'showRese
 Route::post('/password/reset', [PasswordResetController::class, 'reset'])->name('password.update');
 Route::get('/password/success', [PasswordResetController::class, 'showSuccessPage'])->name('password.success');
 
-// ----------------------------------
-// Deprecated / Unused Routes
-// (moved here, kept for backward compatibility)
-// ----------------------------------
-// Route::post('/checkout', [UserController::class, 'checkout'])->name('checkout');
-// Route::get('/invoice/{id}', [PesananController::class, 'invoice'])->name('invoice');
-// Route::get('/keranjang',       [CartController::class,'index']); // duplicate kept
-// Route::get('/pustaka', [UserController::class, 'pustaka'])->name('pustaka');
-// Route::get('/ebook/read/{id}', [ProductController::class, 'read'])->name('ebook.read');
-// Route::get('/ubah_profil/{id}', [UserController::class, 'ubahProfil'])->name('landingpage.profile_edit');
-// Route::get('/pdf-viewer', function () {
-//     return view('landingpage.pdf-viewer');
-// });
-// Route::get('/produk',         function () { return view('landingpage.produk'); });
-// Route::get('/contact',        function () { return view('landingpage.contact'); });
-// Route::get('/promo',          [ProductController::class, 'bukuDiskon']);
-// Route::get('/buku',           [ProductController::class, 'index']);
-// Route::resource('buku',       ProductController::class);
-// Route::resource('kategori',   KategoriController::class);
-// Route::resource('pelanggan',  PelangganController::class);
-// Route::resource('penerbit',   PenerbitController::class);
-// Route::resource('pesanan',    PesananController::class);
-// Route::get('/buku-excel',     [ProductController::class, 'bukuExcel']);
-// Route::get('/pesanan-excel',  [PesananController::class, 'pesananExcel']);
-// Route::get('/paynow', [UserController::class, 'pay'])->name('pay_now');
-// Route::get('pesanan/delete/{id}', [PesananController::class, 'destroy'])->name('pesanan_delete');
-// Route::post('/keranjang_pesanan', [UserController::class, 'checkout'])->name('keranjang_pesanan');
+Route::fallback(function () {
+    return response()->view('errors.404', [], 404);
+});
