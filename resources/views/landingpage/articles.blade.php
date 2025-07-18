@@ -1,241 +1,324 @@
 @extends('landingpage.index')
 @section('content')
-<br><br><br><br>
+<div class="main-content">
 
-{{-- Header Section --}}
-<div class="container-fluid px-3 mb-5">
-  <div class="position-relative mb-5">
-    <img class="w-100 rounded" src="{{ asset('landingpage/img/cara_pesan.png') }}" alt="CTA Image">
-    <div class="position-absolute top-50 start-0 translate-middle-y cta-content">
-      <h3 class="mb-0" style="font-family: 'Poppins'; font-size:4rem; font-weight:600; color:#fff;">Informasi dan</h3>
-      <h3 class="mb-8" style="font-family: 'Poppins'; font-size:4rem; font-weight:600; color:#ffc74c;">Promo Spesial</h3>
-      <p class="mb-0" style="font-family: 'Poppins'; font-size:1.1rem; font-weight:350; color:#fff;">Dapatkan info seputar dunia percetakan dan berbagai</p>
-      <p class="mb-0" style="font-family: 'Poppins'; font-size:1.1rem; font-weight:350; color:#fff;">promo menarik yang sayang untuk dilewatkan.</p>
-    </div>
-  </div>
-</div>
-
-{{-- Artikel Pilihan Section --}}
-<div class="container-xl mb-5">
-    <div class="row align-items-center">
-        <div class="col-md-12 position-relative">
-            <div class="step-content">
-                <h4 style="font-family: 'Poppins'; font-size:1rem; font-weight:600; color:#444444;">ARTIKEL PILIHAN</h4>
-                <h3 class="mb-4" style="margin-top:-5px !important;">
-                    <span class="mt-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:600; color:#000;">Artikel</span>
-                    <span class="mt-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:600; color:#0258d3;"> Pilihan</span>
-                </h3>
+    {{-- Header Section --}}
+    <div class="container-fluid px-3 mb-5">
+        <div class="position-relative mb-5">
+            <img class="w-100 rounded" src="{{ asset('landingpage/img/cara_pesan.png') }}" alt="CTA Image">
+            <div class="position-absolute top-50 start-0 translate-middle-y cta-content">
+            <h3 class="mb-0" style="font-family: 'Poppins'; font-size:4rem; font-weight:600; color:#fff;">Informasi dan</h3>
+            <h3 class="mb-8" style="font-family: 'Poppins'; font-size:4rem; font-weight:600; color:#ffc74c;">Promo Spesial</h3>
+            <p class="mb-0" style="font-family: 'Poppins'; font-size:1.1rem; font-weight:350; color:#fff;">Dapatkan info seputar dunia percetakan dan berbagai</p>
+            <p class="mb-0" style="font-family: 'Poppins'; font-size:1.1rem; font-weight:350; color:#fff;">promo menarik yang sayang untuk dilewatkan.</p>
             </div>
         </div>
     </div>
-    
-    <div id="artikelPilihanCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            @php
-                $featuredBlogs = $blogs->take(6);
-            @endphp
-            @foreach ($featuredBlogs->chunk(2) as $index => $chunk)
-                <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                    <div class="row g-4">
-                        @foreach ($chunk as $blog)
-                            <div class="col-lg-6 col-md-6 col-sm-12">
-                                <a href="{{ route('landingpage.article_show', $blog->slug) }}" class="text-decoration-none">
-                                    <div class="featured-article-card h-100">
-                                        <div class="featured-article-image-container position-relative">
-                                            @if($blog->banner && file_exists(storage_path('app/public/' . $blog->banner)))
-                                                <img src="{{ asset('storage/' . $blog->banner) }}" alt="{{ $blog->title }}" class="featured-article-image">
-                                            @else
-                                                <img src="{{ asset('landingpage/img/nophoto_blog.png') }}" alt="{{ $blog->title }}" class="featured-article-image">
-                                            @endif
-                                            
-                                            {{-- Content Overlay - Always visible at bottom --}}
-                                            <div class="featured-article-content-overlay">
-                                                {{-- Category and Date --}}
-                                                <div class="d-flex align-items-center mb-2">
-                                                    <span class="featured-article-category">
-                                                        {{ strtoupper($blog->blog_type) }}
-                                                    </span>
-                                                    <span class="featured-article-date ms-auto">{{ $blog->created_at->format('d M Y') }}</span>
+
+    {{-- Artikel Pilihan Section --}}
+    <div class="container-xl mb-5">
+        <div class="row align-items-center">
+            <div class="col-md-12 position-relative">
+                <div class="step-content">
+                    <h4 style="font-family: 'Poppins'; font-size:1rem; font-weight:600; color:#444444;">ARTIKEL PILIHAN</h4>
+                    <h3 class="mb-4" style="margin-top:-5px !important;">
+                        <span class="mt-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:600; color:#000;">Artikel</span>
+                        <span class="mt-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:600; color:#0258d3;"> Pilihan</span>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        
+        <div id="artikelPilihanCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                @php
+                    $featuredBlogs = $blogs->take(6);
+                @endphp
+                @foreach ($featuredBlogs->chunk(2) as $index => $chunk)
+                    <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                        <div class="row g-4">
+                            @foreach ($chunk as $blog)
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <a href="{{ route('landingpage.article_show', $blog->slug) }}" class="text-decoration-none">
+                                        <div class="featured-article-card h-100">
+                                            <div class="featured-article-image-container position-relative">
+                                                @if($blog->banner && file_exists(storage_path('app/public/' . $blog->banner)))
+                                                    <img src="{{ asset('storage/' . $blog->banner) }}" alt="{{ $blog->title }}" class="featured-article-image">
+                                                @else
+                                                    <img src="{{ asset('landingpage/img/nophoto_blog.png') }}" alt="{{ $blog->title }}" class="featured-article-image">
+                                                @endif
+                                                
+                                                <div class="featured-article-content-overlay">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <span class="featured-article-category">
+                                                            {{ strtoupper($blog->blog_type) }}
+                                                        </span>
+                                                        <span class="featured-article-date ms-auto">{{ $blog->created_at->format('d M Y') }}</span>
+                                                    </div>
+                                                    
+                                                    <h4 class="featured-article-title">{{ $blog->title }}</h4>
                                                 </div>
                                                 
-                                                {{-- Title --}}
-                                                <h4 class="featured-article-title">{{ $blog->title }}</h4>
-                                            </div>
-                                            
-                                            {{-- Hover Overlay --}}
-                                            <div class="featured-article-hover-overlay">
-                                                <div class="overlay-content">
+                                                <div class="featured-article-hover-overlay">
+                                                    <div class="overlay-content">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </a>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            @endforeach
-        </div>
-
-        <div class="carousel-controls-container">
-            <div class="carousel-controls">
-                <!-- Prev tombol -->
-                <button class="carousel-control-prev" type="button" data-bs-target="#artikelPilihanCarousel" data-bs-slide="prev">
-                    <span class="btn-arrow-carousel">
-                        <span class="arrow-out">&#8592;</span>
-                        <span class="arrow-in">&#8592;</span>
-                    </span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-
-                <!-- Next tombol -->
-                <button class="carousel-control-next" type="button" data-bs-target="#artikelPilihanCarousel" data-bs-slide="next">
-                    <span class="btn-arrow-carousel">
-                        <span class="arrow-out">&#8594;</span>
-                        <span class="arrow-in">&#8594;</span>
-                    </span>
-                    <span class="visually-hidden">Next</span>
-                </button>
-            </div>
-
-            <div class="carousel-indicators-custom" id="artikelPilihanIndicators">
-                @foreach ($featuredBlogs->chunk(2) as $index => $chunk)
-                    <div class="indicator-line {{ $index == 0 ? 'active' : '' }}" 
-                         data-bs-target="#artikelPilihanCarousel" 
-                         data-bs-slide-to="{{ $index }}">
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
                 @endforeach
             </div>
+
+            <div class="carousel-controls-container">
+                <div class="carousel-controls">
+                    <button class="carousel-control-prev" type="button" data-bs-target="#artikelPilihanCarousel" data-bs-slide="prev">
+                        <span class="btn-arrow-carousel">
+                            <span class="arrow-out">&#8592;</span>
+                            <span class="arrow-in">&#8592;</span>
+                        </span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+
+                    <button class="carousel-control-next" type="button" data-bs-target="#artikelPilihanCarousel" data-bs-slide="next">
+                        <span class="btn-arrow-carousel">
+                            <span class="arrow-out">&#8594;</span>
+                            <span class="arrow-in">&#8594;</span>
+                        </span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+
+                <div class="carousel-indicators-custom" id="artikelPilihanIndicators">
+                    @foreach ($featuredBlogs->chunk(2) as $index => $chunk)
+                        <div class="indicator-line {{ $index == 0 ? 'active' : '' }}" 
+                            data-bs-target="#artikelPilihanCarousel" 
+                            data-bs-slide-to="{{ $index }}">
+                        </div>
+                    @endforeach
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-{{-- Filter and Sort Section --}}
-<div class="container mb-5">
-    <div class="row align-items-center mb-4">
-        <div class="col-md-12">
-            <div class="d-flex align-items-center">
-                {{-- Filter --}}
-                <div class="d-flex align-items-center me-5">
-                    <span class="me-3" style="font-family: 'Poppins'; font-weight: 500; color: #666;">FILTER</span>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-secondary dropdown-toggle px-4 py-2" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 25px; min-width: 200px; text-align: left;">
-                            @if($filter == 'semua') SEMUA ARTIKEL
-                            @else {{ strtoupper($filter) }}
-                            @endif
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="filterDropdown">
-                            <li><a class="dropdown-item" href="{{ request()->fullUrlWithQuery(['filter' => 'semua']) }}">SEMUA ARTIKEL</a></li>
-                            @foreach(['Promo Sinau','Printips','Company','Printutor'] as $type)
-                                <li>
-                                    <a class="dropdown-item" 
-                                    href="{{ request()->fullUrlWithQuery(['filter' => $type]) }}">
-                                    {{ strtoupper($type) }}
-                                    </a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-                
+    {{-- Filter and Sort Section --}}
+    <div class="container mb-5">
+        <div class="row align-items-center mb-4">
+            <div class="col-md-12">
                 <div class="d-flex align-items-center">
-                    <span class="me-3" style="font-family: 'Poppins'; font-weight: 500; color: #666;">SORTIR</span>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-secondary dropdown-toggle px-4 py-2" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 25px; min-width: 200px; text-align: left;">
-                            @if($sort == 'terlama') ARTIKEL TERLAMA
-                            @else ARTIKEL TERBARU
-                            @endif
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="sortDropdown">
-                            <li><a class="dropdown-item" href="{{ request()->fullUrlWithQuery(['sort' => 'terbaru']) }}">ARTIKEL TERBARU</a></li>
-                            <li><a class="dropdown-item" href="{{ request()->fullUrlWithQuery(['sort' => 'terlama']) }}">ARTIKEL TERLAMA</a></li>
-                        </ul>
+                    <div class="d-flex align-items-center me-5">
+                        <span class="me-3" style="font-family: 'Poppins'; font-weight: 500; color: #666;">FILTER</span>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle px-4 py-2" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 25px; min-width: 200px; text-align: left;">
+                                @if($filter == 'semua') SEMUA ARTIKEL
+                                @else {{ strtoupper($filter) }}
+                                @endif
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                                <li><a class="dropdown-item" href="{{ request()->fullUrlWithQuery(['filter' => 'semua']) }}">SEMUA ARTIKEL</a></li>
+                                @foreach(['Promo Sinau','Printips','Company','Printutor'] as $type)
+                                    <li>
+                                        <a class="dropdown-item" 
+                                        href="{{ request()->fullUrlWithQuery(['filter' => $type]) }}">
+                                        {{ strtoupper($type) }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-center">
+                        <span class="me-3" style="font-family: 'Poppins'; font-weight: 500; color: #666;">SORTIR</span>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle px-4 py-2" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 25px; min-width: 200px; text-align: left;">
+                                @if($sort == 'terlama') ARTIKEL TERLAMA
+                                @else ARTIKEL TERBARU
+                                @endif
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                                <li><a class="dropdown-item" href="{{ request()->fullUrlWithQuery(['sort' => 'terbaru']) }}">ARTIKEL TERBARU</a></li>
+                                <li><a class="dropdown-item" href="{{ request()->fullUrlWithQuery(['sort' => 'terlama']) }}">ARTIKEL TERLAMA</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-{{-- Articles Grid Section --}}
-<div class="container mb-5">
-    <div class="row g-4">
-        @forelse($blogs as $blog)
-        <div class="col-lg-3 col-md-6 col-sm-12">
-            <a href="{{ route('landingpage.article_show', $blog->slug) }}" class="text-decoration-none">
-                <div class="article-card-home h-100" style="border-radius:10px;">
-                    <div class="position-relative bg-light overflow-hidden article-image-container-home" style="border-radius:10px; height:170px;">
-                        @if($blog->banner && file_exists(storage_path('app/public/' . $blog->banner)))
-                            <img src="{{ asset('storage/' . $blog->banner) }}"
-                                class="img-fluid w-100 h-100 article-image-home" style="object-fit:cover;" 
-                                alt="{{ $blog->title }}">
-                        @else
-                            <img src="{{ asset('landingpage/img/nophoto_blog.png') }}"
-                                class="img-fluid w-100 h-100 article-image-home" style="object-fit:cover;"
-                                alt="No Image">
-                        @endif
-                        
-                        {{-- Overlay yang muncul saat hover --}}
-                        <div class="article-overlay-home">
-                            <div class="overlay-content-home">
-                                <span class="read-more-text-home">Baca Selengkapnya</span>
-                                <div class="arrow-circle-home">
-                                    <i class="bi bi-arrow-right"></i>
+    {{-- Articles Grid Section --}}
+    <div class="container mb-5">
+        <div class="row g-4">
+            @forelse($blogs as $blog)
+            <div class="col-lg-3 col-md-6 col-sm-12">
+                <a href="{{ route('landingpage.article_show', $blog->slug) }}" class="text-decoration-none">
+                    <div class="article-card-home h-100" style="border-radius:10px;">
+                        <div class="position-relative bg-light overflow-hidden article-image-container-home" style="border-radius:10px; height:170px;">
+                            @if($blog->banner && file_exists(storage_path('app/public/' . $blog->banner)))
+                                <img src="{{ asset('storage/' . $blog->banner) }}"
+                                    class="img-fluid w-100 h-100 article-image-home" style="object-fit:cover;" 
+                                    alt="{{ $blog->title }}">
+                            @else
+                                <img src="{{ asset('landingpage/img/nophoto_blog.png') }}"
+                                    class="img-fluid w-100 h-100 article-image-home" style="object-fit:cover;"
+                                    alt="No Image">
+                            @endif
+                            
+                            <div class="article-overlay-home">
+                                <div class="overlay-content-home">
+                                    <span class="read-more-text-home">Baca Selengkapnya</span>
+                                    <div class="arrow-circle-home">
+                                        <i class="bi bi-arrow-right"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="content p-3 d-flex flex-column" style="min-height:140px;">
-                        <div class="article-category-home mb-2" style="font-family: 'Poppins'; font-size:0.7rem; font-weight:600; color:#666;">
-                            {{-- Updated: Use blog type instead of hardcoded categories --}}
-                            {{ strtoupper($blog->blog_type ?? 'ARTIKEL') }}
-                            <span class="article-date-home ms-auto" style="color:#999;">{{ $blog->created_at->format('d M Y') }}</span>
+                        <div class="content p-3 d-flex flex-column" style="min-height:140px;">
+                            <div class="article-category-home mb-2" style="font-family: 'Poppins'; font-size:0.7rem; font-weight:600; color:#666;">
+                                {{ strtoupper($blog->blog_type ?? 'ARTIKEL') }}
+                                <span class="article-date-home ms-auto" style="color:#999;">{{ $blog->created_at->format('d M Y') }}</span>
+                            </div>
+                            <div class="title text-dark mb-0"
+                                style="font-family: 'Poppins'; font-size:1.1rem; font-weight:600;">
+                                {{ Str::limit($blog->title, 50) }}
+                            </div>
                         </div>
-                        <div class="title text-dark mb-0"
-                            style="font-family: 'Poppins'; font-size:1.1rem; font-weight:600;">
-                            {{ Str::limit($blog->title, 50) }}
-                        </div>
                     </div>
-                </div>
-            </a>
+                </a>
+            </div>
+            @empty
+            <div class="col-12 text-center py-5">
+                <p style="font-family: 'Poppins'; color: #666;">Belum ada artikel yang tersedia.</p>
+            </div>
+            @endforelse
         </div>
-        @empty
-        <div class="col-12 text-center py-5">
-            <p style="font-family: 'Poppins'; color: #666;">Belum ada artikel yang tersedia.</p>
+        
+        {{-- Pagination --}}
+        @if($blogs->hasPages())
+        <div class="row">
+            <div class="col-12 d-flex justify-content-center">
+                {{ $blogs->appends(request()->query())->links() }}
+            </div>
         </div>
-        @endforelse
+        @endif
     </div>
-    
-    {{-- Pagination --}}
-    @if($blogs->hasPages())
-    <div class="row">
-        <div class="col-12 d-flex justify-content-center">
-            {{ $blogs->appends(request()->query())->links() }}
-        </div>
-    </div>
-    @endif
-</div>
 
-{{-- CTA Section --}}
-<div class="container-fluid footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
-    <div class="position-relative mb-5">
-        <img class="w-100 rounded" src="{{ asset('landingpage/img/CTA.png') }}" alt="CTA Image">
-        <div class="position-absolute top-50 start-0 translate-middle-y cta-content">
-            <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:600; color:#fff;">Kantormu Lagi Ada Acara?</h3>
-            <h3 class="mb-8" style="font-family: 'Poppins'; font-size:3rem; font-weight:600; color:#ffc74c;">Cetak Banner Sekarang!</h3>
-            <a href="{{ url('/products') }}" class="btn-schedule">
-            <span class="btn-text">SEMUA PRODUK</span>
-            <span class="btn-arrow">
-                <i class="bi bi-arrow-right arrow-out"></i>
-                <i class="bi bi-arrow-right arrow-in"></i>
-            </span>
-            </a>
+    {{-- CTA Section --}}
+    <div class="container-fluid footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
+        <div class="position-relative mb-5">
+            <img class="w-100 rounded" src="{{ asset('landingpage/img/CTA.png') }}" alt="CTA Image">
+            <div class="position-absolute top-50 start-0 translate-middle-y cta-content">
+                <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:600; color:#fff;">Kantormu Lagi Ada Acara?</h3>
+                <h3 class="mb-8" style="font-family: 'Poppins'; font-size:3rem; font-weight:600; color:#ffc74c;">Cetak Banner Sekarang!</h3>
+                <a href="{{ url('/products') }}" class="btn-schedule">
+                <span class="btn-text">SEMUA PRODUK</span>
+                <span class="btn-arrow">
+                    <i class="bi bi-arrow-right arrow-out"></i>
+                    <i class="bi bi-arrow-right arrow-in"></i>
+                </span>
+                </a>
+            </div>
         </div>
     </div>
 </div>
 
 <style>
-/* Style untuk card artikel - mirip dengan card produk (dari home) */
+body {
+    padding-top: 80px;
+}
+
+.main-content {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 70px;
+    }
+}
+
+@media (max-width: 576px) {
+    body {
+        padding-top: 65px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cta-content {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    .cta-content h3 {
+        font-size: 2rem !important;
+        line-height: 1.2;
+    }
+    
+    .cta-content p {
+        font-size: 0.9rem !important;
+        line-height: 1.4;
+    }
+    
+    .position-relative img {
+        min-height: 250px;
+        max-height: 350px;
+        object-fit: cover;
+    }
+}
+
+@media (max-width: 576px) {
+    .cta-content {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .cta-content h3 {
+        font-size: 1.5rem !important;
+        line-height: 1.1;
+    }
+    
+    .cta-content p {
+        font-size: 0.8rem !important;
+        line-height: 1.3;
+    }
+    
+    .position-relative img {
+        min-height: 200px;
+        max-height: 280px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container .row .d-flex.align-items-center {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1rem;
+    }
+    
+    .container .row .d-flex.align-items-center .me-5 {
+        margin-right: 0 !important;
+        width: 100%;
+    }
+    
+    .dropdown-toggle {
+        width: 100%;
+        text-align: left;
+    }
+}
+
+@media (max-width: 576px) {
+    .dropdown-toggle {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+        min-width: 100% !important;
+    }
+}
 .article-card-home {
     background: #fff;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
@@ -260,7 +343,6 @@
     transform: scale(1.05);
 }
 
-/* Overlay yang muncul saat hover */
 .article-overlay-home {
     position: absolute;
     top: 0;
@@ -320,7 +402,6 @@
     color: #3b82f6;
 }
 
-/* Style untuk kategori dan tanggal */
 .article-category-home {
     display: flex;
     justify-content: space-between;
@@ -332,7 +413,6 @@
     font-weight: 400 !important;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .article-card-home {
         margin-bottom: 20px;
@@ -359,8 +439,8 @@
     box-shadow: 0 8px 32px rgba(0,0,0,0.12);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     width: 100%;
-    aspect-ratio: 2/1; /* Lebar : Tinggi = 2:1 (tinggi = setengah lebar) */
-    height: auto; /* Let aspect-ratio control the height */
+    aspect-ratio: 2/1;
+    height: auto;
 }
 
 .featured-article-card:hover {
@@ -386,7 +466,6 @@
     transform: scale(1.05);
 }
 
-/* Content Overlay - Always visible at bottom with blue gradient */
 .featured-article-content-overlay {
     position: absolute;
     bottom: 0;
@@ -399,10 +478,9 @@
     transition: all 0.3s ease;
 }
 
-/* Hover effect - gradient expands upward */
 .featured-article-card:hover .featured-article-content-overlay {
     background: linear-gradient(180deg, rgba(59, 130, 246, 0) 20%, rgba(59, 130, 246, 0.7) 100%);
-    padding-top: 40px; /* Expand the overlay area upward */
+    padding-top: 40px;
 }
 
 .featured-article-category {
@@ -439,26 +517,23 @@
     text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
-/* Carousel Column Adjustments for Equal Width with Margins */
 .carousel-item .row .col-lg-6 {
-    flex: 0 0 50%; /* Each card takes exactly 50% width */
+    flex: 0 0 50%;
     max-width: 50%;
-    padding: 0 15px; /* Increased padding for more spacing */
+    padding: 0 15px;
 }
 
-/* Container adjustments for side margins */
 .container-xl {
-    max-width: 90%; /* Set max width instead of 100% */
-    padding-left: 10px; /* Side margins */
-    padding-right: 10px; /* Side margins */
-    margin: 0 auto; /* Center the container */
+    max-width: 90%;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin: 0 auto;
 }
 
-/* Remove default Bootstrap gaps for perfect equal sizing */
 .carousel-item .row {
     margin-left: 0;
     margin-right: 0;
-    --bs-gutter-x: 30px; /* Increased gap between cards */
+    --bs-gutter-x: 30px;
 }
 
 .carousel-item .row > * {
@@ -466,7 +541,6 @@
     padding-right: calc(var(--bs-gutter-x) * 0.5);
 }
 
-/* Carousel Controls Style dengan animasi seperti btn-schedule */
 .carousel-controls-container {
     position: relative;
     margin-top: 2rem;
@@ -518,7 +592,6 @@
     opacity: 0;
 }
 
-/* Initial positions - hanya arrow-out yang terlihat */
 .carousel-control-prev .btn-arrow-carousel .arrow-in {
     transform: translateX(-100%);
 }
@@ -527,7 +600,6 @@
     transform: translateX(100%);
 }
 
-/* Hover animations */
 .btn-arrow-carousel:hover {
     background: #3b82f6;
     border-color: #3b82f6;
@@ -559,13 +631,43 @@
     transform: translateX(0);
 }
 
-/* Indicators tanpa gap */
 .carousel-indicators-custom {
     display: flex;
     width: 100%;
     justify-content: flex-start;
-    padding-left: 130px; /* Space for arrows */
+    padding-left: 130px;
     padding-right: 0;
+}
+@media (max-width: 768px) {
+    .carousel-indicators-custom {
+        padding-left: 0;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+    
+    .carousel-controls {
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+    
+    .indicator-line {
+        min-width: 25px;
+        flex: none;
+        width: 25px;
+    }
+}
+
+@media (max-width: 576px) {
+    .indicator-line {
+        min-width: 20px;
+        width: 20px;
+        height: 2px;
+    }
+    
+    .indicator-line.active {
+        height: 3px;
+    }
 }
 
 .indicator-line {
@@ -586,7 +688,6 @@
     background: #93c5fd;
 }
 
-/* Regular Article Card Styles */
 .article-card {
     background: #fff;
     border-radius: 12px;
@@ -672,7 +773,6 @@
     color: #3b82f6;
 }
 
-/* Dropdown Styles */
 .dropdown-toggle::after {
     margin-left: auto;
 }
@@ -694,7 +794,6 @@
     color: #3b82f6;
 }
 
-/* CTA Section Styles */
 .cta-content {
     padding-left: 50px;
 }
@@ -758,7 +857,6 @@
     transform: translateX(-20px);
 }
 
-/* Responsive adjustments for equal sizing */
 @media (max-width: 992px) {
     .carousel-item .row .col-lg-6 {
         flex: 0 0 50%;
@@ -766,7 +864,7 @@
     }
     
     .featured-article-card {
-        aspect-ratio: 1.8/1; /* Slightly taller on tablet */
+        aspect-ratio: 1.8/1;
     }
     
     .featured-article-title {
@@ -789,13 +887,13 @@
     }
     
     .carousel-item .row .col-lg-6 {
-        flex: 0 0 100%; /* Stack cards vertically on mobile */
+        flex: 0 0 100%;
         max-width: 100%;
         margin-bottom: 20px;
     }
     
     .featured-article-card {
-        aspect-ratio: 2/1; /* Maintain 2:1 ratio on mobile */
+        aspect-ratio: 2/1;
     }
     
     .featured-article-title {
@@ -829,15 +927,15 @@
         padding-right: 15px !important;
     }
     
-    .d-flex.align-items-center {
+    .container .row .d-flex.align-items-center {
         flex-direction: column;
         align-items: flex-start !important;
         gap: 1rem;
     }
     
-    .d-flex.align-items-center .me-5 {
+    .container .row .d-flex.align-items-center .me-5 {
         margin-right: 0 !important;
-        margin-bottom: 1rem;
+        width: 100%;
     }
     
     .carousel-indicators-custom {
@@ -863,7 +961,7 @@
 
 @media (max-width: 576px) {
     .featured-article-card {
-        aspect-ratio: 1.6/1; /* Slightly different ratio for very small screens */
+        aspect-ratio: 1.6/1;
     }
     
     .featured-article-title {
@@ -894,7 +992,6 @@
     }
 }
 
-/* Additional utility styles */
 .position-relative {
     position: relative;
 }
@@ -1043,7 +1140,6 @@
     border: 0 !important;
 }
 
-/* Container styles */
 .container,
 .container-fluid {
     width: 100%;
@@ -1053,7 +1149,6 @@
     margin-left: auto;
 }
 
-/* Row and column styles */
 .row {
     --bs-gutter-x: 1.5rem;
     --bs-gutter-y: 0;
@@ -1106,39 +1201,36 @@
 </style>
 
 <script>
-// Update custom indicators function
-function updateCustomIndicators(carouselId, indicatorsId) {
-    const carousel = document.querySelector(carouselId);
-    const indicators = document.querySelectorAll(`#${indicatorsId} .indicator-line`);
-    
-    if (carousel && indicators.length > 0) {
-        carousel.addEventListener('slide.bs.carousel', function (event) {
-            indicators.forEach((indicator, index) => {
-                if (index === event.to) {
-                    indicator.classList.add('active');
-                } else {
-                    indicator.classList.remove('active');
+    function updateCustomIndicators(carouselId, indicatorsId) {
+        const carousel = document.querySelector(carouselId);
+        const indicators = document.querySelectorAll(`#${indicatorsId} .indicator-line`);
+        
+        if (carousel && indicators.length > 0) {
+            carousel.addEventListener('slide.bs.carousel', function (event) {
+                indicators.forEach((indicator, index) => {
+                    if (index === event.to) {
+                        indicator.classList.add('active');
+                    } else {
+                        indicator.classList.remove('active');
+                    }
+                });
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        updateCustomIndicators('#artikelPilihanCarousel', 'artikelPilihanIndicators');
+        
+        const indicators = document.querySelectorAll('#artikelPilihanIndicators .indicator-line');
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', function() {
+                const carousel = bootstrap.Carousel.getInstance(document.querySelector('#artikelPilihanCarousel'));
+                if (carousel) {
+                    carousel.to(index);
                 }
             });
         });
-    }
-}
-
-// Initialize custom indicators
-document.addEventListener('DOMContentLoaded', function() {
-    updateCustomIndicators('#artikelPilihanCarousel', 'artikelPilihanIndicators');
-    
-    // Add click handlers for custom indicators
-    const indicators = document.querySelectorAll('#artikelPilihanIndicators .indicator-line');
-    indicators.forEach((indicator, index) => {
-        indicator.addEventListener('click', function() {
-            const carousel = bootstrap.Carousel.getInstance(document.querySelector('#artikelPilihanCarousel'));
-            if (carousel) {
-                carousel.to(index);
-            }
-        });
     });
-});
 </script>
 
 @endsection

@@ -433,14 +433,14 @@
                           @endphp
 
                           <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                              <div class="slide w-100 p-xl-5 p-3 rounded"
+                              <div class="slide w-100 p-xl-5 p-2 rounded"
                                   style="background-image: url({{ $backgroundImage }}); height: 550px; background-size: cover;">
-                                  <div class="string-cover m-5">
+                                  <div class="string-cover m-3 m-md-5">
                                       @foreach($processedHeading as $i => $line)
                                           @if($i == 0)
-                                              <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:600; color:#fff;">{!! $line !!}</h1>
+                                              <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:600; color:#fff;">{!! $line !!}</h1>
                                           @else
-                                              <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3.3rem; font-weight:600; color:#fff;">{!! $line !!}</h1>
+                                              <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:600; color:#fff;">{!! $line !!}</h1>
                                           @endif
                                       @endforeach
 
@@ -922,77 +922,80 @@
       <div class="carousel-inner">
         <!-- Slide 1 -->
         <div class="carousel-item active">
-          <img class="w-100 rounded" src="{{ asset('landingpage/img/home_choice.png') }}" alt="CTA Image 1">
-          <div class="position-absolute top-50 start-0 translate-middle-y cta-content">
-            <h4 class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:600; color:#fff;">PRODUK PILIHAN</h4>
-            <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#fff;">Mau Cetak Banner</h3>
-            <h3 class="mb-4" style="margin-top:-5px !important;">
-              <span class="mt-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#fff;">Biar</span>
-              <span class="mt-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#ffc74c;"> Keliatan di Jalan?</span>
-            </h3>
-            <p class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
-              Cetak banner ukuran besar biar mencolok dari kejauhan.
-            </p>
-            <p class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
-              Tipis-tipis curi perhatian pelanggan, mau coba lihat dulu?
-            </p>
-            <a href="{{ url('/products') }}" class="btn-schedule">
-              <span class="btn-text">RINCIAN PRODUK</span>
-              <span class="btn-arrow">
-                <i class="bi bi-arrow-right-short arrow-out"></i>
-                <i class="bi bi-arrow-right-short arrow-in"></i>
-              </span>
-            </a>
-          </div>
+            <div class="section-branding p-3 rouded" style="background-image: url({{ asset('landingpage/img/home_choice.png') }}); height: 450px; object-fit: cover;">
+                <div class="m-2 m-md-5">
+                    <h4 class="pt-md-4" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:600; color:#fff;">PRODUK PILIHAN</h4>
+                    <h3 class="mb-0" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:550; color:#fff;">Mau Cetak Banner</h3>
+                    <h3 class="mb-2" style="margin-top:-5px !important;">
+                    <span class="mt-0" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:550; color:#fff;">Biar</span>
+                    <span class="mt-0" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:550; color:#ffc74c;"> Keliatan di Jalan?</span>
+                    </h3>
+                    <p class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
+                    Cetak banner ukuran besar biar mencolok dari kejauhan.
+                    </p>
+                    <p class="mb-3" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
+                    Tipis-tipis curi perhatian pelanggan, mau coba lihat dulu?
+                    </p>
+                    <a href="{{ url('/products') }}" class="btn-schedule">
+                    <span class="btn-text">RINCIAN PRODUK</span>
+                    <span class="btn-arrow">
+                        <i class="bi bi-arrow-right-short arrow-out"></i>
+                        <i class="bi bi-arrow-right-short arrow-in"></i>
+                    </span>
+                    </a>
+                </div>
+            </div>
         </div>
         <!-- Slide 2 -->
         <div class="carousel-item">
-          <img class="w-100 rounded" src="{{ asset('landingpage/img/home_choice.png') }}" alt="CTA Image 2">
-          <div class="position-absolute top-50 start-0 translate-middle-y cta-content">
-            <h4 class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:600; color:#fff;">PRODUK PILIHAN</h4>
-            <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#fff;">Cetak Stiker</h3>
-            <h3 class="mb-4" style="margin-top:-5px !important;">
-              <span class="mt-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#fff;">Buat</span>
-              <span class="mt-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#ffc74c;"> Branding Keren!</span>
-            </h3>
-            <p class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
-              Stiker custom untuk promosi atau dekorasi.
-            </p>
-            <p class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
-              Tahan lama dan eye-catching, cek sekarang!
-            </p>
-            <a href="{{ url('/products') }}" class="btn-schedule">
-              <span class="btn-text">RINCIAN PRODUK</span>
-              <span class="btn-arrow">
-                <i class="bi bi-arrow-right-short arrow-out"></i>
-                <i class="bi bi-arrow-right-short arrow-in"></i>
-              </span>
-            </a>
+           <div class="section-branding p-3 rouded" style="background-image: url({{ asset('landingpage/img/home_choice.png') }}); height: 450px; object-fit: cover;">
+                <div class="m-2 m-md-5">
+                    <h4 class="pt-md-4" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:600; color:#fff;">PRODUK PILIHAN</h4>
+                    <h3 class="mb-0" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:550; color:#fff;">Cetak Stiker</h3>
+                    <h3 class="mb-2" style="margin-top:-5px !important;">
+                    <span class="mt-0" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:550; color:#fff;">Buat</span>
+                    <span class="mt-0" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:550; color:#ffc74c;"> Branding Keren!</span>
+                    </h3>
+                    <p class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
+                    Stiker custom untuk promosi atau dekorasi.
+                    </p>
+                    <p class="mb-3" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
+                    Tahan lama dan eye-catching, cek sekarang!
+                    </p>
+                    <a href="{{ url('/products') }}" class="btn-schedule">
+                    <span class="btn-text">RINCIAN PRODUK</span>
+                    <span class="btn-arrow">
+                        <i class="bi bi-arrow-right-short arrow-out"></i>
+                        <i class="bi bi-arrow-right-short arrow-in"></i>
+                    </span>
+                    </a>
+                </div>
           </div>
         </div>
         <!-- Slide 3 -->
         <div class="carousel-item">
-          <img class="w-100 rounded" src="{{ asset('landingpage/img/home_choice.png') }}" alt="CTA Image 3">
-          <div class="position-absolute top-50 start-0 translate-middle-y cta-content">
-            <h4 class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:600; color:#fff;">PRODUK PILIHAN</h4>
-            <h3 class="mb-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#fff;">Poster Besar</h3>
-            <h3 class="mb-4" style="margin-top:-5px !important;">
-              <span class="mt-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#fff;">Untuk</span>
-              <span class="mt-0" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#ffc74c;"> Event Spesial!</span>
-            </h3>
-            <p class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
-              Poster berkualitas tinggi untuk acara pentingmu.
-            </p>
-            <p class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
-              Desain menarik, pesan sekarang!
-            </p>
-            <a href="{{ url('/products') }}" class="btn-schedule">
-              <span class="btn-text">RINCIAN PRODUK</span>
-              <span class="btn-arrow">
-                <i class="bi bi-arrow-right-short arrow-out"></i>
-                <i class="bi bi-arrow-right-short arrow-in"></i>
-              </span>
-            </a>
+            <div class="section-branding p-3 rouded" style="background-image: url({{ asset('landingpage/img/home_choice.png') }}); height: 450px; object-fit: cover;">
+                <div class="m-2 m-md-5">
+                    <h4 class="pt-md-4" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:600; color:#fff;">PRODUK PILIHAN</h4>
+                    <h3 class="mb-0" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:550; color:#fff;">Poster Besar</h3>
+                    <h3 class="mb-2" style="margin-top:-5px !important;">
+                    <span class="mt-0" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:550; color:#fff;">Untuk</span>
+                    <span class="mt-0" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:550; color:#ffc74c;"> Event Spesial!</span>
+                    </h3>
+                    <p class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
+                    Poster berkualitas tinggi untuk acara pentingmu.
+                    </p>
+                    <p class="mb-3" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
+                    Desain menarik, pesan sekarang!
+                    </p>
+                    <a href="{{ url('/products') }}" class="btn-schedule">
+                    <span class="btn-text">RINCIAN PRODUK</span>
+                    <span class="btn-arrow">
+                        <i class="bi bi-arrow-right-short arrow-out"></i>
+                        <i class="bi bi-arrow-right-short arrow-in"></i>
+                    </span>
+                    </a>
+                </div>
           </div>
         </div>
       </div>
@@ -1020,6 +1023,8 @@
     </div>
   </div>
 
+  <div class="py-4 my-4"></div>
+
   <div class="container-lg py-5">
     <div class="row align-items-center flex-md-row-reverse">
       <div class="col-md-6 mb-4 mb-md-0">
@@ -1029,9 +1034,11 @@
       </div>
       <div class="col-md-6 position-relative">
         <div class="step-content">
-          <h4 class="step-title" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:600; color:#000;">Dari Semarang ke</h4>
-          <h4 class="step-title" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:600; color:#0258d3; margin-top: -20px">Seluruh Indonesia</h4>
-          <p class="step-desc" style="font-size:0.8rem;">
+            <h4 class="mb-2">
+                <span style="font-family: 'Poppins'; font-size:2.6rem; font-weight:600; color:#000;">Dari Semarang ke</span>
+                <span style="font-family: 'Poppins'; font-size:2.6rem; font-weight:600; color:#0258d3">Seluruh Indonesia</span>
+            </h4>
+          <p class="mb-3" style="font-size:0.8rem;">
               Sejak 2024, Sinau Print selalu berkomitmen untuk menjadi penyedia jasa
               printing terbaik di Semarang. Dengan berbekal pengalaman dan teknologi
               mesin paling mutakhir, kami siap cetak segala kebutuhanmu.
@@ -1050,134 +1057,130 @@
 
   <div class="container-fluid footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
     <div class="position-relative">
-        <img
-            class="w-100 rounded"
-            src="{{ asset('landingpage/img/login_register_bg.png') }}"
-            alt="Background"
-        />
+        <div class="section-branding p-2 rouded" style="background-image: url({{ asset('landingpage/img/login_register_bg.png') }}); height: 550px; object-fit: cover;">
+                <div class="m-2 m-md-3">
+                    <h3 class="my-5 pt-5 text-center" style="font-family: 'Poppins'; font-size:2.5rem; font-weight:550; color:#fff;">
+                        Kata Mereka <span style="color:#ffc74c;">Tentang Sinau Print</span>
+                    </h3>
 
-        <div class="position-absolute top-50 start-50 translate-middle text-center w-100 px-3 feedback-container">
-            <h3 class="mb-5" style="font-family: 'Poppins'; font-size:3rem; font-weight:550; color:#fff;">
-                Kata Mereka <span style="color:#ffc74c;">Tentang Sinau Print</span>
-            </h3>
+                    {{-- Testimonial Container --}}
+                    <div class="testimonial-infinite-scroll" id="testimonialScroll">
+                        <div class="testimonial-track" id="testimonialTrack">
+                            @if($testimonials->count() > 0)
+                                @foreach($testimonials as $testimonial)
+                                    @php
+                                        $photoPath = $testimonial->photo ? 'storage/' . $testimonial->photo : null;
+                                        $photoExists = $photoPath && file_exists(public_path($photoPath));
+                                        $photoUrl = $photoExists ? asset($photoPath) : asset('landingpage/img/no-photo-icon.jpg');
+                                    @endphp
+                                    
+                                    <div class="testimonial-item">
+                                        <div class="testimonial-card">
+                                            <div class="quote-mark">"</div>
+                                            <div class="testimonial-text">
+                                                {{ $testimonial->feedback }}
+                                            </div>
+                                            <div class="testimonial-author">
+                                                <img src="{{ $photoUrl }}" alt="{{ $testimonial->name }}" class="author-photo"
+                                                    onerror="this.src='{{ asset('landingpage/img/no-photo-icon.jpg') }}'">
+                                                <div class="author-info">
+                                                    <div class="author-name">{{ $testimonial->name }}</div>
+                                                    <div class="author-location">{{ $testimonial->location }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
 
-            {{-- Testimonial Container --}}
-            <div class="testimonial-infinite-scroll" id="testimonialScroll">
-                <div class="testimonial-track" id="testimonialTrack">
-                    @if($testimonials->count() > 0)
-                        @foreach($testimonials as $testimonial)
-                            @php
-                                $photoPath = $testimonial->photo ? 'storage/' . $testimonial->photo : null;
-                                $photoExists = $photoPath && file_exists(public_path($photoPath));
-                                $photoUrl = $photoExists ? asset($photoPath) : asset('landingpage/img/no-photo-icon.jpg');
-                            @endphp
-                            
-                            <div class="testimonial-item">
-                                <div class="testimonial-card">
-                                    <div class="quote-mark">"</div>
-                                    <div class="testimonial-text">
-                                        {{ $testimonial->feedback }}
-                                    </div>
-                                    <div class="testimonial-author">
-                                        <img src="{{ $photoUrl }}" alt="{{ $testimonial->name }}" class="author-photo"
-                                            onerror="this.src='{{ asset('landingpage/img/no-photo-icon.jpg') }}'">
-                                        <div class="author-info">
-                                            <div class="author-name">{{ $testimonial->name }}</div>
-                                            <div class="author-location">{{ $testimonial->location }}</div>
+                                @foreach($testimonials as $testimonial)
+                                    @php
+                                        $photoPath = $testimonial->photo ? 'storage/' . $testimonial->photo : null;
+                                        $photoExists = $photoPath && file_exists(public_path($photoPath));
+                                        $photoUrl = $photoExists ? asset($photoPath) : asset('landingpage/img/no-photo-icon.jpg');
+                                    @endphp
+                                    
+                                    <div class="testimonial-item">
+                                        <div class="testimonial-card">
+                                            <div class="quote-mark">"</div>
+                                            <div class="testimonial-text">
+                                                {{ $testimonial->feedback }}
+                                            </div>
+                                            <div class="testimonial-author">
+                                                <img src="{{ $photoUrl }}" alt="{{ $testimonial->name }}" class="author-photo"
+                                                    onerror="this.src='{{ asset('landingpage/img/no-photo-icon.jpg') }}'">
+                                                <div class="author-info">
+                                                    <div class="author-name">{{ $testimonial->name }}</div>
+                                                    <div class="author-location">{{ $testimonial->location }}</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        @endforeach
-
-                        @foreach($testimonials as $testimonial)
-                            @php
-                                $photoPath = $testimonial->photo ? 'storage/' . $testimonial->photo : null;
-                                $photoExists = $photoPath && file_exists(public_path($photoPath));
-                                $photoUrl = $photoExists ? asset($photoPath) : asset('landingpage/img/no-photo-icon.jpg');
-                            @endphp
-                            
-                            <div class="testimonial-item">
-                                <div class="testimonial-card">
-                                    <div class="quote-mark">"</div>
-                                    <div class="testimonial-text">
-                                        {{ $testimonial->feedback }}
-                                    </div>
-                                    <div class="testimonial-author">
-                                        <img src="{{ $photoUrl }}" alt="{{ $testimonial->name }}" class="author-photo"
-                                            onerror="this.src='{{ asset('landingpage/img/no-photo-icon.jpg') }}'">
-                                        <div class="author-info">
-                                            <div class="author-name">{{ $testimonial->name }}</div>
-                                            <div class="author-location">{{ $testimonial->location }}</div>
+                                @endforeach
+                            @else
+                                @php
+                                    $dummyTestimonials = [
+                                        ['text' => "Pelayanan yang sangat ramah dibantu sampai selesai", 'name' => 'Andi', 'location' => 'Jakarta'],
+                                        ['text' => "Cepat sekali pengerjaannya!", 'name' => 'Budi', 'location' => 'Bandung'],
+                                        ['text' => "Mau online atau offline, mudah banget dan cepat!", 'name' => 'Citra', 'location' => 'Surabaya'],
+                                        ['text' => "Warna nya bagus banget!", 'name' => 'Dewi', 'location' => 'Yogyakarta'],
+                                        ['text' => "Kualitas cetak juara!", 'name' => 'Eka', 'location' => 'Medan'],
+                                    ];
+                                @endphp
+                                
+                                @foreach($dummyTestimonials as $dummy)
+                                    <div class="testimonial-item">
+                                        <div class="testimonial-card">
+                                            <div class="quote-mark">"</div>
+                                            <div class="testimonial-text">
+                                                {{ $dummy['text'] }}
+                                            </div>
+                                            <div class="testimonial-author">
+                                                <img src="{{ asset('landingpage/img/no-photo-icon.jpg') }}" 
+                                                    alt="{{ $dummy['name'] }}" class="author-photo">
+                                                <div class="author-info">
+                                                    <div class="author-name">{{ $dummy['name'] }}</div>
+                                                    <div class="author-location">{{ $dummy['location'] }}</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    @else
-                        @php
-                            $dummyTestimonials = [
-                                ['text' => "Pelayanan yang sangat ramah dibantu sampai selesai", 'name' => 'Andi', 'location' => 'Jakarta'],
-                                ['text' => "Cepat sekali pengerjaannya!", 'name' => 'Budi', 'location' => 'Bandung'],
-                                ['text' => "Mau online atau offline, mudah banget dan cepat!", 'name' => 'Citra', 'location' => 'Surabaya'],
-                                ['text' => "Warna nya bagus banget!", 'name' => 'Dewi', 'location' => 'Yogyakarta'],
-                                ['text' => "Kualitas cetak juara!", 'name' => 'Eka', 'location' => 'Medan'],
-                            ];
-                        @endphp
-                        
-                        @foreach($dummyTestimonials as $dummy)
-                            <div class="testimonial-item">
-                                <div class="testimonial-card">
-                                    <div class="quote-mark">"</div>
-                                    <div class="testimonial-text">
-                                        {{ $dummy['text'] }}
-                                    </div>
-                                    <div class="testimonial-author">
-                                        <img src="{{ asset('landingpage/img/no-photo-icon.jpg') }}" 
-                                            alt="{{ $dummy['name'] }}" class="author-photo">
-                                        <div class="author-info">
-                                            <div class="author-name">{{ $dummy['name'] }}</div>
-                                            <div class="author-location">{{ $dummy['location'] }}</div>
+                                @endforeach
+                                
+                                @foreach($dummyTestimonials as $dummy)
+                                    <div class="testimonial-item">
+                                        <div class="testimonial-card">
+                                            <div class="quote-mark">"</div>
+                                            <div class="testimonial-text">
+                                                {{ $dummy['text'] }}
+                                            </div>
+                                            <div class="testimonial-author">
+                                                <img src="{{ asset('landingpage/img/no-photo-icon.jpg') }}" 
+                                                    alt="{{ $dummy['name'] }}" class="author-photo">
+                                                <div class="author-info">
+                                                    <div class="author-name">{{ $dummy['name'] }}</div>
+                                                    <div class="author-location">{{ $dummy['location'] }}</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        @endforeach
-                        
-                        @foreach($dummyTestimonials as $dummy)
-                            <div class="testimonial-item">
-                                <div class="testimonial-card">
-                                    <div class="quote-mark">"</div>
-                                    <div class="testimonial-text">
-                                        {{ $dummy['text'] }}
-                                    </div>
-                                    <div class="testimonial-author">
-                                        <img src="{{ asset('landingpage/img/no-photo-icon.jpg') }}" 
-                                            alt="{{ $dummy['name'] }}" class="author-photo">
-                                        <div class="author-info">
-                                            <div class="author-name">{{ $dummy['name'] }}</div>
-                                            <div class="author-location">{{ $dummy['location'] }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    @endif
+                                @endforeach
+                            @endif
+                        </div>
+                    </div>
                 </div>
-            </div>
         </div>
     </div>
 </div>
 
 <div class="container-xl py-5">
-    <div class="row align-items-center mb-2">
-        <div class="col-md-6">
-            <div class="step-content">
-                <h3 style="margin-top:-5px !important; font-family: 'Poppins'; font-size:2.5rem; font-weight:600;"><span class="mt-0"
+    <div class="row align-items-center mb-5">
+        <div class="col-md-6 mb-3">
+            <div class="">
+                <h3 style="font-family: 'Poppins'; font-size:2.3rem; font-weight:600;"><span class="mt-0"
                             style="color:#000;">Ikuti Artikel</span><span class="mt-0" style="color:#0258d3;"> Terbaru</span></h3>
             </div>
         </div>
-        <div class="col-md-6 text-end">
+        <div class="col-md-6 text-md-end mb-3">
             <a href="{{ route('landingpage.article_index') }}" class="btn-semua-artikel">
                 <span class="btn-text">SEMUA ARTIKEL</span>
                 <span class="btn-arrow">
@@ -1239,12 +1242,12 @@
 </div>
 
 {{-- CTA Section --}}
-<div class="container-fluid footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
+<div class="container-fluid footer mt-5 pt-5 wow fadeIn d-none d-md-inline" data-wow-delay="0.1s">
     <div class="position-relative">
         <img class="w-100 rounded" src="{{ asset('landingpage/img/CTA.png') }}" alt="CTA Image">
-        <div class="position-absolute top-50 start-0 translate-middle-y cta-content">
-            <h3 class="mb-0" style="font-family: 'Poppins'; font-size:2.6rem !important; font-weight:550; color:#fff;">Mau Cetak Keperluan Kantor?</h3>
-            <h3 class="mb-8" style="font-family: 'Poppins'; font-size:2.6rem !important; font-weight:550; color:#ffc74c; margin-top:-4px;">Boleh Tanya Dulu!</h3>
+        <div class="position-absolute top-50 start-0 translate-middle-y p-3">
+            <h3 class="mb-0" style="font-family: 'Poppins'; font-size:2.5rem !important; font-weight:550; color:#fff;">Mau Cetak Keperluan Kantor?</h3>
+            <h3 class="mb-8" style="font-family: 'Poppins'; font-size:2.5rem !important; font-weight:550; color:#ffc74c; margin-top:-4px;">Boleh Tanya Dulu!</h3>
             <a href="https://wa.me/6281952764747?text=Halo%20Admin%20Sinau%20Print%21%20Saya%20ingin%20mengajukan%20pertanyaan%20terkait%20produk%20yang%20ada%20di%20sinau%20print" target="_blank" class="btn-schedule">
             <span class="btn-text">JADWALKAN KONSULTASI</span>
             <span class="btn-arrow">
@@ -1255,6 +1258,25 @@
         </div>
     </div>
 </div>
+
+<div class="container-fluid footer mt-5 pt-5 wow fadeIn d-inline d-md-none" data-wow-delay="0.1s">
+    <div class="position-relative">
+        <div class="section-branding p-2 rouded" style="background-image: url({{ asset('landingpage/img/CTA.png') }}); height: 450px; background-size: cover;">
+                <div class="m-3 m-md-3 mt-5">
+                    <h3 class="mb-0" style="font-family: 'Poppins'; font-size:2.6rem !important; font-weight:550; color:#fff;">Mau Cetak Keperluan Kantor?</h3>
+                    <h3 class="mb-3" style="font-family: 'Poppins'; font-size:2.6rem !important; font-weight:550; color:#ffc74c">Boleh Tanya Dulu!</h3>
+                    <a href="https://wa.me/6281952764747?text=Halo%20Admin%20Sinau%20Print%21%20Saya%20ingin%20mengajukan%20pertanyaan%20terkait%20produk%20yang%20ada%20di%20sinau%20print" target="_blank" class="btn-schedule">
+                    <span class="btn-text">JADWALKAN KONSULTASI</span>
+                    <span class="btn-arrow">
+                        <i class="bi bi-arrow-right-short arrow-out"></i>
+                        <i class="bi bi-arrow-right-short arrow-in"></i>
+                    </span>
+                    </a>
+                </div>
+        </div>
+    </div>
+</div>
+
 <!-- Sticky Discount Tab -->
 <div class="discount-tab" data-bs-toggle="modal" data-bs-target="#discountModal">
     <div class="discount-tab-text">AMBIL DISKON</div>

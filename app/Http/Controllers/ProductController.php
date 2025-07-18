@@ -227,6 +227,16 @@ class ProductController extends Controller
 
         $products = $query->paginate(12)->withQueryString();
 
+        $currentPage = $request->query('page', 1);
+        $totalPages = $products->lastPage();
+        
+        if ($currentPage > $totalPages && $totalPages > 0) {
+            $queryParams = $request->except(['page']);
+            $queryParams['page'] = 1;
+            
+            return redirect()->route('landingpage.products', $queryParams);
+        }
+
         return view('landingpage.product_all', compact(
             'labels','products','filter','productId','search','sort','pageTitle'
         ));

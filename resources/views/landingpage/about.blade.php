@@ -331,117 +331,117 @@
 
 <div class="container-fluid footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
     <div class="position-relative">
-        <img class="w-100 rounded" src="{{ asset('landingpage/img/login_register_bg.png') }}" alt="Background" />
+        <div class="section-branding p-2 rouded" style="background-image: url({{ asset('landingpage/img/login_register_bg.png') }}); height: 550px; object-fit: cover;">
+                <div class="m-2 m-md-3">
+                    <h3 class="my-5 pt-5 text-center" style="font-family: 'Poppins'; font-size:2.5rem; font-weight:550; color:#fff;">
+                        Kata Mereka <span style="color:#ffc74c;">Tentang Sinau Print</span>
+                    </h3>
 
-        <div class="position-absolute top-50 start-50 translate-middle text-center w-100 px-3 feedback-container">
-            <h3 class="testimonial-title">
-                Kata Mereka <span class="testimonial-highlight">Tentang Sinau Print</span>
-            </h3>
+                    {{-- Testimonial Container --}}
+                    <div class="testimonial-infinite-scroll" id="testimonialScroll">
+                        <div class="testimonial-track" id="testimonialTrack">
+                            @if($testimonials->count() > 0)
+                                @foreach($testimonials as $testimonial)
+                                    @php
+                                        $photoPath = $testimonial->photo ? 'storage/' . $testimonial->photo : null;
+                                        $photoExists = $photoPath && file_exists(public_path($photoPath));
+                                        $photoUrl = $photoExists ? asset($photoPath) : asset('landingpage/img/no-photo-icon.jpg');
+                                    @endphp
+                                    
+                                    <div class="testimonial-item">
+                                        <div class="testimonial-card">
+                                            <div class="quote-mark">"</div>
+                                            <div class="testimonial-text">
+                                                {{ $testimonial->feedback }}
+                                            </div>
+                                            <div class="testimonial-author">
+                                                <img src="{{ $photoUrl }}" alt="{{ $testimonial->name }}" class="author-photo"
+                                                    onerror="this.src='{{ asset('landingpage/img/no-photo-icon.jpg') }}'">
+                                                <div class="author-info">
+                                                    <div class="author-name">{{ $testimonial->name }}</div>
+                                                    <div class="author-location">{{ $testimonial->location }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
 
-            {{-- TESTIMONIAL --}}
-            <div class="testimonial-infinite-scroll" id="testimonialScroll">
-                <div class="testimonial-track" id="testimonialTrack">
-                    @if($testimonials->count() > 0)
-                        @foreach($testimonials as $testimonial)
-                            @php
-                                $photoPath = $testimonial->photo ? 'storage/' . $testimonial->photo : null;
-                                $photoExists = $photoPath && file_exists(public_path($photoPath));
-                                $photoUrl = $photoExists ? asset($photoPath) : asset('landingpage/img/no-photo-icon.jpg');
-                            @endphp
-                            
-                            <div class="testimonial-item">
-                                <div class="testimonial-card">
-                                    <div class="quote-mark">"</div>
-                                    <div class="testimonial-text">
-                                        {{ $testimonial->feedback }}
-                                    </div>
-                                    <div class="testimonial-author">
-                                        <img src="{{ $photoUrl }}" alt="{{ $testimonial->name }}" class="author-photo"
-                                            onerror="this.src='{{ asset('landingpage/img/no-photo-icon.jpg') }}'">
-                                        <div class="author-info">
-                                            <div class="author-name">{{ $testimonial->name }}</div>
-                                            <div class="author-location">{{ $testimonial->location }}</div>
+                                @foreach($testimonials as $testimonial)
+                                    @php
+                                        $photoPath = $testimonial->photo ? 'storage/' . $testimonial->photo : null;
+                                        $photoExists = $photoPath && file_exists(public_path($photoPath));
+                                        $photoUrl = $photoExists ? asset($photoPath) : asset('landingpage/img/no-photo-icon.jpg');
+                                    @endphp
+                                    
+                                    <div class="testimonial-item">
+                                        <div class="testimonial-card">
+                                            <div class="quote-mark">"</div>
+                                            <div class="testimonial-text">
+                                                {{ $testimonial->feedback }}
+                                            </div>
+                                            <div class="testimonial-author">
+                                                <img src="{{ $photoUrl }}" alt="{{ $testimonial->name }}" class="author-photo"
+                                                    onerror="this.src='{{ asset('landingpage/img/no-photo-icon.jpg') }}'">
+                                                <div class="author-info">
+                                                    <div class="author-name">{{ $testimonial->name }}</div>
+                                                    <div class="author-location">{{ $testimonial->location }}</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        @endforeach
-
-                        @foreach($testimonials as $testimonial)
-                            @php
-                                $photoPath = $testimonial->photo ? 'storage/' . $testimonial->photo : null;
-                                $photoExists = $photoPath && file_exists(public_path($photoPath));
-                                $photoUrl = $photoExists ? asset($photoPath) : asset('landingpage/img/no-photo-icon.jpg');
-                            @endphp
-                            
-                            <div class="testimonial-item">
-                                <div class="testimonial-card">
-                                    <div class="quote-mark">"</div>
-                                    <div class="testimonial-text">
-                                        {{ $testimonial->feedback }}
-                                    </div>
-                                    <div class="testimonial-author">
-                                        <img src="{{ $photoUrl }}" alt="{{ $testimonial->name }}" class="author-photo"
-                                            onerror="this.src='{{ asset('landingpage/img/no-photo-icon.jpg') }}'">
-                                        <div class="author-info">
-                                            <div class="author-name">{{ $testimonial->name }}</div>
-                                            <div class="author-location">{{ $testimonial->location }}</div>
+                                @endforeach
+                            @else
+                                @php
+                                    $dummyTestimonials = [
+                                        ['text' => "Pelayanan yang sangat ramah dibantu sampai selesai", 'name' => 'Andi', 'location' => 'Jakarta'],
+                                        ['text' => "Cepat sekali pengerjaannya!", 'name' => 'Budi', 'location' => 'Bandung'],
+                                        ['text' => "Mau online atau offline, mudah banget dan cepat!", 'name' => 'Citra', 'location' => 'Surabaya'],
+                                        ['text' => "Warna nya bagus banget!", 'name' => 'Dewi', 'location' => 'Yogyakarta'],
+                                        ['text' => "Kualitas cetak juara!", 'name' => 'Eka', 'location' => 'Medan'],
+                                    ];
+                                @endphp
+                                
+                                @foreach($dummyTestimonials as $dummy)
+                                    <div class="testimonial-item">
+                                        <div class="testimonial-card">
+                                            <div class="quote-mark">"</div>
+                                            <div class="testimonial-text">
+                                                {{ $dummy['text'] }}
+                                            </div>
+                                            <div class="testimonial-author">
+                                                <img src="{{ asset('landingpage/img/no-photo-icon.jpg') }}" 
+                                                    alt="{{ $dummy['name'] }}" class="author-photo">
+                                                <div class="author-info">
+                                                    <div class="author-name">{{ $dummy['name'] }}</div>
+                                                    <div class="author-location">{{ $dummy['location'] }}</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    @else
-                        @php
-                            $dummyTestimonials = [
-                                ['text' => "Pelayanan yang sangat ramah dibantu sampai selesai", 'name' => 'Andi', 'location' => 'Jakarta'],
-                                ['text' => "Cepat sekali pengerjaannya!", 'name' => 'Budi', 'location' => 'Bandung'],
-                                ['text' => "Mau online atau offline, mudah banget dan cepat!", 'name' => 'Citra', 'location' => 'Surabaya'],
-                                ['text' => "Warna nya bagus banget!", 'name' => 'Dewi', 'location' => 'Yogyakarta'],
-                                ['text' => "Kualitas cetak juara!", 'name' => 'Eka', 'location' => 'Medan'],
-                            ];
-                        @endphp
-                        
-                        @foreach($dummyTestimonials as $dummy)
-                            <div class="testimonial-item">
-                                <div class="testimonial-card">
-                                    <div class="quote-mark">"</div>
-                                    <div class="testimonial-text">
-                                        {{ $dummy['text'] }}
-                                    </div>
-                                    <div class="testimonial-author">
-                                        <img src="{{ asset('landingpage/img/no-photo-icon.jpg') }}" 
-                                            alt="{{ $dummy['name'] }}" class="author-photo">
-                                        <div class="author-info">
-                                            <div class="author-name">{{ $dummy['name'] }}</div>
-                                            <div class="author-location">{{ $dummy['location'] }}</div>
+                                @endforeach
+                                
+                                @foreach($dummyTestimonials as $dummy)
+                                    <div class="testimonial-item">
+                                        <div class="testimonial-card">
+                                            <div class="quote-mark">"</div>
+                                            <div class="testimonial-text">
+                                                {{ $dummy['text'] }}
+                                            </div>
+                                            <div class="testimonial-author">
+                                                <img src="{{ asset('landingpage/img/no-photo-icon.jpg') }}" 
+                                                    alt="{{ $dummy['name'] }}" class="author-photo">
+                                                <div class="author-info">
+                                                    <div class="author-name">{{ $dummy['name'] }}</div>
+                                                    <div class="author-location">{{ $dummy['location'] }}</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        @endforeach
-                        
-                        @foreach($dummyTestimonials as $dummy)
-                            <div class="testimonial-item">
-                                <div class="testimonial-card">
-                                    <div class="quote-mark">"</div>
-                                    <div class="testimonial-text">
-                                        {{ $dummy['text'] }}
-                                    </div>
-                                    <div class="testimonial-author">
-                                        <img src="{{ asset('landingpage/img/no-photo-icon.jpg') }}" 
-                                            alt="{{ $dummy['name'] }}" class="author-photo">
-                                        <div class="author-info">
-                                            <div class="author-name">{{ $dummy['name'] }}</div>
-                                            <div class="author-location">{{ $dummy['location'] }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    @endif
+                                @endforeach
+                            @endif
+                        </div>
+                    </div>
                 </div>
-            </div>
         </div>
     </div>
 </div>

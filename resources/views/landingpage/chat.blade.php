@@ -581,9 +581,170 @@
                 width: 100%;
             }
         }
+        /* Mobile */
+        @media (max-width: 991.98px) {
+            .cta-overlay {
+                left: 2% !important;
+                width: 96% !important;
+            }
+            
+            .cta-overlay h3 {
+                font-size: 1.8rem !important;
+            }
+            
+            .logout-button {
+                padding: 6px 20px !important;
+                font-size: 0.75rem !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding-top: 2rem !important;
+            }
+            
+            .product-card {
+                margin-top: 0 !important;
+            }
+            
+            .container-fluid.px-4 {
+                padding-top: 1rem !important;
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            
+            .cta-overlay .d-flex {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 1rem;
+            }
+            
+            .cta-overlay h3 {
+                font-size: 1.6rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .logout-button {
+                align-self: flex-end;
+                padding: 8px 24px !important;
+            }
+            
+            .sidebar-filter {
+                margin-bottom: 2rem !important;
+            }
+            
+            .sidebar-filter a {
+                font-size: 0.8rem !important;
+                padding: 8px 16px !important;
+                margin-bottom: 4px !important;
+            }
+            
+            .chat-container {
+                height: 450px !important;
+            }
+            
+            .chat-sidebar {
+                width: 140px !important;
+            }
+            
+            .chat-name {
+                font-size: 0.65rem !important;
+            }
+            
+            .chat-preview {
+                font-size: 0.6rem !important;
+            }
+            
+            .chat-time {
+                font-size: 0.6rem !important;
+            }
+            
+            .message-bubble {
+                font-size: 0.8rem !important;
+                padding: 8px 10px !important;
+                max-width: 85% !important;
+            }
+            
+            .message-time {
+                font-size: 0.55rem !important;
+            }
+            
+            .chat-avatar {
+                width: 24px !important;
+                height: 24px !important;
+                font-size: 0.6rem !important;
+            }
+            
+            .send-btn {
+                width: 44px !important;
+                padding: 0.4rem 0.6rem !important;
+            }
+            
+            .form-control {
+                height: 40px !important;
+                font-size: 0.8rem !important;
+                padding: 0.4rem 0.8rem !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            main {
+                padding-top: 1rem !important;
+            }
+            
+            .container-fluid.px-4 {
+                padding-top: 0.5rem !important;
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+            }
+            
+            .cta-overlay h3 {
+                font-size: 1.4rem !important;
+            }
+            
+            .logout-button {
+                padding: 6px 16px !important;
+                font-size: 0.7rem !important;
+            }
+            
+            .chat-container {
+                height: 400px !important;
+            }
+            
+            .chat-sidebar {
+                width: 120px !important;
+            }
+            
+            .sidebar-filter a {
+                font-size: 0.75rem !important;
+                padding: 6px 12px !important;
+            }
+            
+            .message-bubble {
+                font-size: 0.75rem !important;
+                padding: 6px 8px !important;
+                max-width: 90% !important;
+            }
+            
+            .chat-avatar {
+                width: 20px !important;
+                height: 20px !important;
+                font-size: 0.55rem !important;
+            }
+            
+            .send-btn {
+                width: 40px !important;
+                padding: 0.3rem 0.5rem !important;
+            }
+            
+            .form-control {
+                height: 36px !important;
+                font-size: 0.75rem !important;
+            }
+        }
     </style>
 
-    <div class="container-fluid footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
+    <div class="container-fluid footer mt-5 pt-5 wow fadeIn d-none d-md-block" data-wow-delay="0.1s">
         <div class="position-relative mb-0">
             <img class="w-100 rounded" src="{{ asset('landingpage/img/blue_bg.png') }}" alt="CTA Image">
             <div class="position-absolute start-0 translate-middle-y cta-overlay" style="left: 5%; width: 90%;">
@@ -599,7 +760,7 @@
                 </div>
 
                 <!-- Breadcrumb tetap di bawah -->
-                <nav aria-label="breadcrumb">
+                <nav aria-label="breadcrumb" class="d-none d-md-block">
                     <ol class="breadcrumb mb-0" style="font-family:'Poppins'; font-size:0.8rem; font-weight:400;">
                         <li class="breadcrumb-item"><a href="{{ url('/') }}">BERANDA</a></li>
                         <li class="breadcrumb-item active" aria-current="page">PROFIL</li>
@@ -611,7 +772,7 @@
     </div>
 
     <main>
-        <div class="container-fluid px-4">
+        <div class="container-fluid px-3">
             <div class="container product-card" style="margin-top:-144px;">
                 <div class="row g-5" style="margin-top:32px;">
 

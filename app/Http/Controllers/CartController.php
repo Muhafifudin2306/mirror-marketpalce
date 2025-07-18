@@ -259,8 +259,13 @@ class CartController extends Controller
         $provinceName = $user->province
             ? DB::table('d_provinsi')->where('id', $user->province)->value('nama')
             : null;
+        
+        $districtName = $user->province
+            ? DB::table('d_kabkota')->where('id', $user->district)->value('nama')
+            : null;
+
         $cityName = $user->city
-            ? DB::table('d_kabkota')->where('id', $user->city)->value('nama')
+            ? DB::table('d_kecamatan')->where('id', $user->city)->value('nama')
             : null;
 
         return view('landingpage.checkout', [
@@ -269,6 +274,7 @@ class CartController extends Controller
             'isset' => $isset,
             'provinceName' => $provinceName,
             'cityName'     => $cityName,
+            'districtName' => $districtName
         ]);
     }
 

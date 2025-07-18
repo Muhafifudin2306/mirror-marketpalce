@@ -73,55 +73,75 @@
                 <h2 class="other-articles-title">Baca Artikel Lainnya</h2>
             </div>
         </div>
-        <div class="row g-4">
-            @php
-                $otherArticles = App\Models\Blog::where('is_live', 1)
-                    ->where('id', '!=', $blog->id)
-                    ->latest()
-                    ->limit(4)
-                    ->get();
-            @endphp
-            
-            @foreach($otherArticles as $article)
-            <div class="col-lg-3 col-md-6 col-sm-12">
-                <a href="{{ route('landingpage.article_show', $article->slug) }}" class="text-decoration-none">
-                    <div class="article-card-home h-100" style="border-radius:10px;">
-                        <div class="position-relative bg-light overflow-hidden article-image-container-home" style="border-radius:10px; height:170px;">
-                            @if($article->banner && file_exists(storage_path('app/public/' . $article->banner)))
-                                <img src="{{ asset('storage/' . $article->banner) }}"
-                                    class="img-fluid w-100 h-100 article-image-home" style="object-fit:cover;" 
-                                    alt="{{ $article->title }}">
-                            @else
-                                <img src="{{ asset('landingpage/img/nophoto_blog.png') }}"
-                                    class="img-fluid w-100 h-100 article-image-home" style="object-fit:cover;"
-                                    alt="No Image">
-                            @endif
-                            
-                            {{-- Overlay yang muncul saat hover --}}
-                            <div class="article-overlay-home">
-                                <div class="overlay-content-home">
-                                    <span class="read-more-text-home">Baca Selengkapnya</span>
-                                    <div class="arrow-circle-home">
-                                        <i class="bi bi-arrow-right"></i>
+        
+        <!-- Carousel Container -->
+        <div id="otherArticlesCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                @php
+                    $otherArticles = App\Models\Blog::where('is_live', 1)
+                        ->where('id', '!=', $blog->id)
+                        ->latest()
+                        ->limit(6)
+                        ->get();
+                @endphp
+                
+                @foreach($otherArticles as $index => $article)
+                <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-6 col-md-8 col-sm-10">
+                            <a href="{{ route('landingpage.article_show', $article->slug) }}" class="text-decoration-none">
+                                <div class="article-card-carousel h-100">
+                                    <div class="position-relative bg-light overflow-hidden article-image-container-carousel">
+                                        @if($article->banner && file_exists(storage_path('app/public/' . $article->banner)))
+                                            <img src="{{ asset('storage/' . $article->banner) }}"
+                                                class="img-fluid w-100 h-100 article-image-carousel" 
+                                                alt="{{ $article->title }}">
+                                        @else
+                                            <img src="{{ asset('landingpage/img/nophoto_blog.png') }}"
+                                                class="img-fluid w-100 h-100 article-image-carousel"
+                                                alt="No Image">
+                                        @endif
+                                        
+                                        <div class="article-overlay-carousel">
+                                            <div class="overlay-content-carousel">
+                                                <span class="read-more-text-carousel">Baca Selengkapnya</span>
+                                                <div class="arrow-circle-carousel">
+                                                    <i class="bi bi-arrow-right"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="content-carousel">
+                                        <div class="article-category-carousel">
+                                            {{ strtoupper($article->type ?? $article->blog_type ?? 'ARTIKEL') }}
+                                            <span class="article-date-carousel">{{ $article->created_at->format('d M Y') }}</span>
+                                        </div>
+                                        <div class="title-carousel">
+                                            {{ Str::limit($article->title, 80) }}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="content p-3 d-flex flex-column" style="min-height:140px;">
-                            <div class="article-category-home mb-2" style="font-family: 'Poppins'; font-size:0.7rem; font-weight:600; color:#666;">
-                                {{-- Updated: Use article type --}}
-                                {{ strtoupper($article->type ?? $article->blog_type ?? 'ARTIKEL') }}
-                                <span class="article-date-home ms-auto" style="color:#999;">{{ $article->created_at->format('d M Y') }}</span>
-                            </div>
-                            <div class="title text-dark mb-0"
-                                style="font-family: 'Poppins'; font-size:1.1rem; font-weight:600;">
-                                {{ Str::limit($article->title, 50) }}
-                            </div>
+                            </a>
                         </div>
                     </div>
-                </a>
+                </div>
+                @endforeach
             </div>
-            @endforeach
+
+            <!-- Carousel Controls -->
+            <div class="carousel-controls-wrapper">
+                <button class="carousel-control-prev custom-carousel-btn" type="button" data-bs-target="#otherArticlesCarousel" data-bs-slide="prev">
+                    <span class="custom-arrow-btn">
+                        <i class="fas fa-arrow-left"></i>
+                    </span>
+                </button>
+                
+                <button class="carousel-control-next custom-carousel-btn" type="button" data-bs-target="#otherArticlesCarousel" data-bs-slide="next">
+                    <span class="custom-arrow-btn">
+                        <i class="fas fa-arrow-right"></i>
+                    </span>
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -506,14 +526,398 @@
         font-size: 12px;
     }
     
-    .d-flex.justify-content-between {
+    .container .d-flex.justify-content-between:has(.back-link) {
         flex-direction: column;
-        gap: 15px;
+        gap: 20px;
         align-items: flex-start !important;
     }
-    
-    .d-flex.align-items-center.gap-3 {
+
+    .container .d-flex.align-items-center.gap-3:has(.share-text) {
         align-self: flex-end;
+        gap: 10px !important;
+    }
+}
+@media (max-width: 768px) {
+    .hero-banner-wrapper {
+        margin-top: 0;
+    }
+    
+    .hero-banner {
+        height: 300px;
+    }
+    
+    .hero-overlay {
+        padding-bottom: 30px;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .hero-title {
+        font-size: 1.8rem;
+        line-height: 1.1;
+        text-align: center;
+        -webkit-line-clamp: 4;
+    }
+    
+    .hero-meta {
+        text-align: center;
+    }
+    
+    .meta-text {
+        font-size: 0.8rem;
+        line-height: 1.4;
+        word-break: break-word;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-banner {
+        height: 250px;
+    }
+    
+    .hero-title {
+        font-size: 1.5rem;
+    }
+    
+    .meta-text {
+        font-size: 0.7rem;
+    }
+    
+    .hero-overlay {
+        padding-bottom: 20px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container.py-5 {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+    }
+    
+    .article-banner {
+        width: 100%;
+        margin-bottom: 30px;
+    }
+    
+    .article-content {
+        font-size: 0.95rem;
+        line-height: 1.7;
+    }
+    
+    .article-content h1,
+    .article-content h2,
+    .article-content h3,
+    .article-content h4 {
+        font-size: 1.3rem;
+        margin-top: 1.5rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .article-content p {
+        margin-bottom: 1.2rem;
+    }
+    
+    .promo-section h4 {
+        font-size: 1.5rem !important;
+        line-height: 1.3;
+        margin-bottom: 20px;
+    }
+    
+    .btn-promo-full {
+        font-size: 1rem;
+        padding: 12px 30px;
+    }
+    
+    .share-text {
+        font-size: 0.8rem;
+    }
+    
+    .share-btn {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 576px) {
+    .container.py-5 {
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
+    
+    .article-content {
+        font-size: 0.9rem;
+    }
+    
+    .promo-section h4 {
+        font-size: 1.3rem !important;
+    }
+    
+    .btn-promo-full {
+        font-size: 0.9rem;
+        padding: 10px 25px;
+    }
+}
+
+
+.other-articles-section {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    padding: 80px 0;
+    position: relative;
+    width: 100vw;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+}
+
+.other-articles-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.article-card-carousel {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin: 0 20px;
+}
+
+.article-card-carousel:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.25);
+}
+
+.article-image-container-carousel {
+    height: 250px;
+    overflow: hidden;
+    border-radius: 16px 16px 0 0;
+}
+
+.article-image-carousel {
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.article-card-carousel:hover .article-image-carousel {
+    transform: scale(1.05);
+}
+
+.article-overlay-carousel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0) 0%, rgba(59, 130, 246, 0.9) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.article-card-carousel:hover .article-overlay-carousel {
+    opacity: 1;
+}
+
+.overlay-content-carousel {
+    text-align: center;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.read-more-text-carousel {
+    font-family: 'Poppins';
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.arrow-circle-carousel {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.arrow-circle-carousel i {
+    font-size: 16px;
+    color: #fff;
+}
+
+.article-card-carousel:hover .arrow-circle-carousel {
+    background: #fff;
+}
+
+.article-card-carousel:hover .arrow-circle-carousel i {
+    color: #3b82f6;
+}
+
+.content-carousel {
+    padding: 24px;
+}
+
+.article-category-carousel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-family: 'Poppins';
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #666;
+}
+
+.article-date-carousel {
+    color: #999 !important;
+    font-weight: 400 !important;
+}
+
+.title-carousel {
+    font-family: 'Poppins';
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.carousel-controls-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.custom-carousel-btn {
+    width: 50px;
+    height: 50px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    position: static;
+    opacity: 1;
+}
+
+.custom-carousel-btn:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(255, 255, 255, 0.9);
+    transform: scale(1.1);
+}
+
+.custom-arrow-btn {
+    color: white;
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+
+.custom-carousel-btn:hover .custom-arrow-btn {
+    color: #3b82f6;
+}
+
+
+@media (max-width: 768px) {
+    .other-articles-section {
+        padding: 60px 0;
+    }
+    
+    .other-articles-title {
+        font-size: 2rem;
+        margin-bottom: 30px;
+    }
+    
+    .article-card-carousel {
+        margin: 0 10px;
+    }
+    
+    .article-image-container-carousel {
+        height: 200px;
+    }
+    
+    .content-carousel {
+        padding: 20px;
+    }
+    
+    .title-carousel {
+        font-size: 1.1rem;
+        -webkit-line-clamp: 2;
+    }
+    
+    .carousel-controls-wrapper {
+        gap: 20px;
+        margin-top: 30px;
+    }
+    
+    .custom-carousel-btn {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .custom-arrow-btn {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 576px) {
+    .other-articles-title {
+        font-size: 1.5rem;
+    }
+    
+    .article-card-carousel {
+        margin: 0 5px;
+    }
+    
+    .article-image-container-carousel {
+        height: 180px;
+    }
+    
+    .content-carousel {
+        padding: 16px;
+    }
+    
+    .title-carousel {
+        font-size: 1rem;
+    }
+    
+    .article-category-carousel {
+        font-size: 0.7rem;
+    }
+    
+    .read-more-text-carousel {
+        font-size: 0.9rem;
+    }
+    
+    .arrow-circle-carousel {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .arrow-circle-carousel i {
+        font-size: 14px;
     }
 }
 </style>
@@ -523,7 +927,6 @@ function copyToClipboard() {
     const url = window.location.href;
     
     if (navigator.clipboard && window.isSecureContext) {
-        // Use modern clipboard API
         navigator.clipboard.writeText(url).then(() => {
             showCopySuccess();
         }).catch(err => {
@@ -531,7 +934,6 @@ function copyToClipboard() {
             fallbackCopyTextToClipboard(url);
         });
     } else {
-        // Fallback for older browsers
         fallbackCopyTextToClipboard(url);
     }
 }
@@ -540,7 +942,6 @@ function fallbackCopyTextToClipboard(text) {
     const textArea = document.createElement("textarea");
     textArea.value = text;
     
-    // Avoid scrolling to bottom
     textArea.style.top = "0";
     textArea.style.left = "0";
     textArea.style.position = "fixed";
@@ -564,7 +965,6 @@ function fallbackCopyTextToClipboard(text) {
 }
 
 function showCopySuccess() {
-    // Create a temporary notification
     const notification = document.createElement('div');
     notification.textContent = 'Link berhasil disalin!';
     notification.style.cssText = `
@@ -584,7 +984,6 @@ function showCopySuccess() {
     
     document.body.appendChild(notification);
     
-    // Remove notification after 3 seconds
     setTimeout(() => {
         notification.style.opacity = '0';
         setTimeout(() => {

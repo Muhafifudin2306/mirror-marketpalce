@@ -111,4 +111,244 @@
         </div>
     </div>
 </div>
+
+<style>
+  @media (max-width: 768px) {
+      .cta-content {
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+          padding-left: 20px;
+          padding-right: 20px;
+      }
+      
+      .cta-content h3 {
+          font-size: 2rem !important;
+          line-height: 1.2;
+      }
+      
+      .cta-content p {
+          font-size: 0.9rem !important;
+          line-height: 1.4;
+      }
+      
+      .position-relative img {
+          min-height: 250px;
+          max-height: 350px;
+          object-fit: cover;
+      }
+  }
+
+  @media (max-width: 576px) {
+      .cta-content {
+          padding-left: 15px;
+          padding-right: 15px;
+      }
+      
+      .cta-content h3 {
+          font-size: 1.5rem !important;
+          line-height: 1.1;
+      }
+      
+      .cta-content p {
+          font-size: 0.8rem !important;
+          line-height: 1.3;
+      }
+      
+      .position-relative img {
+          min-height: 200px;
+          max-height: 280px;
+      }
+  }
+
+  @media (max-width: 768px) {
+      .container-lg {
+          padding-left: 20px;
+          padding-right: 20px;
+      }
+      
+      .step-content {
+          text-align: center;
+          margin-top: 20px;
+      }
+      
+      .step-number {
+          font-size: 4rem !important;
+          text-align: center;
+          margin-bottom: 10px;
+          position: static !important;
+      }
+      
+      .step-title {
+          font-size: 1.5rem !important;
+          text-align: center;
+          line-height: 1.2;
+      }
+      
+      .step-desc {
+          font-size: 0.9rem;
+          text-align: center;
+          line-height: 1.5;
+          margin-top: 15px;
+          color: #666;
+      }
+      
+      .py-5 {
+          padding-top: 2.5rem !important;
+          padding-bottom: 2.5rem !important;
+      }
+      
+      .mb-4 {
+          margin-bottom: 1rem !important;
+      }
+  }
+
+  @media (max-width: 576px) {
+      .container-lg {
+          padding-left: 15px;
+          padding-right: 15px;
+      }
+      
+      .step-number {
+          font-size: 3rem !important;
+      }
+      
+      .step-title {
+          font-size: 1.2rem !important;
+      }
+      
+      .step-desc {
+          font-size: 0.85rem;
+      }
+      
+      .py-5 {
+          padding-top: 2rem !important;
+          padding-bottom: 2rem !important;
+      }
+  }
+
+  @media (max-width: 768px) {
+      .btn-schedule {
+          display: inline-flex;
+          align-items: center;
+          background: none;
+          color: #fff;
+          text-decoration: none;
+          padding: 10px 20px;
+          border-radius: 25px;
+          font-family: 'Poppins';
+          font-weight: 600;
+          font-size: 0.8rem;
+          letter-spacing: 0.5px;
+          transition: all 0.3s ease;
+          overflow: hidden;
+          position: relative;
+          margin: 5px;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+      }
+      
+      .btn-schedule:hover {
+          background: #fff;
+          color: #333;
+          transform: translateY(-2px);
+          text-decoration: none;
+      }
+  }
+
+  @media (max-width: 576px) {
+      .btn-schedule {
+          padding: 8px 16px;
+          font-size: 0.75rem;
+          margin: 3px;
+      }
+      
+      .btn-schedule .btn-text {
+          font-size: 0.7rem;
+      }
+  }
+
+  @media (min-width: 769px) {
+      .step-number {
+          position: absolute;
+          font-size: 8rem;
+          font-weight: 900;
+          z-index: -1;
+          top: -20px;
+      }
+      
+      .step-title {
+          font-family: 'Poppins';
+          font-size: 2.5rem;
+          font-weight: 600;
+          line-height: 1.1;
+          margin-bottom: 20px;
+      }
+      
+      .step-desc {
+          font-family: 'Poppins';
+          font-size: 1rem;
+          color: #666;
+          line-height: 1.6;
+      }
+      
+      .btn-schedule {
+          display: inline-flex;
+          align-items: center;
+          background: none;
+          color: #fff;
+          text-decoration: none;
+          padding: 12px 24px;
+          border-radius: 30px;
+          font-family: 'Poppins';
+          font-weight: 600;
+          font-size: 0.9rem;
+          letter-spacing: 0.5px;
+          transition: all 0.3s ease;
+          overflow: hidden;
+          position: relative;
+          margin: 10px;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+      }
+      
+      .btn-schedule:hover {
+          background: #fff;
+          color: #333;
+          transform: translateY(-2px);
+          text-decoration: none;
+      }
+  }
+
+  .btn-text {
+      transition: transform 0.3s ease;
+  }
+
+  .btn-arrow {
+      margin-left: 10px;
+      transition: transform 0.3s ease;
+      position: relative;
+      width: 20px;
+      height: 20px;
+      overflow: hidden;
+  }
+
+  .btn-arrow .arrow-out {
+      transition: transform 0.3s ease;
+      position: absolute;
+      top: 0;
+      left: 0;
+  }
+
+  .btn-arrow .arrow-in {
+      transition: transform 0.3s ease;
+      position: absolute;
+      top: 0;
+      left: 20px;
+  }
+
+  .btn-schedule:hover .btn-arrow .arrow-out {
+      transform: translateX(-20px);
+  }
+
+  .btn-schedule:hover .btn-arrow .arrow-in {
+      transform: translateX(-20px);
+  }
+</style>
 @endsection

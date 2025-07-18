@@ -378,10 +378,385 @@
                 padding: 10px 20px;
             }
         }
+
+        @media (max-width: 991.98px) {
+            .cta-overlay {
+                left: 2% !important;
+                width: 96% !important;
+            }
+            
+            .cta-overlay h3 {
+                font-size: 1.8rem !important;
+            }
+            
+            .logout-button {
+                padding: 6px 20px !important;
+                font-size: 0.75rem !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container-fluid.px-3 {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            
+            .product-card {
+                margin-top: -100px !important;
+            }
+            
+            .cta-overlay .d-flex {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 1rem;
+            }
+            
+            .cta-overlay h3 {
+                font-size: 1.6rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .logout-button {
+                align-self: flex-end;
+                padding: 8px 24px !important;
+            }
+            
+            .sidebar-filter {
+                margin-bottom: 2rem !important;
+            }
+            
+            .sidebar-filter a {
+                font-size: 0.8rem !important;
+                padding: 8px 16px !important;
+                margin-bottom: 4px !important;
+            }
+            
+            .section-pill {
+                font-size: 1rem !important;
+                padding: 10px 20px !important;
+                margin-bottom: 1rem !important;
+            }
+            
+            .form-control {
+                height: 40px !important;
+                font-size: 0.8rem !important;
+                padding: 0.4rem 0.8rem !important;
+            }
+            
+            .form-label {
+                font-size: 0.65rem !important;
+                margin-bottom: 0.3rem !important;
+            }
+            
+            .row .col-md-6 {
+                margin-bottom: 1rem !important;
+            }
+            
+            .btn-save {
+                padding: 12px 16px !important;
+                font-size: 0.85rem !important;
+                margin-top: 1rem !important;
+            }
+            
+            .btn-edit-text {
+                font-size: 0.8rem !important;
+                padding: 8px 12px !important;
+            }
+            
+            .eye-btn {
+                right: 0.8rem !important;
+                font-size: 0.9rem !important;
+            }
+            
+            .table-responsive {
+                border: none !important;
+            }
+            
+            .table {
+                font-size: 0.7rem !important;
+                margin-bottom: 0 !important;
+            }
+            
+            .table th {
+                font-size: 0.65rem !important;
+                padding: 8px 4px !important;
+                white-space: nowrap !important;
+            }
+            
+            .table td {
+                font-size: 0.6rem !important;
+                padding: 12px 4px !important;
+                line-height: 1.3 !important;
+            }
+            
+            .table .badge {
+                font-size: 0.55rem !important;
+                padding: 4px 8px !important;
+                line-height: 1.2 !important;
+            }
+            
+            .table .btn {
+                font-size: 0.55rem !important;
+                padding: 4px 6px !important;
+                margin-bottom: 2px !important;
+            }
+            
+            .list-group-item {
+                padding: 1rem !important;
+                margin-bottom: 0.8rem !important;
+            }
+            
+            .notification-badge {
+                font-size: 0.6rem !important;
+                padding: 2px 8px !important;
+            }
+            
+            .list-group-item h6 {
+                font-size: 0.75rem !important;
+                margin-bottom: 0.5rem !important;
+                margin-top: 0.5rem !important;
+            }
+            
+            .list-group-item p {
+                font-size: 0.7rem !important;
+                line-height: 1.4 !important;
+            }
+            
+            .pagination .page-link {
+                width: 28px !important;
+                height: 28px !important;
+                line-height: 26px !important;
+                font-size: 0.7rem !important;
+            }
+            
+            .form-select {
+                height: 36px !important;
+                font-size: 0.7rem !important;
+                padding: 0 12px !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container-fluid.px-3 {
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+            }
+            
+            .product-card {
+                margin-top: -80px !important;
+            }
+            
+            .cta-overlay h3 {
+                font-size: 1.4rem !important;
+            }
+            
+            .logout-button {
+                padding: 6px 16px !important;
+                font-size: 0.7rem !important;
+            }
+            
+            .table th:nth-child(5),
+            .table td:nth-child(5) {
+                display: none !important;
+            }
+            
+            .table th:nth-child(2),
+            .table td:nth-child(2) {
+                display: none !important;
+            }
+            
+            .section-pill {
+                font-size: 0.9rem !important;
+                padding: 8px 16px !important;
+            }
+            
+            .form-control {
+                height: 36px !important;
+                font-size: 0.75rem !important;
+            }
+            
+            .form-label {
+                font-size: 0.6rem !important;
+            }
+            
+            .sidebar-filter a {
+                font-size: 0.75rem !important;
+                padding: 6px 12px !important;
+            }
+        }
+        @media (max-width: 768px) {
+            main {
+                padding-top: 0 !important;
+            }
+            
+            .product-card {
+                margin-top: 0 !important;
+            }
+            
+            .container-fluid.px-3 {
+                padding-top: 0 !important;
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            
+            .sidebar-filter {
+                margin-bottom: 2rem !important;
+            }
+            
+            .sidebar-filter a {
+                font-size: 0.8rem !important;
+                padding: 8px 16px !important;
+                margin-bottom: 4px !important;
+            }
+            
+            .section-pill {
+                font-size: 1rem !important;
+                padding: 10px 20px !important;
+                margin-bottom: 1rem !important;
+            }
+            
+            .form-control {
+                height: 40px !important;
+                font-size: 0.8rem !important;
+                padding: 0.4rem 0.8rem !important;
+            }
+            
+            .form-label {
+                font-size: 0.65rem !important;
+                margin-bottom: 0.3rem !important;
+            }
+            
+            .row .col-md-6 {
+                margin-bottom: 1rem !important;
+            }
+            
+            .btn-save {
+                padding: 12px 16px !important;
+                font-size: 0.85rem !important;
+                margin-top: 1rem !important;
+            }
+            
+            .btn-edit-text {
+                font-size: 0.8rem !important;
+                padding: 8px 12px !important;
+            }
+            
+            .eye-btn {
+                right: 0.8rem !important;
+                font-size: 0.9rem !important;
+            }
+            .table-responsive {
+                border: none !important;
+            }
+            
+            .table {
+                font-size: 0.7rem !important;
+                margin-bottom: 0 !important;
+            }
+            
+            .table th {
+                font-size: 0.65rem !important;
+                padding: 8px 4px !important;
+                white-space: nowrap !important;
+            }
+            
+            .table td {
+                font-size: 0.6rem !important;
+                padding: 12px 4px !important;
+                line-height: 1.3 !important;
+            }
+            
+            .table .badge {
+                font-size: 0.55rem !important;
+                padding: 4px 8px !important;
+                line-height: 1.2 !important;
+            }
+            
+            .table .btn {
+                font-size: 0.55rem !important;
+                padding: 4px 6px !important;
+                margin-bottom: 2px !important;
+            }
+            
+            .list-group-item {
+                padding: 1rem !important;
+                margin-bottom: 0.8rem !important;
+            }
+            
+            .notification-badge {
+                font-size: 0.6rem !important;
+                padding: 2px 8px !important;
+            }
+            
+            .list-group-item h6 {
+                font-size: 0.75rem !important;
+                margin-bottom: 0.5rem !important;
+                margin-top: 0.5rem !important;
+            }
+            
+            .list-group-item p {
+                font-size: 0.7rem !important;
+                line-height: 1.4 !important;
+            }
+            
+            .pagination .page-link {
+                width: 28px !important;
+                height: 28px !important;
+                line-height: 26px !important;
+                font-size: 0.7rem !important;
+            }
+            
+            .form-select {
+                height: 36px !important;
+                font-size: 0.7rem !important;
+                padding: 0 12px !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            main {
+                padding-top: 0 !important;
+            }
+            
+            .container-fluid.px-3 {
+                padding-top: 0 !important;
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+            }
+            
+            .table th:nth-child(5),
+            .table td:nth-child(5) {
+                display: none !important;
+            }
+            
+            .table th:nth-child(2),
+            .table td:nth-child(2) {
+                display: none !important;
+            }
+            
+            .section-pill {
+                font-size: 0.9rem !important;
+                padding: 8px 16px !important;
+            }
+            
+            .form-control {
+                height: 36px !important;
+                font-size: 0.75rem !important;
+            }
+            
+            .form-label {
+                font-size: 0.6rem !important;
+            }
+            
+            .sidebar-filter a {
+                font-size: 0.75rem !important;
+                padding: 6px 12px !important;
+            }
+        }
     </style>
 
     <br><br>
-    <div class="container-fluid footer mt-4 pt-4 wow fadeIn" data-wow-delay="0.1s">
+    <div class="container-fluid footer mt-4 pt-4 wow fadeIn d-none d-md-block" data-wow-delay="0.1s">
         <div class="position-relative mb-0">
             <img class="w-100 rounded" src="{{ asset('landingpage/img/blue_bg.png') }}" alt="CTA Image">
             <div class="position-absolute start-0 translate-middle-y cta-overlay" style="left: 5%; width: 90%;">
@@ -397,7 +772,7 @@
                 </div>
 
                 <!-- Breadcrumb tetap di bawah -->
-                <nav aria-label="breadcrumb">
+                <nav aria-label="breadcrumb" class="d-none d-md-block">
                     <ol class="breadcrumb mb-0" style="font-family:'Poppins'; font-size:0.875rem; font-weight:400;">
                         <li class="breadcrumb-item"><a href="{{ url('/') }}">BERANDA</a></li>
                         <li class="breadcrumb-item active" aria-current="page">PROFIL</li>
@@ -433,112 +808,114 @@
                         <div class="tab-content" id="sidebarTabsContent">
                             {{-- Pesanan Saya --}}
                             <div class="tab-pane fade" id="pane-orders" role="tabpanel" aria-labelledby="tab-orders">
-                                <table class="table table-borderless">
-                                    <thead>
-                                        <tr class="border-bottom">
-                                            <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Pesanan Saya</th>
-                                            <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Tanggal</th>
-                                            <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Total</th>
-                                            <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Status</th>
-                                            <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Estimasi</th>
-                                            <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($orders as $order)
+                                <div class="table-responsive">
+                                    <table class="table table-borderless">
+                                        <thead>
                                             <tr class="border-bottom">
-                                                <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{{ 'INV' . substr($order->spk, 3, strpos($order->spk, '-') - 3) }}</td>
-                                                <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{!! $order->created_at->locale('id')->translatedFormat('l, d M') . '<br>' . $order->created_at->translatedFormat('Y') !!}</td>
-                                                <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Rp {{ number_format($order->subtotal, 0, ',', '.') }}</td>
-                                                <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">
-                                                    @php
-                                                    switch 
-                                                    ($order->order_status) {
-                                                    case 0:
-                                                        $badge = '#ffd782';
-                                                        $foncol= '#444444';
-                                                        $firlabel = 'Menunggu';
-                                                        $seclabel = 'Pembayaran';
-                                                        break;
-                                                    case 1:
-                                                        $badge = '#4CAF50';
-                                                        $foncol= '#ffffff';
-                                                        $firlabel = 'Sudah';
-                                                        $seclabel = 'Dibayar';
-                                                        break;
-                                                    case 2:
-                                                        $badge = '#5ee3e3';
-                                                        $foncol= '#444444';
-                                                        $firlabel = 'Dalam';
-                                                        $seclabel = 'Pengerjaan';
-                                                        break;
-                                                    case 3:
-                                                        $badge = '#abceff';
-                                                        $foncol= '#444444';
-                                                        $firlabel = 'Dalam';
-                                                        $seclabel = 'Pengiriman';
-                                                        break;
-                                                    case 4:
-                                                        $badge = '#0258d3';
-                                                        $foncol= '#fff';
-                                                        $firlabel = 'Pesanan';
-                                                        $seclabel = 'Diterima';
-                                                        break;
-                                                    case 9:
-                                                        $badge = '#721c24';
-                                                        $foncol = '#444444';
-                                                        $firlabel = 'Order';
-                                                        $seclabel = 'Dibatalkan';
-                                                        break;
-                                                    default:
-                                                        $badge = '#e9ecef';
-                                                        $foncol = '#444444';
-                                                        $firlabel = 'Status';
-                                                        $seclabel = 'Unknown';
-                                                    } @endphp
-                                                    <span class="badge" style="display: block;width: 100%;text-align: left;font-weight: 450 !important; padding: 8px 20px 8px 8px; font-size: 0.65rem !important; background-color: {{ $badge ?? '#e9ecef' }}; color:{{ $foncol }} !important; font-family: 'Poppins', sans-serif; border-radius:3px;">{{ $firlabel }} <br> {{ $seclabel }}</span>
-                                                </td>
-                                                <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{{ $order->estimasi ?? '-' }}</td>
-                                                <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">
-                                                    @if ($order->order_status == 0)
-                                                        <a href="{{ route('checkout.order', $order->id) }}"
-                                                        class="btn btn-sm rounded-pill mb-1"
-                                                        style="display:block; width:100%; text-align:center;
-                                                                font-weight:450!important; padding:2px 8px;
-                                                                font-size:0.65rem!important; background-color:#0258d3;
-                                                                color:#fff!important; font-family:'Poppins',sans-serif;">
-                                                            BAYAR
-                                                        </a>
-
-                                                        <a href="{{ route('order.show', $order->id) }}" 
-                                                        class="btn btn-sm rounded-pill mb-1" 
-                                                        style="border-color:#8888;display: block;width: 100%;text-align: center;
-                                                                font-weight: 450 !important; padding: 2px 8px; font-size: 0.65rem !important; 
-                                                                background-color:none; color:#000 !important; font-family: 'Poppins', sans-serif;">
-                                                            LIHAT ORDER
-                                                        </a>
-                                                        
-                                                        <button onclick="cancelOrder({{ $order->id }})" 
-                                                                class="btn btn-sm rounded-pill" 
-                                                                style="display: block;width: 100%;text-align: center;font-weight: 450 !important; 
-                                                                    padding: 2px 8px; font-size: 0.65rem !important; background-color:#fc2865; 
-                                                                    color:#fff !important; font-family: 'Poppins', sans-serif;">
-                                                            BATALKAN
-                                                        </button>
-                                                    @else
-                                                        <a href="{{ route('order.show', $order->id) }}" 
-                                                        class="btn btn-sm rounded-pill" 
-                                                        style="border-color:#8888;display: block;width: 100%;text-align: center;
-                                                                font-weight: 450 !important; padding: 2px 8px; font-size: 0.65rem !important; 
-                                                                background-color:none; color:#000 !important; font-family: 'Poppins', sans-serif;">
-                                                            LIHAT ORDER
-                                                        </a>
-                                                    @endif
-                                                </td>
+                                                <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Pesanan Saya</th>
+                                                <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Tanggal</th>
+                                                <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Total</th>
+                                                <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Status</th>
+                                                <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Estimasi</th>
+                                                <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Aksi</th>
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($orders as $order)
+                                                <tr class="border-bottom">
+                                                    <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{{ 'INV' . substr($order->spk, 3, strpos($order->spk, '-') - 3) }}</td>
+                                                    <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{!! $order->created_at->locale('id')->translatedFormat('l, d M') . '<br>' . $order->created_at->translatedFormat('Y') !!}</td>
+                                                    <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Rp {{ number_format($order->subtotal, 0, ',', '.') }}</td>
+                                                    <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">
+                                                        @php
+                                                        switch 
+                                                        ($order->order_status) {
+                                                        case 0:
+                                                            $badge = '#ffd782';
+                                                            $foncol= '#444444';
+                                                            $firlabel = 'Menunggu';
+                                                            $seclabel = 'Pembayaran';
+                                                            break;
+                                                        case 1:
+                                                            $badge = '#4CAF50';
+                                                            $foncol= '#ffffff';
+                                                            $firlabel = 'Sudah';
+                                                            $seclabel = 'Dibayar';
+                                                            break;
+                                                        case 2:
+                                                            $badge = '#5ee3e3';
+                                                            $foncol= '#444444';
+                                                            $firlabel = 'Dalam';
+                                                            $seclabel = 'Pengerjaan';
+                                                            break;
+                                                        case 3:
+                                                            $badge = '#abceff';
+                                                            $foncol= '#444444';
+                                                            $firlabel = 'Dalam';
+                                                            $seclabel = 'Pengiriman';
+                                                            break;
+                                                        case 4:
+                                                            $badge = '#0258d3';
+                                                            $foncol= '#fff';
+                                                            $firlabel = 'Pesanan';
+                                                            $seclabel = 'Diterima';
+                                                            break;
+                                                        case 9:
+                                                            $badge = '#721c24';
+                                                            $foncol = '#444444';
+                                                            $firlabel = 'Order';
+                                                            $seclabel = 'Dibatalkan';
+                                                            break;
+                                                        default:
+                                                            $badge = '#e9ecef';
+                                                            $foncol = '#444444';
+                                                            $firlabel = 'Status';
+                                                            $seclabel = 'Unknown';
+                                                        } @endphp
+                                                        <span class="badge" style="display: block;width: 100%;text-align: left;font-weight: 450 !important; padding: 8px 20px 8px 8px; font-size: 0.65rem !important; background-color: {{ $badge ?? '#e9ecef' }}; color:{{ $foncol }} !important; font-family: 'Poppins', sans-serif; border-radius:3px;">{{ $firlabel }} <br> {{ $seclabel }}</span>
+                                                    </td>
+                                                    <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{{ $order->estimasi ?? '-' }}</td>
+                                                    <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">
+                                                        @if ($order->order_status == 0)
+                                                            <a href="{{ route('checkout.order', $order->id) }}"
+                                                            class="btn btn-sm rounded-pill mb-1"
+                                                            style="display:block; width:100%; text-align:center;
+                                                                    font-weight:450!important; padding:2px 8px;
+                                                                    font-size:0.65rem!important; background-color:#0258d3;
+                                                                    color:#fff!important; font-family:'Poppins',sans-serif;">
+                                                                BAYAR
+                                                            </a>
+
+                                                            <a href="{{ route('order.show', $order->id) }}" 
+                                                            class="btn btn-sm rounded-pill mb-1" 
+                                                            style="border-color:#8888;display: block;width: 100%;text-align: center;
+                                                                    font-weight: 450 !important; padding: 2px 8px; font-size: 0.65rem !important; 
+                                                                    background-color:none; color:#000 !important; font-family: 'Poppins', sans-serif;">
+                                                                LIHAT ORDER
+                                                            </a>
+                                                            
+                                                            <button onclick="cancelOrder({{ $order->id }})" 
+                                                                    class="btn btn-sm rounded-pill" 
+                                                                    style="display: block;width: 100%;text-align: center;font-weight: 450 !important; 
+                                                                        padding: 2px 8px; font-size: 0.65rem !important; background-color:#fc2865; 
+                                                                        color:#fff !important; font-family: 'Poppins', sans-serif;">
+                                                                BATALKAN
+                                                            </button>
+                                                        @else
+                                                            <a href="{{ route('order.show', $order->id) }}" 
+                                                            class="btn btn-sm rounded-pill" 
+                                                            style="border-color:#8888;display: block;width: 100%;text-align: center;
+                                                                    font-weight: 450 !important; padding: 2px 8px; font-size: 0.65rem !important; 
+                                                                    background-color:none; color:#000 !important; font-family: 'Poppins', sans-serif;">
+                                                                LIHAT ORDER
+                                                            </a>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
 
                             {{-- Profil Saya --}}
