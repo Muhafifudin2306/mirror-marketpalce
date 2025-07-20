@@ -1102,7 +1102,7 @@
                                             <small>Bahan: {{ $item->product->name ?? '-' }}</small>
                                         </div>
                                         <div class="mobile-product-price">
-                                            Rp {{ number_format($item->subtotal,0,',','.') }}
+                                            Rp {{ number_format($item->product->subtotal,0,',','.') }}
                                         </div>
                                     </div>
                                     

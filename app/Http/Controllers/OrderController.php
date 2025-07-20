@@ -50,6 +50,31 @@ class OrderController extends Controller
             $order->update([
                 'order_status' => $newStatus
             ]);
+
+            if($newStatus == 4){
+                $order->update([
+                    'status_pengerjaan' => 'selesai',
+                ]);
+            }
+
+            if($newStatus == 2){
+                $order->update([
+                    'status_pengerjaan' => 'produksi',
+                ]);
+            }
+
+            if($newStatus == 3){
+                $order->update([
+                    'status_pengerjaan' => 'pengambilan',
+                ]);
+            }
+
+            if($newStatus == 9){
+                $order->update([
+                    'status_pengerjaan' => 'cancel',
+                    'cancel_reason' => 'Cancel dari customer'
+                ]);
+            }
             
             $invoiceNumber = $order->spk ?? 'SPK-' . str_pad($order->id, 4, '0', STR_PAD_LEFT);
             

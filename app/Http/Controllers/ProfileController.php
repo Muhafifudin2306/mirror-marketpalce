@@ -126,7 +126,7 @@ class ProfileController extends Controller
                 break;
             case 9:
                 $badge = '#721c24';
-                $foncol = '#444444';
+                $foncol = '#ffffff';
                 $firlabel = 'Order';
                 $seclabel = 'Dibatalkan';
                 break;
@@ -185,7 +185,11 @@ class ProfileController extends Controller
 
             DB::beginTransaction();
             
-            $order->update(['order_status' => 9]);
+            $order->update([
+                'order_status' => 9,
+                'status_pengerjaan' => 'cancel',
+                'cancel_reason' => 'Cancel dari customer'
+            ]);
             
             DB::commit();
             

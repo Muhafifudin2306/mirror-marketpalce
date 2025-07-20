@@ -357,6 +357,8 @@ class ProductController extends Controller
             'length'          => 'nullable|numeric|min:0',
             'width'           => 'nullable|numeric|min:0',
             'qty'             => 'required|integer|min:1',
+            'panjang'         => 'nullable|integer',
+            'lebar'           => 'nullable|integer',
             'notes'           => 'nullable|string|max:1000',
             'order_status'    => 'required|in:0',
         ]);
@@ -418,17 +420,27 @@ class ProductController extends Controller
             }
 
             $area = 1;
-            if (in_array($product->additional_unit, ['cm', 'm']) && $validated['length'] && $validated['width']) {
+
+            $defaultPanjang = $product->long_product;
+            $defaultLebar = $product->width_product;
+            $finalP = 0;
+            $finalL = 0;
+
+            if (isset($validated['length']) && $validated['length'] && $validated['width']) {
                 $l = $validated['length'];
                 $w = $validated['width'];
-                $area = $product->additional_unit == 'cm'
-                    ? ($l / 100) * ($w / 100)
-                    : $l * $w;
+
+                $finalP = $l <= $defaultPanjang ? 100 : $l;
+                $finalL = $w <= $defaultLebar ? 100 : $w;
+
+                $area = ($finalP / 100) * ($finalL / 100);
+                // dd($area);
             }
 
             $subtotalHpl       = $basePrice * $area * $validated['qty'];
             $subtotalFinishing = $finishingPrice * $validated['qty'];
             $subtotal          = $subtotalHpl + $subtotalFinishing;
+            $subtotalWithoutAdd= $subtotalHpl + $subtotalFinishing;
 
             if ($validated['express'] == 1) {
                 $subtotal *= 1.5;
@@ -463,6 +475,8 @@ class ProductController extends Controller
                 'pickup_status'     => 0,
                 'notes'             => $validated['notes'] ?? null,
                 'jenis_transaksi'   => 2,
+                'metode_transaksi'  => 3,
+                'metode_transaksi_paid'   => 3,
                 'tipe_pengambilan'  => 1,
                 'metode_pengiriman' => 1,
                 'alamat'            => $user->address ?? null,
@@ -479,13 +493,18 @@ class ProductController extends Controller
                 'tanggal'           => $today->toDateString(),
                 'waktu'             => $today->toTimeString(),
                 'dp'                 => round($subtotal),
-                'full_payment'       => round($subtotal)
+                'full_payment'       => round($subtotal),
+                'design_link'       => $designFileName ? env('APP_URL').'/'.'storage'. '/landingpage/img/order_design/' . $designFileName : null,
+                'preview_link'      => $previewFileName ? env('APP_URL').'/'.'storage'. '/landingpage/img/order_design/' . $previewFileName : null,
             ]);
+
+            $label = Product::where('id',$validated['product_id'])->pluck('label_id')->first();
+            // dd($label);
 
             OrderProduct::create([
                 'order_id'       => $order->id,
                 'product_id'     => $validated['product_id'],
-                'jenis_cetakan'  => $validated['product_id'],
+                'jenis_cetakan'  => $label,
                 'material_type'  => $product->name,
                 'jenis_bahan'    => $product->id,
                 'finishing_type' => $finishingName,
@@ -493,10 +512,12 @@ class ProductController extends Controller
                 'length'         => $validated['length'] ?? null,
                 'width'          => $validated['width'] ?? null,
                 'qty'            => $validated['qty'],
-                'subtotal'       => round($subtotal),
+                'subtotal'       => round($subtotalWithoutAdd),
                 'desain'            => $designFileName ?? null,
                 'preview'           => $previewFileName ?? null,
-                'jumlah_pesanan'    => $validated['qty']
+                'jumlah_pesanan'    => $validated['qty'],
+                'panjang'           => $validated['length'] ?? null,
+                'lebar'             => $validated['width'] ?? null
             ]);
 
             $this->createOrderNotification($order, 0, $spkNumber);

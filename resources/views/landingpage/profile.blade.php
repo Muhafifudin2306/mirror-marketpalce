@@ -792,9 +792,9 @@
                     <div class="col-lg-3">
                         <div class="sidebar-filter nav flex-column nav-pills me-3" id="sidebarTabs" role="tablist"
                             style="font-weight: 200 !important;">
-                            <a class="nav-link" id="tab-orders" data-bs-toggle="pill" data-bs-target="#pane-orders">Pesanan
+                            <a class="nav-link active" id="tab-orders" data-bs-toggle="pill" data-bs-target="#pane-orders">Pesanan
                                 Saya</a>
-                            <a class="nav-link active" id="tab-profile" data-bs-toggle="pill"
+                            <a class="nav-link" id="tab-profile" data-bs-toggle="pill"
                                 data-bs-target="#pane-profile">Profil Saya</a>
                             <a class="nav-link" href="{{ route('landingpage.chats') }}">Chat
                                 Saya</a>
@@ -807,7 +807,7 @@
                     <div class="col-lg-8">
                         <div class="tab-content" id="sidebarTabsContent">
                             {{-- Pesanan Saya --}}
-                            <div class="tab-pane fade" id="pane-orders" role="tabpanel" aria-labelledby="tab-orders">
+                            <div class="tab-pane fade show active" id="pane-orders" role="tabpanel" aria-labelledby="tab-orders">
                                 <div class="table-responsive">
                                     <table class="table table-borderless">
                                         <thead>
@@ -862,7 +862,7 @@
                                                             break;
                                                         case 9:
                                                             $badge = '#721c24';
-                                                            $foncol = '#444444';
+                                                            $foncol = '#fffff';
                                                             $firlabel = 'Order';
                                                             $seclabel = 'Dibatalkan';
                                                             break;
@@ -919,7 +919,7 @@
                             </div>
 
                             {{-- Profil Saya --}}
-                            <div class="tab-pane fade show active" id="pane-profile" role="tabpanel">
+                            <div class="tab-pane fade" id="pane-profile" role="tabpanel">
                                 <form id="formProfile" method="POST" action="{{ route('profile.update') }}">
                                     @csrf
 

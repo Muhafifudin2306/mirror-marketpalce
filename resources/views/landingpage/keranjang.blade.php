@@ -774,7 +774,7 @@
                 </div>
                 <div>
                   <span class="subtotal-item">Subtotal:</span>
-                  <strong class="subtotal-item">Rp {{ number_format($item->subtotal,0,',','.') }}</strong>
+                  <strong class="subtotal-item">Rp {{ number_format($item->order->subtotal,0,',','.') }}</strong>
                 </div>
               </div>
               
@@ -807,7 +807,7 @@
             <span class="subtotal-label">Subtotal Keranjang</span>
             <div>
               <strong class="subtotal-amount" id="cart-summary">
-                Rp {{ number_format($subtotal,0,',','.') }}
+                Rp {{ number_format($subTotal,0,',','.') }}
               </strong>
             </div>
           </div>

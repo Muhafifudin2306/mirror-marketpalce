@@ -965,10 +965,10 @@
             </div>
 
             {{-- DIMENSI (jika ada) --}}
-            @if(in_array($product->additional_unit, ['cm','m']))
+            @if($product->width_product && $product->long_product)
               <div class="row g-2 mb-3">
                 <div class="col">
-                  <label class="form-label"><b>PANJANG ({{ strtoupper($product->additional_unit) }})</b><span class="required-asterisk">*</span></label>
+                  <label class="form-label"><b>PANJANG (cm)</b><span class="required-asterisk">*</span></label>
                   <div class="input-group flex-nowrap">
                     <input
                       type="number"
@@ -976,12 +976,16 @@
                       id="panjang"
                       class="form-control @error('length') is-invalid @enderror"
                       placeholder="Panjang"
-                      value="{{ old('length', $orderProduct->length ?? ($product->additional_unit === 'm' ? 1 : 100)) }}"
+                      value="{{ old('length', intval($product->long_product)) }}"
                       style="height:40px; border-radius:50px 0 0 50px; font-size:0.8rem; padding:0 1.6rem;"
+                      @if ($product->label->type != 'khusus')
+                      readonly
+                      @endif
                       required
                     >
                     <span class="input-group-text">
-                      {{ $product->additional_unit }}
+                      {{-- {{ $product->additional_unit }} --}}
+                      cm
                     </span>
                   </div>
                   @error('length')
@@ -990,7 +994,7 @@
                   <div class="field-error-message" id="length_error">Panjang wajib diisi</div>
                 </div>
                 <div class="col">
-                  <label class="form-label"><b>LEBAR ({{ strtoupper($product->additional_unit) }})</b><span class="required-asterisk">*</span></label>
+                  <label class="form-label"><b>LEBAR (cm)</b><span class="required-asterisk">*</span></label>
                   <div class="input-group flex-nowrap">
                     <input
                       type="number"
@@ -998,12 +1002,16 @@
                       id="lebar"
                       class="form-control @error('width') is-invalid @enderror"
                       placeholder="Lebar"
-                      value="{{ old('width', $orderProduct->width ?? ($product->additional_unit === 'm' ? 1 : 100)) }}"
+                      value="{{ old('width', intval($product->width_product) ) }}"
                       style="height:40px; border-radius:50px 0 0 50px; font-size:0.8rem; padding:0 1.6rem;"
+                      @if ($product->label->type != 'khusus')
+                      readonly
+                      @endif
                       required
                     >
                     <span class="input-group-text">
-                      {{ $product->additional_unit }}
+                      {{-- {{ $product->additional_unit }} --}}
+                      cm
                     </span>
                   </div>
                   @error('width')
@@ -1189,6 +1197,10 @@
 </main>
 
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    @php
+        $productSizes = $product->toArray();
+    @endphp
+
 <script>
   document.getElementById('add-to-cart')?.addEventListener('submit', function(e) {
     e.preventDefault();
@@ -1325,7 +1337,7 @@
     const lebar = document.getElementById('lebar');
     const unit = document.getElementById('unit').value;
     
-    if((unit === 'cm' || unit === 'm')) {
+    if((panjang || lebar)) {
       if(panjang && (!panjang.value || panjang.value <= 0)) {
         document.getElementById('length_error').style.display = 'block';
         hasError = true;
@@ -1444,13 +1456,32 @@
           
           // 2) Hitung HPL (Harga per Luas) jika ada dimensi
           let hpl = pricePerUnit;
-          if ((unit === 'cm' || unit === 'm') && panjangInput && lebarInput) {
+
+          const productSizes = @json($productSizes);
+
+          const master = productSizes;
+
+          console.log(master)
+
+          const defaultPanjang = master.long_product;
+          const defaultLebar = master.width_product;
+
+          if (panjangInput && lebarInput) {
               const l = parseFloat(panjangInput.value) || 0;
               const w = parseFloat(lebarInput.value) || 0;
+
+              
+              let finalP = 0;
+              let finalL = 0;
+
               if (l > 0 && w > 0) {
-                  const areaInM2 = unit === 'cm'
-                      ? (l / 100) * (w / 100)
-                      : l * w;
+                  finalP = l <= defaultPanjang ? 100 : l;
+                  finalL = w <= defaultLebar ? 100 : w;
+
+                  console.log(defaultPanjang)
+                  console.log(defaultLebar)
+
+                  const areaInM2 = (finalP / 100) * (finalL / 100)
                   hpl = pricePerUnit * areaInM2;
               }
           }
