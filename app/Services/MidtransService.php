@@ -17,45 +17,44 @@ class MidtransService
 
     public function createSnapToken($order, $user, $deliveryMethod = null, $deliveryCost = 0, $promoCode = '', $promoDiscount = 0)
     {
-        $subtotal = $order->orderProducts->sum('subtotal');
-
+        $baseSubtotal = $order->orderProducts->sum('subtotal');
+        
+        $expressFee = 0;
         if ($order->express == 1) {
-            $expressFee    = $subtotal / 3;
-            $baseSubtotal  = $subtotal - $expressFee;
-        } else {
-            $expressFee    = 0;
-            $baseSubtotal  = $subtotal;
+            $expressFee = $baseSubtotal * 0.5;
         }
-
-        $grossAmount = $baseSubtotal + $expressFee + $deliveryCost - $promoDiscount;
-
-        $itemDetails = [
-            [
-                'id'       => 'subtotal_barang',
-                'price'    => (int) $baseSubtotal,
-                'quantity' => $order->qty ?? 1,
-                'name'     => 'Subtotal Barang'
-            ]
+        
+        $totalBeforeDiscount = $baseSubtotal + $expressFee + $deliveryCost;
+        
+        $grossAmount = $totalBeforeDiscount - $promoDiscount;
+        
+        $itemDetails = [];
+        
+        $itemDetails[] = [
+            'id'       => 'subtotal_barang',
+            'price'    => (int) $baseSubtotal,
+            'quantity' => 1,
+            'name'     => 'Subtotal Produk'
         ];
-
+        
         if ($expressFee > 0) {
             $itemDetails[] = [
                 'id'       => 'express_fee',
                 'price'    => (int) $expressFee,
                 'quantity' => 1,
-                'name'     => 'Jasa Express (+50%)'
+                'name'     => 'Biaya Express (+50%)'
             ];
         }
-
+        
         if ($deliveryCost > 0) {
             $itemDetails[] = [
-                'id'       => 'shipping',
+                'id'       => 'shipping_cost',
                 'price'    => (int) $deliveryCost,
                 'quantity' => 1,
                 'name'     => 'Biaya Pengiriman - ' . ($deliveryMethod ?? 'Kurir')
             ];
         }
-
+        
         if ($promoDiscount > 0) {
             $itemDetails[] = [
                 'id'       => 'promo_discount',
@@ -69,6 +68,7 @@ class MidtransService
             'order_id'     => $order->id . '-' . time(),
             'gross_amount' => (int) $grossAmount
         ];
+
         $customerDetails = [
             'first_name'      => $user->first_name,
             'last_name'       => $user->last_name,

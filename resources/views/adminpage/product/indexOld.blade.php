@@ -1,3 +1,4 @@
+CMS CRUD PRODUK SPA
 @extends('adminpage.index')
 
 @php
@@ -303,82 +304,6 @@
         .toggle-icon {
             transition: all 0.3s ease;
         }
-
-        .variant-section {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .variant-category {
-            background: white;
-            border: 1px solid #dee2e6;
-            border-radius: 6px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .variant-category-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .variant-value-row {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 4px;
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .variant-controls {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
-        .btn-add-variant {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            border: none;
-            color: white;
-        }
-
-        .btn-add-variant:hover {
-            background: linear-gradient(135deg, #218838, #1abc9c);
-            color: white;
-        }
-
-        .has-variants-section {
-            background: #e8f5e8;
-            border: 1px solid #c3e6cb;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .variant-toggle {
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-
-        .variant-empty-state {
-            text-align: center;
-            padding: 2rem;
-            color: #6c757d;
-            background: #f8f9fa;
-            border: 1px dashed #dee2e6;
-            border-radius: 8px;
-        }
-
-        .availability-toggle {
-            transform: scale(0.8);
-        }
     </style>
 
     <!-- Content -->
@@ -518,7 +443,7 @@
                                     <textarea name="desc" class="form-control" rows="3" 
                                               placeholder="Jelaskan produk secara umum...">{{ old('desc', $editingLabel->desc ?? '') }}</textarea>
                                 </div>
-                                {{-- <div class="col-12">
+                                <div class="col-12">
                                     <div class="form-check form-switch" style="background-color: #e8f5e8; padding: 15px; border-radius: 8px; border: 1px solid #c3e6cb;">
                                         <input class="form-check-input" type="checkbox" role="switch" 
                                             id="is_live_label" name="is_live_label" value="1" 
@@ -531,7 +456,7 @@
                                             Jika dinonaktifkan, seluruh kategori produk ini tidak akan tampil di website
                                         </small>
                                     </div>
-                                </div> --}}
+                                </div>
                             </div>
                         </div>
 
@@ -605,136 +530,10 @@
                                                     </div>
                                                     <div class="col-md-2">
                                                         <label class="form-label fw-semibold">Harga *</label>
-                                                        <input type="number" name="price[]" class="form-control product-price" required
+                                                        <input type="number" name="price[]" class="form-control" required
                                                                placeholder="50000"
-                                                               value="{{ old("price.$i", $prod->price) }}"
-                                                               data-product-index="{{ $i }}">
+                                                               value="{{ old("price.$i", $prod->price) }}">
                                                     </div>
-
-                                                    <div class="col-12">
-                                                        <div class="has-variants-section">
-                                                            <div class="form-check form-switch">
-                                                                <input class="form-check-input variant-toggle-switch" 
-                                                                       type="checkbox" role="switch" 
-                                                                       id="has_variants_{{ $i }}" 
-                                                                       name="has_variants[{{ $i }}]" value="1"
-                                                                       data-product-index="{{ $i }}"
-                                                                       {{ old("has_variants.{$i}", $prod->has_category ?? 0) ? 'checked' : '' }}>
-                                                                <label class="form-check-label variant-toggle" for="has_variants_{{ $i }}">
-                                                                    <i class="bx bx-category me-2"></i>
-                                                                    Produk ini memiliki varian (ukuran, warna, dll)
-                                                                </label>
-                                                                <small class="text-muted d-block mt-1">
-                                                                    Aktifkan jika produk memiliki pilihan varian seperti ukuran, warna, atau tipe
-                                                                </small>
-                                                            </div>
-                                                        </div>
-                                                        <div class="variant-management-container" 
-                                                             id="variant_container_{{ $i }}" 
-                                                             data-product-index="{{ $i }}"
-                                                             style="display: {{ old("has_variants.{$i}", $prod->has_category ?? 0) ? 'block' : 'none' }};">
-                                                            
-                                                            <div class="variant-section">
-                                                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                                                    <h6 class="fw-bold text-info mb-0">
-                                                                        <i class="bx bx-palette me-2"></i>
-                                                                        Manajemen Varian
-                                                                    </h6>
-                                                                    <button type="button" class="btn btn-sm btn-add-variant add-variant-category" 
-                                                                            data-product-index="{{ $i }}">
-                                                                        <i class="bx bx-plus me-1"></i>
-                                                                        Tambah Kategori
-                                                                    </button>
-                                                                </div>
-
-                                                                <div class="variant-categories-container" data-product-index="{{ $i }}">
-                                                                    @if($isEditing && $prod->variants->isNotEmpty())
-                                                                        @php
-                                                                            $groupedVariants = $prod->variants->groupBy('category');
-                                                                        @endphp
-                                                                        @foreach($groupedVariants as $category => $variants)
-                                                                            <div class="variant-category" data-category="{{ $category }}">
-                                                                                <div class="variant-category-header">
-                                                                                    <div class="d-flex justify-content-between align-items-center">
-                                                                                        <h6 class="fw-semibold mb-0 text-capitalize">
-                                                                                            <i class="bx bx-tag me-1"></i>
-                                                                                            {{ ucfirst($category) }}
-                                                                                        </h6>
-                                                                                        <div class="variant-controls">
-                                                                                            <button type="button" class="btn btn-sm btn-outline-success add-variant-value" 
-                                                                                                    data-product-index="{{ $i }}" data-category="{{ $category }}">
-                                                                                                <i class="bx bx-plus"></i>
-                                                                                            </button>
-                                                                                            <button type="button" class="btn btn-sm btn-outline-danger remove-variant-category">
-                                                                                                <i class="bx bx-trash"></i>
-                                                                                            </button>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                                
-                                                                                <div class="variant-values-container">
-                                                                                    @foreach($variants as $variantIndex => $variant)
-                                                                                        <div class="variant-value-row">
-                                                                                            <div class="row g-2 align-items-center">
-                                                                                                <div class="col-md-4">
-                                                                                                    <input type="hidden" name="variant_ids[{{ $i }}][]" value="{{ $variant->id }}">
-                                                                                                    <input type="hidden" name="variant_categories[{{ $i }}][]" value="{{ $category }}">
-                                                                                                    <label class="form-label fw-semibold">Nilai</label>
-                                                                                                    <input type="text" 
-                                                                                                           name="variant_values[{{ $i }}][]" 
-                                                                                                           class="form-control" 
-                                                                                                           placeholder="Contoh: Besar, Biru, dll"
-                                                                                                           value="{{ old("variant_values.{$i}.{$variantIndex}", $variant->value) }}"
-                                                                                                           required>
-                                                                                                </div>
-                                                                                                <div class="col-md-3">
-                                                                                                    <label class="form-label fw-semibold">Harga Tambahan</label>
-                                                                                                    <input type="number" 
-                                                                                                           name="variant_prices[{{ $i }}][]" 
-                                                                                                           class="form-control" 
-                                                                                                           placeholder="0"
-                                                                                                           value="{{ old("variant_prices.{$i}.{$variantIndex}", $variant->price) }}"
-                                                                                                           min="0">
-                                                                                                </div>
-                                                                                                <div class="col-md-3">
-                                                                                                    <label class="form-label fw-semibold">Ketersediaan</label>
-                                                                                                    <div class="form-check form-switch availability-toggle">
-                                                                                                        <input class="form-check-input variant-availability-checkbox" 
-                                                                                                               type="checkbox" role="switch" 
-                                                                                                               {{ old("variant_availability.{$i}.{$variantIndex}", $variant->is_available ?? 1) ? 'checked' : '' }}>
-                                                                                                        <input type="hidden" 
-                                                                                                               name="variant_availability[{{ $i }}][]" 
-                                                                                                               value="{{ old("variant_availability.{$i}.{$variantIndex}", $variant->is_available ?? 1) ? '1' : '0' }}"
-                                                                                                               class="availability-hidden-input">
-                                                                                                        <label class="form-check-label">
-                                                                                                            <small>Tersedia</small>
-                                                                                                        </label>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="col-md-2">
-                                                                                                    <label class="form-label fw-semibold">&nbsp;</label>
-                                                                                                    <button type="button" class="btn btn-sm btn-outline-danger w-100 remove-variant-value">
-                                                                                                        <i class="bx bx-trash"></i>
-                                                                                                    </button>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    @endforeach
-                                                                                </div>
-                                                                            </div>
-                                                                        @endforeach
-                                                                    @else
-                                                                        <div class="variant-empty-state">
-                                                                            <i class="bx bx-package bx-lg text-muted mb-2"></i>
-                                                                            <p class="mb-2">Belum ada kategori varian</p>
-                                                                            <small class="text-muted">Klik "Tambah Kategori" untuk menambah varian produk</small>
-                                                                        </div>
-                                                                    @endif
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
                                                     <div class="col-12">
                                                         <label class="form-label fw-semibold">Upload Gambar (Max 4)</label>
                                                         <input type="file" 
@@ -783,7 +582,6 @@
                                                     </div>
                                                     <div class="col-12">
                                                         <div class="form-check form-switch" style="background-color: #f8f9fa; padding: 12px; border-radius: 6px; border: 1px solid #e9ecef;">
-                                                            <input type="hidden" name="is_live_product[{{ $i }}]" value="0">
                                                             <input class="form-check-input" type="checkbox" role="switch" 
                                                                 id="is_live_product_{{ $i }}" 
                                                                 name="is_live_product[{{ $i }}]" value="1" 
@@ -847,57 +645,9 @@
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label fw-semibold">Harga *</label>
-                                                    <input type="number" name="price[]" class="form-control product-price" required
-                                                           placeholder="50000" data-product-index="0">
+                                                    <input type="number" name="price[]" class="form-control" required
+                                                           placeholder="50000">
                                                 </div>
-
-                                                <div class="col-12">
-                                                    <div class="has-variants-section">
-                                                        <div class="form-check form-switch">
-                                                            <input class="form-check-input variant-toggle-switch" 
-                                                                   type="checkbox" role="switch" 
-                                                                   id="has_variants_0" 
-                                                                   name="has_variants[0]" value="1"
-                                                                   data-product-index="0">
-                                                            <label class="form-check-label variant-toggle" for="has_variants_0">
-                                                                <i class="bx bx-category me-2"></i>
-                                                                Produk ini memiliki varian (ukuran, warna, dll)
-                                                            </label>
-                                                            <small class="text-muted d-block mt-1">
-                                                                Aktifkan jika produk memiliki pilihan varian seperti ukuran, warna, atau tipe
-                                                            </small>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="variant-management-container" 
-                                                         id="variant_container_0" 
-                                                         data-product-index="0"
-                                                         style="display: none;">
-                                                        
-                                                        <div class="variant-section">
-                                                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                                                <h6 class="fw-bold text-info mb-0">
-                                                                    <i class="bx bx-palette me-2"></i>
-                                                                    Manajemen Varian
-                                                                </h6>
-                                                                <button type="button" class="btn btn-sm btn-add-variant add-variant-category" 
-                                                                        data-product-index="0">
-                                                                    <i class="bx bx-plus me-1"></i>
-                                                                    Tambah Kategori
-                                                                </button>
-                                                            </div>
-
-                                                            <div class="variant-categories-container" data-product-index="0">
-                                                                <div class="variant-empty-state">
-                                                                    <i class="bx bx-package bx-lg text-muted mb-2"></i>
-                                                                    <p class="mb-2">Belum ada kategori varian</p>
-                                                                    <small class="text-muted">Klik "Tambah Kategori" untuk menambah varian produk</small>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
                                                 <div class="col-12">
                                                     <label class="form-label fw-semibold">Upload Gambar (Max 4)</label>
                                                     <input type="file" name="product_images[0][]" 
@@ -1146,7 +896,6 @@
                                                 <tr>
                                                     <th><i class="bx bx-cube me-1"></i> Sub Produk</th>
                                                     <th><i class="bx bx-show me-1"></i> Status</th>
-                                                    <th><i class="bx bx-category me-1"></i> Varian</th>
                                                     <th><i class="bx bx-ruler me-1"></i> Spesifikasi</th>
                                                     <th><i class="bx bx-expand-horizontal me-1"></i> P×L (cm)</th>
                                                     <th><i class="bx bx-package me-1"></i> Unit</th>
@@ -1154,7 +903,6 @@
                                                     <th><i class="bx bx-trending-up me-1"></i> Max</th>
                                                     <th><i class="bx bx-dollar me-1"></i> Harga</th>
                                                     <th><i class="bx bx-image me-1"></i> Gambar</th>
-                                                    <th>Aksi</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -1175,25 +923,6 @@
                                                                 <span class="badge bg-danger">
                                                                     <i class="bx bx-hide me-1"></i>Hidden
                                                                 </span>
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            @if($product->has_category && $product->variants->isNotEmpty())
-                                                                @php
-                                                                    $categories = $product->variants->groupBy('category');
-                                                                @endphp
-                                                                <div class="d-flex flex-wrap gap-1">
-                                                                    @foreach($categories as $category => $variants)
-                                                                        <span class="badge bg-info">
-                                                                            {{ ucfirst($category) }} ({{ $variants->count() }})
-                                                                        </span>
-                                                                    @endforeach
-                                                                </div>
-                                                                <small class="text-muted d-block mt-1">
-                                                                    Total: {{ $product->variants->count() }} varian
-                                                                </small>
-                                                            @else
-                                                                <span class="badge bg-light text-dark">Single Product</span>
                                                             @endif
                                                         </td>
                                                         <td>{{ $product->additional_size ?: '-' }}</td>
@@ -1219,25 +948,8 @@
                                                                 -
                                                             @endif
                                                         </td>
-                                                        <td class="fw-bold">
-                                                            @if($product->has_category && $product->variants->isNotEmpty())
-                                                                @php
-                                                                    $minVariantPrice = $product->variants->min('price');
-                                                                    $maxVariantPrice = $product->variants->max('price');
-                                                                    $basePrice = $product->price;
-                                                                @endphp
-                                                                <span class="text-success">
-                                                                    Rp {{ number_format($basePrice + $minVariantPrice, 0, ',', '.') }}
-                                                                    @if($minVariantPrice != $maxVariantPrice)
-                                                                        - {{ number_format($basePrice + $maxVariantPrice, 0, ',', '.') }}
-                                                                    @endif
-                                                                </span>
-                                                                <small class="d-block text-muted">Base: Rp {{ number_format($basePrice, 0, ',', '.') }}</small>
-                                                            @else
-                                                                <span class="text-success">
-                                                                    Rp {{ number_format($product->price, 0, ',', '.') }}
-                                                                </span>
-                                                            @endif
+                                                        <td class="fw-bold text-success">
+                                                            Rp {{ number_format($product->price, 0, ',', '.') }}
                                                         </td>
                                                         <td>
                                                             @if($product->images->count() > 0)
@@ -1267,35 +979,6 @@
                                                             </form>
                                                         </td>
                                                     </tr>
-                                                    
-                                                    @if($product->has_category && $product->variants->isNotEmpty())
-                                                        <tr class="table-light">
-                                                            <td colspan="11">
-                                                                <div class="p-2">
-                                                                    <small class="fw-semibold text-muted mb-2 d-block">Detail Varian:</small>
-                                                                    @php
-                                                                        $groupedVariants = $product->variants->groupBy('category');
-                                                                    @endphp
-                                                                    @foreach($groupedVariants as $category => $variants)
-                                                                        <div class="mb-2">
-                                                                            <span class="badge bg-secondary me-2">{{ ucfirst($category) }}</span>
-                                                                            @foreach($variants as $variant)
-                                                                                <span class="badge {{ $variant->is_available ? 'bg-success' : 'bg-danger' }} me-1">
-                                                                                    {{ $variant->value }} 
-                                                                                    @if($variant->price > 0)
-                                                                                        (+{{ number_format($variant->price, 0, ',', '.') }})
-                                                                                    @endif
-                                                                                    @if(!$variant->is_available)
-                                                                                        (Kosong)
-                                                                                    @endif
-                                                                                </span>
-                                                                            @endforeach
-                                                                        </div>
-                                                                    @endforeach
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    @endif
                                                 @endforeach
                                             </tbody>
                                         </table>
@@ -1343,9 +1026,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/notiflix@3.2.6/dist/notiflix-aio-3.2.6.min.js"></script>
 
+
     <script>
         let productIndex = 0;
-        let variantCounters = {};
 
         // =============================================================================
         // 1. LAYOUT FORM HANDLERS
@@ -1387,157 +1070,14 @@
         });
 
         // =============================================================================
-        // 2. VARIANT MANAGEMENT FUNCTIONS
-        // =============================================================================
-
-        function createVariantCategory(productIndex, categoryType = '') {
-            const container = document.querySelector(`.variant-categories-container[data-product-index="${productIndex}"]`);
-            const emptyState = container.querySelector('.variant-empty-state');
-            
-            if (emptyState) {
-                emptyState.remove();
-            }
-
-            const categoryHtml = `
-                <div class="variant-category" data-category="${categoryType}">
-                    <div class="variant-category-header">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <h6 class="fw-semibold mb-0 text-capitalize me-3">
-                                    <i class="bx bx-tag me-1"></i>
-                                    <span class="category-name">${categoryType ? ucfirst(categoryType) : ''}</span>
-                                </h6>
-                                ${!categoryType ? `
-                                    <select class="form-select form-select-sm category-selector" style="width: auto;">
-                                        <option value="">Pilih Kategori</option>
-                                        <option value="ukuran">Ukuran</option>
-                                        <option value="warna">Warna</option>
-                                        <option value="varian">Varian</option>
-                                    </select>
-                                ` : ''}
-                            </div>
-                            <div class="variant-controls">
-                                <button type="button" class="btn btn-sm btn-outline-success add-variant-value" 
-                                        data-product-index="${productIndex}" data-category="${categoryType}">
-                                    <i class="bx bx-plus"></i>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-danger remove-variant-category">
-                                    <i class="bx bx-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="variant-values-container">
-                        ${categoryType ? createVariantValue(productIndex, categoryType) : ''}
-                    </div>
-                </div>
-            `;
-            
-            container.insertAdjacentHTML('beforeend', categoryHtml);
-            
-            const newCategory = container.lastElementChild;
-            const categorySelector = newCategory.querySelector('.category-selector');
-            if (categorySelector) {
-                categorySelector.addEventListener('change', function() {
-                    const selectedCategory = this.value;
-                    const categoryDiv = this.closest('.variant-category');
-                    categoryDiv.setAttribute('data-category', selectedCategory);
-                    categoryDiv.querySelector('.category-name').textContent = ucfirst(selectedCategory);
-                    
-                    const addButton = categoryDiv.querySelector('.add-variant-value');
-                    addButton.setAttribute('data-category', selectedCategory);
-                    
-                    const valuesContainer = categoryDiv.querySelector('.variant-values-container');
-                    if (valuesContainer.children.length === 0) {
-                        valuesContainer.innerHTML = createVariantValue(productIndex, selectedCategory);
-                    }
-                    
-                    this.style.display = 'none';
-                });
-            }
-        }
-
-        function createVariantValue(productIndex, category) {
-            if (!variantCounters[productIndex]) {
-                variantCounters[productIndex] = {};
-            }
-            if (!variantCounters[productIndex][category]) {
-                variantCounters[productIndex][category] = 0;
-            }
-            
-            const categoryDiv = document.querySelector(`.variant-category[data-category="${category}"]`);
-            const existingValues = categoryDiv.querySelectorAll('.variant-value-row');
-            const valueIndex = existingValues.length;
-            
-            return `
-                <div class="variant-value-row">
-                    <div class="row g-2 align-items-center">
-                        <div class="col-md-4">
-                            <input type="hidden" name="variant_categories[${productIndex}][]" value="${category}">
-                            <label class="form-label fw-semibold">Nilai</label>
-                            <input type="text" 
-                                   name="variant_values[${productIndex}][]" 
-                                   class="form-control" 
-                                   placeholder="Contoh: Besar, Biru, dll"
-                                   required>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label fw-semibold">Harga Tambahan</label>
-                            <input type="number" 
-                                   name="variant_prices[${productIndex}][]" 
-                                   class="form-control" 
-                                   placeholder="0"
-                                   min="0" value="0">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label fw-semibold">Ketersediaan</label>
-                            <div class="form-check form-switch availability-toggle">
-                                <input class="form-check-input variant-availability-checkbox" 
-                                       type="checkbox" role="switch" 
-                                       checked>
-                                <input type="hidden" 
-                                       name="variant_availability[${productIndex}][]" 
-                                       value="1"
-                                       class="availability-hidden-input">
-                                <label class="form-check-label">
-                                    <small>Tersedia</small>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label fw-semibold">&nbsp;</label>
-                            <button type="button" class="btn btn-sm btn-outline-danger w-100 remove-variant-value">
-                                <i class="bx bx-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function ucfirst(str) {
-            return str.charAt(0).toUpperCase() + str.slice(1);
-        }
-
-        // =============================================================================
-        // 3. MAIN DOM CONTENT LOADED EVENT
+        // 2. MAIN DOM CONTENT LOADED EVENT
         // =============================================================================
 
         document.addEventListener("DOMContentLoaded", function() {
+            // Set initial state untuk editing
             @if ($isEditing)
                 document.getElementById("standar-form").style.display = "block";
                 productIndex = {{ count($editingLabel->products ?? []) }};
-                
-                @foreach($editingLabel->products as $i => $prod)
-                    variantCounters[{{ $i }}] = {};
-                    @if($prod->variants->isNotEmpty())
-                        @php $groupedVariants = $prod->variants->groupBy('category'); @endphp
-                        @foreach($groupedVariants as $category => $variants)
-                            variantCounters[{{ $i }}]['{{ $category }}'] = {{ $variants->count() }};
-                        @endforeach
-                    @endif
-                @endforeach
             @endif
 
             const productGroup = document.querySelector(".product-group");
@@ -1546,130 +1086,7 @@
             const addButton = document.getElementById("add-field");
 
             // =============================================================================
-            // 4. VARIANT EVENT LISTENERS
-            // =============================================================================
-
-            document.addEventListener('change', function(e) {
-                if (e.target.classList.contains('variant-availability-checkbox')) {
-                    const hiddenInput = e.target.closest('.availability-toggle').querySelector('.availability-hidden-input');
-                    if (hiddenInput) {
-                        hiddenInput.value = e.target.checked ? '1' : '0';
-                    }
-                }
-            });
-
-            document.addEventListener('change', function(e) {
-                if (e.target.classList.contains('variant-toggle-switch')) {
-                    const productIndex = e.target.dataset.productIndex;
-                    const variantContainer = document.getElementById(`variant_container_${productIndex}`);
-                    const priceInput = document.querySelector(`input[name="price[]"][data-product-index="${productIndex}"]`);
-                    
-                    if (e.target.checked) {
-                        variantContainer.style.display = 'block';
-                        const priceLabel = priceInput.closest('.col-md-2').querySelector('label');
-                        priceLabel.innerHTML = 'Harga Base *<small class="d-block text-muted">Harga termurah</small>';
-                    } else {
-                        variantContainer.style.display = 'none';
-                        const priceLabel = priceInput.closest('.col-md-2').querySelector('label');
-                        priceLabel.innerHTML = 'Harga *';
-                        
-                        variantContainer.querySelector('.variant-categories-container').innerHTML = `
-                            <div class="variant-empty-state">
-                                <i class="bx bx-package bx-lg text-muted mb-2"></i>
-                                <p class="mb-2">Belum ada kategori varian</p>
-                                <small class="text-muted">Klik "Tambah Kategori" untuk menambah varian produk</small>
-                            </div>
-                        `;
-                    }
-                }
-            });
-
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('add-variant-category') || e.target.closest('.add-variant-category')) {
-                    const button = e.target.classList.contains('add-variant-category') ? e.target : e.target.closest('.add-variant-category');
-                    const productIndex = button.dataset.productIndex;
-                    createVariantCategory(productIndex);
-                }
-            });
-
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('add-variant-value') || e.target.closest('.add-variant-value')) {
-                    const button = e.target.classList.contains('add-variant-value') ? e.target : e.target.closest('.add-variant-value');
-                    const productIndex = button.dataset.productIndex;
-                    const category = button.dataset.category;
-                    
-                    if (!category) {
-                        Notiflix.Notify.warning('Pilih kategori terlebih dahulu');
-                        return;
-                    }
-                    
-                    const categoryDiv = button.closest('.variant-category');
-                    const valuesContainer = categoryDiv.querySelector('.variant-values-container');
-                    valuesContainer.insertAdjacentHTML('beforeend', createVariantValue(productIndex, category));
-                }
-            });
-
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('remove-variant-category') || e.target.closest('.remove-variant-category')) {
-                    const button = e.target.classList.contains('remove-variant-category') ? e.target : e.target.closest('.remove-variant-category');
-                    const categoryDiv = button.closest('.variant-category');
-                    
-                    Notiflix.Confirm.show(
-                        'Hapus Kategori Varian',
-                        'Yakin ingin menghapus kategori varian ini beserta semua nilainya?',
-                        'Ya, Hapus',
-                        'Batal',
-                        function onOk() {
-                            categoryDiv.remove();
-                            
-                            const container = categoryDiv.closest('.variant-categories-container');
-                            if (container.children.length === 0) {
-                                container.innerHTML = `
-                                    <div class="variant-empty-state">
-                                        <i class="bx bx-package bx-lg text-muted mb-2"></i>
-                                        <p class="mb-2">Belum ada kategori varian</p>
-                                        <small class="text-muted">Klik "Tambah Kategori" untuk menambah varian produk</small>
-                                    </div>
-                                `;
-                            }
-                        },
-                        function onCancel() {},
-                        {
-                            width: '320px',
-                            borderRadius: '8px',
-                            titleColor: '#e74c3c',
-                            okButtonBackground: '#e74c3c',
-                        }
-                    );
-                }
-            });
-
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('remove-variant-value') || e.target.closest('.remove-variant-value')) {
-                    const button = e.target.classList.contains('remove-variant-value') ? e.target : e.target.closest('.remove-variant-value');
-                    const valueRow = button.closest('.variant-value-row');
-                    
-                    Notiflix.Confirm.show(
-                        'Hapus Nilai Varian',
-                        'Yakin ingin menghapus nilai varian ini?',
-                        'Ya, Hapus',
-                        'Batal',
-                        function onOk() {
-                            valueRow.remove();
-                        },
-                        function onCancel() {},
-                        {
-                            width: '320px',
-                            borderRadius: '8px',
-                            titleColor: '#e74c3c',
-                            okButtonBackground: '#e74c3c',
-                        }
-                    );
-                }
-            });
-
-            // =============================================================================
-            // 5. EXISTING FUNCTIONS (MODIFIED)
+            // 3. FUNCTION UNTUK MEMBUAT ROW PRODUK BARU
             // =============================================================================
 
             function createRow() {
@@ -1726,59 +1143,9 @@
                         </div>
                         <div class="col-md-2">
                             <label class="form-label fw-semibold">Harga *</label>
-                            <input type="number" name="price[]" class="form-control product-price" required
-                                placeholder="50000" data-product-index="${productIndex}">
+                            <input type="number" name="price[]" class="form-control" required
+                                placeholder="50000">
                         </div>
-
-                        <!-- Variant Management Section -->
-                        <div class="col-12">
-                            <div class="has-variants-section">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input variant-toggle-switch" 
-                                           type="checkbox" role="switch" 
-                                           id="has_variants_${productIndex}" 
-                                           name="has_variants[${productIndex}]" value="1"
-                                           data-product-index="${productIndex}">
-                                    <label class="form-check-label variant-toggle" for="has_variants_${productIndex}">
-                                        <i class="bx bx-category me-2"></i>
-                                        Produk ini memiliki varian (ukuran, warna, dll)
-                                    </label>
-                                    <small class="text-muted d-block mt-1">
-                                        Aktifkan jika produk memiliki pilihan varian seperti ukuran, warna, atau tipe
-                                    </small>
-                                </div>
-                            </div>
-
-                            <!-- Variant Management Container -->
-                            <div class="variant-management-container" 
-                                 id="variant_container_${productIndex}" 
-                                 data-product-index="${productIndex}"
-                                 style="display: none;">
-                                
-                                <div class="variant-section">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h6 class="fw-bold text-info mb-0">
-                                            <i class="bx bx-palette me-2"></i>
-                                            Manajemen Varian
-                                        </h6>
-                                        <button type="button" class="btn btn-sm btn-add-variant add-variant-category" 
-                                                data-product-index="${productIndex}">
-                                            <i class="bx bx-plus me-1"></i>
-                                            Tambah Kategori
-                                        </button>
-                                    </div>
-
-                                    <div class="variant-categories-container" data-product-index="${productIndex}">
-                                        <div class="variant-empty-state">
-                                            <i class="bx bx-package bx-lg text-muted mb-2"></i>
-                                            <p class="mb-2">Belum ada kategori varian</p>
-                                            <small class="text-muted">Klik "Tambah Kategori" untuk menambah varian produk</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="col-12">
                             <label class="form-label fw-semibold">Upload Gambar (Max 4)</label>
                             <input type="file" 
@@ -1836,10 +1203,13 @@
                     </div>
                 `;
                 
-                variantCounters[productIndex] = {};
                 productIndex++;
                 return row;
             }
+
+            // =============================================================================
+            // 4. FUNCTION UNTUK MEMBUAT FINISHING BARU
+            // =============================================================================
 
             function createFinishing() {
                 const row = document.createElement("div");
@@ -1867,14 +1237,16 @@
             }
 
             // =============================================================================
-            // 6. FUNCTION UNTUK UPDATE INDEKS PRODUK
+            // 5. FUNCTION UNTUK UPDATE INDEKS PRODUK
             // =============================================================================
 
             function updateProductIndices() {
                 const productRows = productGroup.querySelectorAll('.product-row');
                 productRows.forEach((row, index) => {
+                    // Update data-product-index
                     row.setAttribute('data-product-index', index);
                     
+                    // Update name attribute untuk file input
                     const fileInput = row.querySelector('.image-input');
                     if (fileInput) {
                         const currentName = fileInput.getAttribute('name');
@@ -1886,11 +1258,13 @@
                         }
                     }
                     
+                    // Update preview container
                     const previewContainer = row.querySelector('.image-preview-container');
                     if (previewContainer) {
                         previewContainer.setAttribute('data-index', index);
                     }
                     
+                    // Update header
                     const header = row.querySelector('h6');
                     if (header && header.textContent.includes('Sub Produk')) {
                         header.innerHTML = `
@@ -1898,59 +1272,17 @@
                             Sub Produk #${index + 1}
                         `;
                     }
-
-                    const variantToggle = row.querySelector('.variant-toggle-switch');
-                    if (variantToggle) {
-                        variantToggle.setAttribute('id', `has_variants_${index}`);
-                        variantToggle.setAttribute('name', `has_variants[${index}]`);
-                        variantToggle.setAttribute('data-product-index', index);
-                        
-                        const label = row.querySelector(`label[for^="has_variants_"]`);
-                        if (label) {
-                            label.setAttribute('for', `has_variants_${index}`);
-                        }
-                    }
-
-                    const variantContainer = row.querySelector('.variant-management-container');
-                    if (variantContainer) {
-                        variantContainer.setAttribute('id', `variant_container_${index}`);
-                        variantContainer.setAttribute('data-product-index', index);
-                    }
-
-                    const addCategoryBtn = row.querySelector('.add-variant-category');
-                    if (addCategoryBtn) {
-                        addCategoryBtn.setAttribute('data-product-index', index);
-                    }
-
-                    const categoriesContainer = row.querySelector('.variant-categories-container');
-                    if (categoriesContainer) {
-                        categoriesContainer.setAttribute('data-product-index', index);
-                    }
-
-                    const priceInput = row.querySelector('.product-price');
-                    if (priceInput) {
-                        priceInput.setAttribute('data-product-index', index);
-                    }
-
-                    const liveToggle = row.querySelector(`input[id^="is_live_product_"]`);
-                    if (liveToggle) {
-                        liveToggle.setAttribute('id', `is_live_product_${index}`);
-                        liveToggle.setAttribute('name', `is_live_product[${index}]`);
-                        
-                        const liveLabel = row.querySelector(`label[for^="is_live_product_"]`);
-                        if (liveLabel) {
-                            liveLabel.setAttribute('for', `is_live_product_${index}`);
-                        }
-                    }
                 });
                 
+                // Update productIndex ke jumlah row yang ada
                 productIndex = productRows.length;
             }
 
             // =============================================================================
-            // 7. EVENT LISTENERS
+            // 6. EVENT LISTENERS
             // =============================================================================
 
+            // Event listener untuk tombol tambah produk
             if (addButton) {
                 addButton.addEventListener("click", function() {
                     const newRow = createRow();
@@ -1959,6 +1291,7 @@
                 });
             }
 
+            // Event listener untuk tombol tambah finishing
             if (addFinishing) {
                 addFinishing.addEventListener("click", function() {
                     const newFinishing = createFinishing();
@@ -1967,14 +1300,16 @@
                 });
             }
 
+            // Event listener untuk hapus produk
             if (productGroup) {
                 productGroup.addEventListener("click", function(e) {
                     if (e.target && (e.target.classList.contains("remove-row") || e.target.closest('.remove-row'))) {
                         const row = e.target.closest(".product-row");
                         if (row) {
+                            // Konfirmasi sebelum hapus
                             Notiflix.Confirm.show(
                                 'Hapus Sub Produk',
-                                'Yakin ingin menghapus sub produk ini beserta semua variannya?',
+                                'Yakin ingin menghapus sub produk ini?',
                                 'Ya, Hapus',
                                 'Batal',
                                 function onOk() {
@@ -1994,6 +1329,7 @@
                 });
             }
 
+            // Event listener untuk hapus finishing
             if (finishingGroup) {
                 finishingGroup.addEventListener("click", function(e) {
                     if (e.target && (e.target.classList.contains("remove-finishing") || e.target.closest('.remove-finishing'))) {
@@ -2021,7 +1357,7 @@
             }
 
             // =============================================================================
-            // 8. FORM VALIDATION
+            // 7. FORM VALIDATION
             // =============================================================================
 
             const form = document.querySelector('#standar-form form');
@@ -2034,11 +1370,13 @@
                     let isValid = true;
                     let errorMessages = [];
                     
+                    // Validasi nama label
                     if (!nameLabel.value.trim()) {
                         isValid = false;
                         errorMessages.push('Nama produk utama wajib diisi.');
                     }
                     
+                    // Validasi sub produk
                     names.forEach((nameInput, index) => {
                         if (!nameInput.value.trim()) {
                             isValid = false;
@@ -2052,53 +1390,9 @@
                             errorMessages.push(`Sub Produk #${index + 1}: Harga produk wajib diisi dan harus lebih dari 0.`);
                         }
                     });
-
-                    const variantToggles = form.querySelectorAll('.variant-toggle-switch:checked');
-                    variantToggles.forEach((toggle, toggleIndex) => {
-                        const productIndex = toggle.dataset.productIndex;
-                        const container = document.querySelector(`.variant-categories-container[data-product-index="${productIndex}"]`);
-                        const categories = container.querySelectorAll('.variant-category');
-                        
-                        if (categories.length === 0) {
-                            isValid = false;
-                            errorMessages.push(`Sub Produk #${parseInt(productIndex) + 1}: Jika menggunakan varian, minimal harus ada 1 kategori varian.`);
-                        } else {
-                            categories.forEach((categoryDiv, catIndex) => {
-                                const category = categoryDiv.dataset.category;
-                                const values = categoryDiv.querySelectorAll('.variant-value-row');
-                                
-                                if (!category) {
-                                    isValid = false;
-                                    errorMessages.push(`Sub Produk #${parseInt(productIndex) + 1}: Pilih kategori untuk semua varian.`);
-                                }
-                                
-                                if (values.length === 0) {
-                                    isValid = false;
-                                    errorMessages.push(`Sub Produk #${parseInt(productIndex) + 1}: Kategori ${category} harus memiliki minimal 1 nilai.`);
-                                } else {
-                                    values.forEach((valueRow, valueIndex) => {
-                                        const valueInput = valueRow.querySelector('input[name^="variant_values"]');
-                                        if (!valueInput.value.trim()) {
-                                            isValid = false;
-                                            errorMessages.push(`Sub Produk #${parseInt(productIndex) + 1}: Nilai varian ${category} tidak boleh kosong.`);
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
                     
                     if (!isValid) {
                         e.preventDefault();
-                        
-                        // Reset loading state
-                        const submitBtn = form.querySelector('button[type="submit"]');
-                        if (submitBtn) {
-                            submitBtn.disabled = false;
-                            submitBtn.innerHTML = '<i class="bx bx-save me-2"></i>Simpan Produk';
-                        }
-                        Notiflix.Loading.remove(); // Hapus loading overlay
-                        
                         Notiflix.Report.failure(
                             'Validasi Gagal',
                             errorMessages.join('\n'),
@@ -2115,9 +1409,10 @@
         });
 
         // =============================================================================
-        // 9. GLOBAL FUNCTIONS UNTUK IMAGE HANDLING
+        // 8. GLOBAL FUNCTIONS UNTUK IMAGE HANDLING
         // =============================================================================
 
+        // Function untuk handle image preview
         function handleImagePreview(input, index) {
             const files = input.files;
             const previewContainer = document.querySelector(`.image-preview-container[data-index="${index}"]`);
@@ -2127,9 +1422,11 @@
                 return;
             }
             
+            // Clear existing new previews (keep existing images)
             const newPreviews = previewContainer.querySelectorAll('.image-preview:not(.existing-image)');
             newPreviews.forEach(preview => preview.remove());
             
+            // Validasi maksimal 4 file total
             const existingImages = previewContainer.querySelectorAll('.existing-image').length;
             const totalImages = existingImages + files.length;
             
@@ -2139,6 +1436,7 @@
                 return;
             }
             
+            // Validasi ukuran file
             for (let file of files) {
                 if (file.size > 2 * 1024 * 1024) {
                     Notiflix.Notify.failure(`File ${file.name} terlalu besar. Maksimal 2MB per file.`);
@@ -2147,6 +1445,7 @@
                 }
             }
             
+            // Create preview untuk setiap file
             Array.from(files).forEach((file, fileIndex) => {
                 if (file && file.type.startsWith('image/')) {
                     const reader = new FileReader();
@@ -2164,6 +1463,7 @@
             });
         }
 
+        // Function untuk remove new image preview
         function removeImagePreview(button, productIndex, fileIndex) {
             const preview = button.closest('.image-preview');
             const input = document.querySelector(`.image-input[data-index="${productIndex}"]`);
@@ -2172,6 +1472,7 @@
                 preview.remove();
             }
             
+            // Reset input file jika semua new preview dihapus
             const previewContainer = document.querySelector(`.image-preview-container[data-index="${productIndex}"]`);
             const newImages = previewContainer.querySelectorAll('.new-image');
             if (newImages.length === 0) {
@@ -2179,6 +1480,7 @@
             }
         }
 
+        // Function untuk remove existing image pada edit mode
         function removeExistingImage(button, productIndex, imageId) {
             const preview = button.closest('.image-preview');
             const hiddenInput = preview.querySelector('input[type="hidden"]');
@@ -2190,7 +1492,9 @@
                     'Ya, Hapus',
                     'Batal',
                     function onOk() {
+                        // Remove dari tampilan
                         preview.remove();
+                        // Hidden input sudah terhapus bersama preview
                     },
                     function onCancel() {},
                     {
@@ -2204,7 +1508,7 @@
         }
 
         // =============================================================================
-        // 10. CLEAR EDIT STATE FUNCTION
+        // 9. CLEAR EDIT STATE FUNCTION
         // =============================================================================
 
         function clearEditState() {
@@ -2220,40 +1524,23 @@
 
             form.querySelectorAll('input, textarea, select').forEach(el => {
                 if (el.type != 'hidden' && el.name != '_token') {
-                    if (el.type === 'checkbox') {
-                        el.checked = el.name.includes('is_live') ? true : false;
-                    } else {
-                        el.value = '';
-                    }
+                    el.value = '';
                 }
             });
             
+            // Clear all image previews
             form.querySelectorAll('.image-preview-container').forEach(container => {
                 container.innerHTML = '';
             });
-
-            form.querySelectorAll('.variant-categories-container').forEach(container => {
-                container.innerHTML = `
-                    <div class="variant-empty-state">
-                        <i class="bx bx-package bx-lg text-muted mb-2"></i>
-                        <p class="mb-2">Belum ada kategori varian</p>
-                        <small class="text-muted">Klik "Tambah Kategori" untuk menambah varian produk</small>
-                    </div>
-                `;
-            });
-
-            form.querySelectorAll('.variant-management-container').forEach(container => {
-                container.style.display = 'none';
-            });
             
+            // Reset productIndex
             productIndex = 1;
-            variantCounters = {};
             
             Notiflix.Notify.success('Form telah direset');
         }
 
         // =============================================================================
-        // 11. DELETE FUNCTIONALITY
+        // 10. DELETE FUNCTIONALITY
         // =============================================================================
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -2262,10 +1549,11 @@
                     const url = this.dataset.url;
                     Notiflix.Confirm.show(
                         'Hapus Produk',
-                        'Yakin ingin menghapus produk ini? Semua data termasuk sub produk, varian, dan gambar akan dihapus permanen.',
+                        'Yakin ingin menghapus produk ini? Semua data termasuk sub produk dan gambar akan dihapus permanen.',
                         'Ya, Hapus!',
                         'Batal',
                         function onOk() {
+                            // Show loading
                             Notiflix.Loading.pulse('Menghapus produk...');
                             
                             const form = document.createElement('form');
@@ -2297,10 +1585,11 @@
         });
 
         // =============================================================================
-        // 12. ENHANCED UI INTERACTIONS
+        // 11. ENHANCED UI INTERACTIONS
         // =============================================================================
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Auto-hide alerts after 5 seconds
             setTimeout(function() {
                 const alerts = document.querySelectorAll('.alert:not(.alert-info)');
                 alerts.forEach(alert => {
@@ -2310,6 +1599,7 @@
                 });
             }, 5000);
             
+            // Add smooth scroll behavior
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
                     e.preventDefault();
@@ -2323,6 +1613,7 @@
                 });
             });
             
+            // Add form field focus animations
             document.querySelectorAll('.form-control').forEach(input => {
                 input.addEventListener('focus', function() {
                     this.closest('.col-md-12, .col-md-6, .col-md-4, .col-md-3, .col-md-2, .col-8, .col-4, .col-12')
@@ -2334,107 +1625,36 @@
                         ?.style.setProperty('transform', 'scale(1)');
                 });
             });
-        
+            
+            // Add loading state to submit button
             const form = document.querySelector('#standar-form form');
-                if (form) {
-                    form.addEventListener('submit', function(e) {
-                        const names = form.querySelectorAll('input[name="name[]"]');
-                        const prices = form.querySelectorAll('input[name="price[]"]');
-                        const nameLabel = form.querySelector('input[name="name_label"]');
+            if (form) {
+                form.addEventListener('submit', function() {
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin me-2"></i>Menyimpan...';
                         
-                        let isValid = true;
-                        let errorMessages = [];
-                        
-                        if (!nameLabel.value.trim()) {
-                            isValid = false;
-                            errorMessages.push('Nama produk utama wajib diisi.');
-                        }
-                        
-                        names.forEach((nameInput, index) => {
-                            if (!nameInput.value.trim()) {
-                                isValid = false;
-                                errorMessages.push(`Sub Produk #${index + 1}: Nama produk wajib diisi.`);
-                            }
-                        });
-                        
-                        prices.forEach((priceInput, index) => {
-                            if (!priceInput.value || priceInput.value <= 0) {
-                                isValid = false;
-                                errorMessages.push(`Sub Produk #${index + 1}: Harga produk wajib diisi dan harus lebih dari 0.`);
-                            }
-                        });
-
-                        const variantToggles = form.querySelectorAll('.variant-toggle-switch:checked');
-                        variantToggles.forEach((toggle, toggleIndex) => {
-                            const productIndex = toggle.dataset.productIndex;
-                            const container = document.querySelector(`.variant-categories-container[data-product-index="${productIndex}"]`);
-                            const categories = container.querySelectorAll('.variant-category');
-                            
-                            if (categories.length === 0) {
-                                isValid = false;
-                                errorMessages.push(`Sub Produk #${parseInt(productIndex) + 1}: Jika menggunakan varian, minimal harus ada 1 kategori varian.`);
-                            } else {
-                                categories.forEach((categoryDiv, catIndex) => {
-                                    const category = categoryDiv.dataset.category;
-                                    const values = categoryDiv.querySelectorAll('.variant-value-row');
-                                    
-                                    if (!category) {
-                                        isValid = false;
-                                        errorMessages.push(`Sub Produk #${parseInt(productIndex) + 1}: Pilih kategori untuk semua varian.`);
-                                    }
-                                    
-                                    if (values.length === 0) {
-                                        isValid = false;
-                                        errorMessages.push(`Sub Produk #${parseInt(productIndex) + 1}: Kategori ${category} harus memiliki minimal 1 nilai.`);
-                                    } else {
-                                        values.forEach((valueRow, valueIndex) => {
-                                            const valueInput = valueRow.querySelector('input[name^="variant_values"]');
-                                            if (!valueInput.value.trim()) {
-                                                isValid = false;
-                                                errorMessages.push(`Sub Produk #${parseInt(productIndex) + 1}: Nilai varian ${category} tidak boleh kosong.`);
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                        
-                        if (!isValid) {
-                            e.preventDefault();
-                            Notiflix.Report.failure(
-                                'Validasi Gagal',
-                                errorMessages.join('\n'),
-                                'Tutup',
-                                {
-                                    width: '400px',
-                                    svgSize: '120px',
-                                }
-                            );
-                            return false;
-                        }
-                        
-                        const submitBtn = form.querySelector('button[type="submit"]');
-                        if (submitBtn) {
-                            submitBtn.disabled = true;
-                            submitBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin me-2"></i>Menyimpan...';
-                            
-                            Notiflix.Loading.pulse('Menyimpan produk...');
-                        }
-                    });
-                }
+                        // Show loading overlay
+                        Notiflix.Loading.pulse('Menyimpan produk...');
+                    }
+                });
+            }
         });
 
         // =============================================================================
-        // 13. UTILITY FUNCTIONS
+        // 12. UTILITY FUNCTIONS
         // =============================================================================
 
+        // Function untuk format angka dengan separator
         function formatNumber(num) {
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
+        // Function untuk format input harga real-time
         document.addEventListener('DOMContentLoaded', function() {
             document.addEventListener('input', function(e) {
-                if (e.target.name === 'price[]' || e.target.name === 'finishing_price[]' || e.target.name && e.target.name.includes('variant_prices')) {
+                if (e.target.name === 'price[]' || e.target.name === 'finishing_price[]') {
                     let value = e.target.value.replace(/\D/g, '');
                     if (value) {
                         e.target.setAttribute('data-raw-value', value);
@@ -2443,9 +1663,10 @@
             });
         });
 
+        // Function untuk validasi file upload
         function validateImageFile(file) {
             const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
-            const maxSize = 2 * 1024 * 1024;
+            const maxSize = 2 * 1024 * 1024; // 2MB
             
             if (!allowedTypes.includes(file.type)) {
                 return { valid: false, message: `File ${file.name} bukan format gambar yang diizinkan.` };
@@ -2458,6 +1679,7 @@
             return { valid: true };
         }
 
+        // Initialize tooltips if Bootstrap is loaded
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof bootstrap !== 'undefined') {
                 const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -2468,10 +1690,11 @@
         });
 
         // =============================================================================
-        // 14. KEYBOARD SHORTCUTS
+        // 13. KEYBOARD SHORTCUTS
         // =============================================================================
 
         document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + S untuk save form
             if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                 e.preventDefault();
                 const submitBtn = document.querySelector('#standar-form button[type="submit"]');
@@ -2480,6 +1703,7 @@
                 }
             }
             
+            // Escape untuk close form
             if (e.key === 'Escape') {
                 const standarForm = document.getElementById('standar-form');
                 if (standarForm && standarForm.style.display !== 'none') {
@@ -2488,8 +1712,7 @@
             }
         });
 
-        console.log('✅ Product Management System with Variants loaded successfully!');
-        
+        console.log('✅ Product Management System loaded successfully!');
         document.addEventListener('change', function(e) {
             if (e.target.type === 'checkbox' && e.target.name && 
                 (e.target.name === 'is_live_label' || e.target.name.includes('is_live_product'))) {
@@ -2502,5 +1725,5 @@
                 }
             }
         });
-    </script>
+        </script>
 @endsection

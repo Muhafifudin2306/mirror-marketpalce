@@ -707,6 +707,36 @@
             display: block !important;
         }
     }
+    .label-item {
+        display: none;
+    }
+
+    .label-item.visible {
+        display: block;
+    }
+
+    .load-more-labels {
+        color: #0258d3 !important;
+        font-weight: 600 !important;
+        font-style: italic !important;
+        cursor: pointer !important;
+        padding: 6px 16px !important;
+        margin-bottom: 6px !important;
+        transition: all .3s !important;
+        border-radius: 50px !important;
+        background-color: #f8f9ff !important;
+    }
+
+    .load-more-labels:hover {
+        background-color: #e0f0ff !important;
+        padding-right: 32px !important;
+    }
+
+    .mobile-category-content .load-more-labels {
+        font-size: 0.8rem !important;
+        padding: 8px 12px !important;
+        border-radius: 20px !important;
+    }
 </style>
 <br><br><br><br>
 <div class="container-fluid px-3">
@@ -728,22 +758,29 @@
                         Promo
                     </a>
 
-                    @foreach($labels as $lbl)
+                    @foreach($labels as $index => $lbl)
                         @php $isOpen = (int)$filter == $lbl->id; @endphp
-                        <a href="{{ route('landingpage.products', array_merge(request()->all(), ['filter' => $lbl->id, 'product' => null])) }}"
-                        class="{{ $isOpen ? 'active' : '' }}">
-                            {{ $lbl->name }}
-                        </a>
-                        <div id="label-{{ $lbl->id }}" class="collapse sub-list {{ $isOpen ? 'show' : '' }}">
-                            @foreach($lbl->products as $prod)
-                                <a href="{{ route('landingpage.products', array_merge(request()->all(), ['filter' => $lbl->id, 'product' => $prod->id])) }}"
-                                class="{{ request()->product == $prod->id ? 'active' : '' }}">
-                                    {{ $prod->name }}
-                                </a>
-                            @endforeach
+                        <div class="label-item {{ $index < $labelsPerPage ? 'visible' : '' }}" data-index="{{ $index }}">
+                            <a href="{{ route('landingpage.products', array_merge(request()->all(), ['filter' => $lbl->id, 'product' => null])) }}"
+                            class="{{ $isOpen ? 'active' : '' }}">
+                                {{ $lbl->name }}
+                            </a>
+                            <div id="label-{{ $lbl->id }}" class="collapse sub-list {{ $isOpen ? 'show' : '' }}">
+                                @foreach($lbl->products as $prod)
+                                    <a href="{{ route('landingpage.products', array_merge(request()->all(), ['filter' => $lbl->id, 'product' => $prod->id])) }}"
+                                    class="{{ request()->product == $prod->id ? 'active' : '' }}">
+                                        {{ $prod->name }}
+                                    </a>
+                                @endforeach
+                            </div>
                         </div>
                     @endforeach
 
+                    @if($totalLabels > $labelsPerPage)
+                        <a class="load-more-labels" id="loadMoreDesktop" onclick="loadMoreLabels('desktop')">
+                            Kategori lainnya...
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -764,21 +801,29 @@
                         Promo
                     </a>
 
-                    @foreach($labels as $lbl)
+                    @foreach($labels as $index => $lbl)
                         @php $isOpen = (int)$filter == $lbl->id; @endphp
-                        <a href="{{ route('landingpage.products', array_merge(request()->all(), ['filter' => $lbl->id, 'product' => null])) }}"
-                        class="{{ $isOpen ? 'active' : '' }}">
-                            {{ $lbl->name }}
-                        </a>
-                        <div class="sub-list {{ $isOpen ? 'show' : 'collapse' }}">
-                            @foreach($lbl->products as $prod)
-                                <a href="{{ route('landingpage.products', array_merge(request()->all(), ['filter' => $lbl->id, 'product' => $prod->id])) }}"
-                                class="{{ request()->product == $prod->id ? 'active' : '' }}">
-                                    {{ $prod->name }}
-                                </a>
-                            @endforeach
+                        <div class="label-item {{ $index < $labelsPerPage ? 'visible' : '' }}" data-index="{{ $index }}">
+                            <a href="{{ route('landingpage.products', array_merge(request()->all(), ['filter' => $lbl->id, 'product' => null])) }}"
+                            class="{{ $isOpen ? 'active' : '' }}">
+                                {{ $lbl->name }}
+                            </a>
+                            <div class="sub-list {{ $isOpen ? 'show' : 'collapse' }}">
+                                @foreach($lbl->products as $prod)
+                                    <a href="{{ route('landingpage.products', array_merge(request()->all(), ['filter' => $lbl->id, 'product' => $prod->id])) }}"
+                                    class="{{ request()->product == $prod->id ? 'active' : '' }}">
+                                        {{ $prod->name }}
+                                    </a>
+                                @endforeach
+                            </div>
                         </div>
                     @endforeach
+
+                    @if($totalLabels > $labelsPerPage)
+                        <a class="load-more-labels" id="loadMoreMobile" onclick="loadMoreLabels('mobile')">
+                            Kategori lainnya...
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -797,6 +842,7 @@
                         <input type="hidden" name="{{ $key }}" value="{{ $val }}">
                     @endforeach
                     <select id="sort" name="sort" class="form-select sort-select" onchange="this.form.submit()" style="appearance: none; background: url('data:image/svg+xml;charset=UTF-8,<svg fill=''%23333'' height=''24'' viewBox=''0 0 24 24'' width=''24'' xmlns=''http://www.w3.org/2000/svg''><path d=''M7 10l5 5 5-5z''/></svg>') no-repeat right 10px center; background-size: 16px;">
+                        <option>-- Pilih Filter --</option>
                         <option value="price-desc" {{ $sort=='price-desc' ? 'selected':'' }}>Barang Termahal</option>
                         <option value="price-asc"  {{ $sort=='price-asc'  ? 'selected':'' }}>Barang Termurah</option>
                         <option value="best-selling" {{ $sort=='best-selling' ? 'selected':'' }}>Barang Terlaris</option>
@@ -835,7 +881,7 @@
                                 </div>
                                 <div class="content product-content d-flex flex-column">
                                     <div class="product-title">
-                                        {{ Str::limit($prod->name, 30) }}
+                                        {{ Str::limit($prod->name, 50) }}
                                         @if($prod->additional_size && $prod->additional_unit)
                                             {{ $prod->additional_size }} {{ $prod->additional_unit }}
                                         @endif
@@ -953,4 +999,48 @@
         </div>
     </div>
 </div>
+<script>
+    let currentVisible = {{ $labelsPerPage }};
+    const totalLabels = {{ $totalLabels }};
+    const labelsPerPage = {{ $labelsPerPage }};
+
+    function loadMoreLabels(type) {
+        const nextVisible = Math.min(currentVisible + labelsPerPage, totalLabels);
+        
+        for (let i = currentVisible; i < nextVisible; i++) {
+            const labelItems = document.querySelectorAll(`.label-item[data-index="${i}"]`);
+            labelItems.forEach(item => {
+                item.classList.add('visible');
+            });
+        }
+        
+        currentVisible = nextVisible;
+        
+        if (currentVisible >= totalLabels) {
+            const loadMoreButtons = document.querySelectorAll('#loadMoreDesktop, #loadMoreMobile');
+            loadMoreButtons.forEach(btn => {
+                btn.textContent = 'Sembunyikan';
+                btn.setAttribute('onclick', 'hideLabels()');
+            });
+        }
+    }
+
+    function hideLabels() {
+        for (let i = labelsPerPage; i < totalLabels; i++) {
+            const labelItems = document.querySelectorAll(`.label-item[data-index="${i}"]`);
+            labelItems.forEach(item => {
+                item.classList.remove('visible');
+            });
+        }
+        
+        currentVisible = labelsPerPage;
+        
+        const loadMoreButtons = document.querySelectorAll('#loadMoreDesktop, #loadMoreMobile');
+        loadMoreButtons.forEach(btn => {
+            btn.textContent = 'Kategori lainnya...';
+            btn.setAttribute('onclick', 'loadMoreLabels()');
+            btn.style.display = 'block';
+        });
+    }
+</script>
 @endsection

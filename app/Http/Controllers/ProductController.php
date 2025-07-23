@@ -15,9 +15,10 @@ use App\Models\Notification;
 use App\Models\OrderProduct;
 use Illuminate\Http\Request;
 use App\Models\SearchHistory;
+use App\Models\ProductVariant;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -163,6 +164,9 @@ class ProductController extends Controller
                             $query->where('is_live', true)->with('images');
                         }])
                         ->get();
+
+        $labelsPerPage = 15;
+        $totalLabels = $labels->count();
         
         $filter    = $request->query('filter', 'all');
         $productId = $request->query('product');
@@ -238,7 +242,7 @@ class ProductController extends Controller
         }
 
         return view('landingpage.product_all', compact(
-            'labels','products','filter','productId','search','sort','pageTitle'
+            'labels','products','filter','productId','search','sort','pageTitle','labelsPerPage','totalLabels'
         ));
     }
 
@@ -255,6 +259,9 @@ class ProductController extends Controller
                 ->load([
                     'label.finishings', 
                     'images', 
+                    'variants' => function($q) {
+                        $q->orderBy('category')->orderBy('value');
+                    },
                     'discounts' => function($q) {
                         $q->where('start_discount', '<=', now())
                         ->where('end_discount', '>=', now());
@@ -264,12 +271,33 @@ class ProductController extends Controller
         $finalBase = $product->getDiscountedPrice();
         $bestDiscount = $product->getBestDiscount();
 
+        $variantCategories = collect();
+        if ($product->hasVariants()) {
+            $variantCategories = $product->variants->groupBy('category')->map(function($variants, $category) {
+                return [
+                    'category' => $category,
+                    'display_name' => ucfirst($category),
+                    'variants' => $variants->map(function($variant) {
+                        $numericPrice = (float) str_replace(',', '', $variant->price);
+                        return [
+                            'id' => $variant->id,
+                            'value' => $variant->value,
+                            'price' => $numericPrice,
+                            'formatted_price' => $numericPrice > 0 ? '+' . number_format($numericPrice, 0, ',', '.') : '',
+                            'is_available' => $variant->is_available == 1
+                        ];
+                    })
+                ];
+            })->values();
+        }
+
         $bestProducts = Product::where('is_live', true)
             ->whereHas('label', function($q) {
                 $q->where('is_live', true);
             })
             ->with([
                 'images',
+                'variants',
                 'discounts' => function($q) {
                     $q->where('start_discount', '<=', now())
                     ->where('end_discount', '>=', now());
@@ -286,6 +314,7 @@ class ProductController extends Controller
             'finalBase',
             'bestProducts',
             'bestDiscount',
+            'variantCategories',
             'isEdit'
         ));
     }
@@ -346,26 +375,26 @@ class ProductController extends Controller
         $user = auth()->user();
 
         $validated = $request->validate([
-            'product_id'      => 'required|exists:products,id',
-            'finishing_id'    => 'nullable|exists:finishings,id',
-            'express'         => 'required|in:0,1',
-            'waktu_deadline'  => 'nullable|required_if:express,1|date_format:H:i',
-            'kebutuhan_proofing'  => 'required|in:0,1',
-            'proof_qty'       => 'nullable|integer|min:1',
-            'order_design'    => 'nullable|file|mimes:jpeg,jpg,png,pdf,zip,rar|max:20480',
-            'preview_design'  => 'nullable|file|mimes:jpeg,jpg,png,pdf|max:10240',
-            'length'          => 'nullable|numeric|min:0',
-            'width'           => 'nullable|numeric|min:0',
-            'qty'             => 'required|integer|min:1',
-            'panjang'         => 'nullable|integer',
-            'lebar'           => 'nullable|integer',
-            'notes'           => 'nullable|string|max:1000',
-            'order_status'    => 'required|in:0',
+            'product_id' => 'required|exists:products,id',
+            'selected_variants' => 'nullable|array',
+            'selected_variants.*' => 'exists:product_variants,id',
+            'finishing_id' => 'nullable|exists:finishings,id',
+            'express' => 'required|in:0,1',
+            'waktu_deadline' => 'nullable|required_if:express,1|date_format:H:i',
+            'kebutuhan_proofing' => 'required|in:0,1',
+            'proof_qty' => 'nullable|integer|min:1',
+            'order_design' => 'required|file|mimes:jpeg,jpg,png,pdf,zip,rar|max:20480',
+            'preview_design' => 'nullable|file|mimes:jpeg,jpg,png,pdf|max:10240',
+            'length' => 'nullable|numeric|min:0',
+            'width' => 'nullable|numeric|min:0',
+            'qty' => 'required|integer|min:1',
+            'notes' => 'nullable|string|max:1000',
+            'order_status' => 'required|in:0',
         ]);
 
         DB::beginTransaction();
         try {
-            $product = Product::with(['label.finishings', 'discounts'])->findOrFail($validated['product_id']);
+            $product = Product::with(['label.finishings', 'variants', 'discounts'])->findOrFail($validated['product_id']);
 
             if (!$product->is_live) {
                 return back()->withErrors(['error' => 'Produk tidak tersedia untuk pemesanan.'])->withInput();
@@ -375,10 +404,26 @@ class ProductController extends Controller
                 return back()->withErrors(['error' => 'Kategori produk tidak tersedia untuk pemesanan.'])->withInput();
             }
 
-            $today        = now();
-            $dailyCount   = Order::whereDate('created_at', $today->toDateString())->count() + 1;
+            if ($product->hasVariants()) {
+                $categories = $product->getAvailableCategories();
+                $selectedVariants = $validated['selected_variants'] ?? [];
+                
+                if (count($selectedVariants) !== count($categories)) {
+                    return back()->withErrors(['error' => 'Silakan pilih semua varian yang tersedia.'])->withInput();
+                }
+
+                foreach ($selectedVariants as $variantId) {
+                    $variant = $product->variants()->find($variantId);
+                    if (!$variant || $variant->is_available != 1) {
+                        return back()->withErrors(['error' => 'Varian yang dipilih tidak tersedia.'])->withInput();
+                    }
+                }
+            }
+
+            $today = now();
+            $dailyCount = Order::whereDate('created_at', $today->toDateString())->count() + 1;
             $monthlyCount = Order::whereMonth('created_at', $today->month)->count() + 1;
-            $spkNumber    = sprintf('%s%s%s%02d-%03d', $today->format('y'), $today->format('m'), $today->format('d'), $dailyCount, $monthlyCount);
+            $spkNumber = sprintf('%s%s%s%02d-%03d', $today->format('y'), $today->format('m'), $today->format('d'), $dailyCount, $monthlyCount);
 
             $designFileName = $previewFileName = null;
 
@@ -397,7 +442,7 @@ class ProductController extends Controller
             }
 
             $bestDiscount = $product->getBestDiscount();
-            $basePrice = $product->price;
+            $basePrice = (float) $product->price;
 
             $discountPercent = null;
             $discountFix = null;
@@ -412,112 +457,120 @@ class ProductController extends Controller
                 }
             }
 
+            $variantPrice = 0;
+            $variantDetails = [];
+            if ($product->hasVariants() && !empty($validated['selected_variants'])) {
+                foreach ($validated['selected_variants'] as $variantId) {
+                    $variant = $product->variants()->find($variantId);
+                    if ($variant) {
+                        $numericPrice = (float) str_replace(',', '', $variant->price);
+                        $variantPrice += $numericPrice;
+                        $variantDetails[] = $variant->category . ': ' . $variant->value;
+                    }
+                }
+            }
+
             $finishingPrice = 0;
             $finishingName = null;
             if (!empty($validated['finishing_id']) && $fin = $product->label->finishings->find($validated['finishing_id'])) {
                 $finishingPrice = $fin->finishing_price;
-                $finishingName  = $fin->finishing_name;
+                $finishingName = $fin->finishing_name;
             }
 
             $area = 1;
-
-            $defaultPanjang = $product->long_product;
-            $defaultLebar = $product->width_product;
-            $finalP = 0;
-            $finalL = 0;
-
-            if (isset($validated['length']) && $validated['length'] && $validated['width']) {
+            if ($product->width_product && $product->long_product && isset($validated['length']) && isset($validated['width'])) {
                 $l = $validated['length'];
                 $w = $validated['width'];
-
+                
+                $defaultPanjang = $product->long_product;
+                $defaultLebar = $product->width_product;
+                
                 $finalP = $l <= $defaultPanjang ? 100 : $l;
                 $finalL = $w <= $defaultLebar ? 100 : $w;
-
+                
                 $area = ($finalP / 100) * ($finalL / 100);
-                // dd($area);
             }
 
-            $subtotalHpl       = $basePrice * $area * $validated['qty'];
-            $subtotalFinishing = $finishingPrice * $validated['qty'];
-            $subtotal          = $subtotalHpl + $subtotalFinishing;
-            $subtotalWithoutAdd= $subtotalHpl + $subtotalFinishing;
-
+            $productTotal = ($basePrice + $variantPrice) * $area * $validated['qty'];
+            $finishingTotal = $finishingPrice * $validated['qty'];
+            
+            $subtotalWithoutAdd = $productTotal + $finishingTotal;
+            
+            $subtotal = $subtotalWithoutAdd;
             if ($validated['express'] == 1) {
                 $subtotal *= 1.5;
             }
 
             $calculatedDeadline = null;
-
             if (isset($validated['waktu_deadline'])) {
                 $calculatedDeadline = $today->copy()->addDays(7)->toDateString();
             }
 
             $order = Order::create([
-                'spk'               => $spkNumber,
-                'user_id'           => $user->id,
-                'nama_pelanggan'    => $user->name ?? null,
-                'email_pelanggan'   => $user->email ?? null,
-                'kontak_pelanggan'  => $user->phone ?? null,
-                'order_design'      => $designFileName,
-                'preview_design'    => $previewFileName,
-                'transaction_type'  => 0,
-                'transaction_method'=> 0,
-                'payment_status'    => 0,
-                'order_status'      => 0,
-                'subtotal'          => round($subtotal),
-                'diskon_persen'     => $discountPercent,
-                'potongan_rp'       => $discountFix,
-                'waktu_deadline'    => $validated['waktu_deadline'] ?? null,
-                'deadline'          => $calculatedDeadline ?? null,
-                'express'           => $validated['express'],
-                'kebutuhan_proofing'=> $validated['kebutuhan_proofing'],
-                'proof_qty'         => $validated['proof_qty'] ?? null,
-                'pickup_status'     => 0,
-                'notes'             => $validated['notes'] ?? null,
-                'jenis_transaksi'   => 2,
-                'metode_transaksi'  => 3,
-                'metode_transaksi_paid'   => 3,
-                'tipe_pengambilan'  => 1,
+                'spk' => $spkNumber,
+                'user_id' => $user->id,
+                'nama_pelanggan' => $user->name ?? null,
+                'email_pelanggan' => $user->email ?? null,
+                'kontak_pelanggan' => $user->phone ?? null,
+                'order_design' => $designFileName,
+                'preview_design' => $previewFileName,
+                'transaction_type' => 0,
+                'transaction_method' => 0,
+                'payment_status' => 0,
+                'order_status' => 0,
+                'subtotal' => round($subtotal),
+                'diskon_persen' => $discountPercent,
+                'potongan_rp' => $discountFix,
+                'waktu_deadline' => $validated['waktu_deadline'] ?? null,
+                'deadline' => $calculatedDeadline ?? null,
+                'express' => $validated['express'],
+                'kebutuhan_proofing' => $validated['kebutuhan_proofing'],
+                'proof_qty' => $validated['proof_qty'] ?? null,
+                'pickup_status' => 0,
+                'notes' => $validated['notes'] ?? null,
+                'jenis_transaksi' => 2,
+                'metode_transaksi' => 3,
+                'metode_transaksi_paid' => 3,
+                'tipe_pengambilan' => 1,
                 'metode_pengiriman' => 1,
-                'alamat'            => $user->address ?? null,
-                'kode_pos'          => $user->postal_code ?? null,
-                'provinsi'          => $user->province ?? null,
-                'kota'              => $user->district ?? null,
-                'kecamatan'         => $user->city ?? null,
-                'berat'             => 1000,
+                'alamat' => $user->address ?? null,
+                'kode_pos' => $user->postal_code ?? null,
+                'provinsi' => $user->province ?? null,
+                'kota' => $user->district ?? null,
+                'kecamatan' => $user->city ?? null,
+                'berat' => 1000,
                 'status_pengerjaan' => 'pending',
-                'proses_proofing'   => 0,
-                'proses_produksi'   => 0,
-                'proses_finishing'  => 0,
-                'quality_control'   => 0,
-                'tanggal'           => $today->toDateString(),
-                'waktu'             => $today->toTimeString(),
-                'dp'                 => round($subtotal),
-                'full_payment'       => round($subtotal),
-                'design_link'       => $designFileName ? env('APP_URL').'/'.'storage'. '/landingpage/img/order_design/' . $designFileName : null,
-                'preview_link'      => $previewFileName ? env('APP_URL').'/'.'storage'. '/landingpage/img/order_design/' . $previewFileName : null,
+                'proses_proofing' => 0,
+                'proses_produksi' => 0,
+                'proses_finishing' => 0,
+                'quality_control' => 0,
+                'tanggal' => $today->toDateString(),
+                'waktu' => $today->toTimeString(),
+                'dp' => round($subtotal),
+                'full_payment' => round($subtotal),
+                'design_link' => $designFileName ? env('APP_URL') . '/storage/landingpage/img/order_design/' . $designFileName : null,
+                'preview_link' => $previewFileName ? env('APP_URL') . '/storage/landingpage/img/order_design/' . $previewFileName : null,
             ]);
 
-            $label = Product::where('id',$validated['product_id'])->pluck('label_id')->first();
-            // dd($label);
-
             OrderProduct::create([
-                'order_id'       => $order->id,
-                'product_id'     => $validated['product_id'],
-                'jenis_cetakan'  => $label,
-                'material_type'  => $product->name,
-                'jenis_bahan'    => $product->id,
+                'order_id' => $order->id,
+                'product_id' => $validated['product_id'],
+                'jenis_cetakan' => $product->label_id,
+                'material_type' => $product->name,
+                'jenis_bahan' => $product->id,
                 'finishing_type' => $finishingName,
                 'jenis_finishing' => $validated['finishing_id'] ?? null,
-                'length'         => $validated['length'] ?? null,
-                'width'          => $validated['width'] ?? null,
-                'qty'            => $validated['qty'],
-                'subtotal'       => round($subtotalWithoutAdd),
-                'desain'            => $designFileName ?? null,
-                'preview'           => $previewFileName ?? null,
-                'jumlah_pesanan'    => $validated['qty'],
-                'panjang'           => $validated['length'] ?? null,
-                'lebar'             => $validated['width'] ?? null
+                'length' => $validated['length'] ?? null,
+                'width' => $validated['width'] ?? null,
+                'qty' => $validated['qty'],
+                'subtotal' => round($subtotalWithoutAdd),
+                'desain' => $designFileName ?? null,
+                'preview' => $previewFileName ?? null,
+                'jumlah_pesanan' => $validated['qty'],
+                'panjang' => $validated['length'] ?? null,
+                'lebar' => $validated['width'] ?? null,
+                'variant_details' => !empty($variantDetails) ? implode(', ', $variantDetails) : null,
+                'selected_variants' => !empty($validated['selected_variants']) ? json_encode($validated['selected_variants']) : null,
             ]);
 
             $this->createOrderNotification($order, 0, $spkNumber);
@@ -537,11 +590,21 @@ class ProductController extends Controller
     
     public function adminIndex(Request $request)
     {
-        $labels = Label::with('products.images', 'finishings')->latest()->get();
+        $labels = Label::with([
+            'products.images', 
+            'products.variants',
+            'finishings'
+        ])->latest()->get();
+        
         $editingLabel = null;
         if ($request->has('edit')) {
-            $editingLabel = Label::with('products.images', 'finishings')->find($request->edit);
+            $editingLabel = Label::with([
+                'products.images', 
+                'products.variants',
+                'finishings'
+            ])->find($request->edit);
         }
+        
         return view('adminpage.product.index', compact('labels', 'editingLabel'));
     }
 
@@ -555,74 +618,98 @@ class ProductController extends Controller
             'is_live_label' => 'nullable|boolean',
             'name.*' => 'required|string',
             'price.*' => 'nullable|numeric',
+            'has_variants.*' => 'nullable|boolean',
             'is_live_product.*' => 'nullable|boolean',
             'product_images' => 'nullable|array',
             'product_images.*' => 'nullable|array|max:4',
-            'product_images.*.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'product_images.*.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'variant_categories' => 'nullable|array',
+            'variant_categories.*' => 'nullable|array',
+            'variant_values' => 'nullable|array',
+            'variant_values.*' => 'nullable|array',
+            'variant_prices' => 'nullable|array',
+            'variant_prices.*' => 'nullable|array',
+            'variant_availability' => 'nullable|array',
+            'variant_availability.*' => 'nullable|array',
         ]);
 
-        $label = Label::create([
-            'name' => $request->name_label,
-            'size' => $request->size,
-            'unit' => $request->unit,
-            'desc' => $request->desc,
-            'type' => 'standart',
-            'is_live' => $request->boolean('is_live_label', true)
-        ]);
+        DB::beginTransaction();
+        try {
+            $label = Label::create([
+                'name' => $request->name_label,
+                'size' => $request->size,
+                'unit' => $request->unit,
+                'desc' => $request->desc,
+                'type' => 'standart',
+                'is_live' => $request->boolean('is_live_label', true)
+            ]);
 
-        if ($request->has('name')) {
-            foreach ($request->name as $index => $productName) {
-                $product = Product::create([
-                    'label_id' => $label->id,
-                    'name' => $productName,
-                    'long_product' => $request->long_product[$index] ?? null,
-                    'width_product' => $request->width_product[$index] ?? null,
-                    'additional_size' => $request->additional_size[$index] ?? null,
-                    'additional_unit' => $request->additional_unit[$index] ?? null,
-                    'price' => $request->price[$index] ?? null,
-                    'min_qty' => $request->min_qty[$index] ?? null,
-                    'max_qty' => $request->max_qty[$index] ?? null,
-                    'production_time' => $request->production_time[$index] ?? null,
-                    'description' => $request->description[$index] ?? null,
-                    'spesification_desc' => $request->spesification_desc[$index] ?? null,
-                    'is_live' => $request->boolean("is_live_product.{$index}", true)
-                ]);
-                
-                $product->slug = Str::slug($productName) . '-' . $product->id;
-                $product->save();
+            if ($request->has('name')) {
+                foreach ($request->name as $index => $productName) {
+                    $hasVariants = $request->boolean("has_variants.{$index}", false);
+                    
+                    $product = Product::create([
+                        'label_id' => $label->id,
+                        'name' => $productName,
+                        'long_product' => $request->long_product[$index] ?? null,
+                        'width_product' => $request->width_product[$index] ?? null,
+                        'additional_size' => $request->additional_size[$index] ?? null,
+                        'additional_unit' => $request->additional_unit[$index] ?? null,
+                        'price' => $request->price[$index] ?? null,
+                        'min_qty' => $request->min_qty[$index] ?? null,
+                        'max_qty' => $request->max_qty[$index] ?? null,
+                        'production_time' => $request->production_time[$index] ?? null,
+                        'description' => $request->description[$index] ?? null,
+                        'spesification_desc' => $request->spesification_desc[$index] ?? null,
+                        'has_category' => $hasVariants ? 1 : 0,
+                        'is_live' => $request->boolean("is_live_product.{$index}", true)
+                    ]);
+                    
+                    $product->slug = Str::slug($productName) . '-' . $product->id;
+                    $product->save();
 
-                if ($request->hasFile("product_images.{$index}")) {
-                    $files = $request->file("product_images.{$index}");
-                    
-                    if (!is_array($files)) {
-                        $files = [$files];
-                    }
-                    
-                    $files = array_slice($files, 0, 4);
-                    
-                    foreach ($files as $imagefile) {
-                        if ($imagefile && $imagefile->isValid()) {
-                            $path = $imagefile->store('product_images', 'public');
-                            $product->images()->create(['image_product' => $path]);
+                    if ($request->hasFile("product_images.{$index}")) {
+                        $files = $request->file("product_images.{$index}");
+                        
+                        if (!is_array($files)) {
+                            $files = [$files];
+                        }
+                        
+                        $files = array_slice($files, 0, 4);
+                        
+                        foreach ($files as $imagefile) {
+                            if ($imagefile && $imagefile->isValid()) {
+                                $path = $imagefile->store('product_images', 'public');
+                                $product->images()->create(['image_product' => $path]);
+                            }
                         }
                     }
-                }
-            }
-        }
-        
-        if ($request->has('finishing_name')) {
-            foreach ($request->finishing_name as $index => $finishingName) {
-                if($finishingName) {
-                    Finishing::create([
-                        'label_id' => $label->id,
-                        'finishing_name' => $finishingName,
-                        'finishing_price' => $request->finishing_price[$index] ?? null,
-                    ]);
-                }
-            }
-        }
 
-        return redirect()->back()->with('success', 'Data Produk berhasil ditambahkan.');
+                    if ($hasVariants && $request->has("variant_categories.{$index}")) {
+                        $this->storeProductVariants($product, $request, $index);
+                    }
+                }
+            }
+            
+            if ($request->has('finishing_name')) {
+                foreach ($request->finishing_name as $index => $finishingName) {
+                    if($finishingName) {
+                        Finishing::create([
+                            'label_id' => $label->id,
+                            'finishing_name' => $finishingName,
+                            'finishing_price' => $request->finishing_price[$index] ?? null,
+                        ]);
+                    }
+                }
+            }
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Data Produk berhasil ditambahkan.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()])->withInput();
+        }
     }
 
     public function adminUpdate(Request $request, Label $label)
@@ -636,6 +723,7 @@ class ProductController extends Controller
             'name' => 'required|array|min:1',
             'name.*' => 'required|string',
             'price.*' => 'nullable|numeric',
+            'has_variants.*' => 'nullable|boolean',
             'is_live_product.*' => 'nullable|boolean',
             'product_images' => 'nullable|array',
             'product_images.*' => 'nullable|array|max:4',
@@ -643,118 +731,155 @@ class ProductController extends Controller
             'existing_images' => 'nullable|array',
             'existing_images.*' => 'nullable|array',
             'existing_images.*.*' => 'nullable|string',
+            'variant_ids' => 'nullable|array',
+            'variant_ids.*' => 'nullable|array',
+            'variant_categories' => 'nullable|array',
+            'variant_categories.*' => 'nullable|array',
+            'variant_values' => 'nullable|array',
+            'variant_values.*' => 'nullable|array',
+            'variant_prices' => 'nullable|array',
+            'variant_prices.*' => 'nullable|array',
+            'variant_availability' => 'nullable|array',
+            'variant_availability.*' => 'nullable|array',
         ]);
-        
-        $label->update([
-            'name' => $validated['name_label'],
-            'size' => $validated['size'],
-            'unit' => $request->input('unit'),
-            'desc' => $validated['desc'],
-            'is_live' => $request->boolean('is_live_label', true)
-        ]);
 
-        $existingProductIds = $label->products()->pluck('id')->toArray();
-        $submittedProductIds = [];
+        DB::beginTransaction();
+        try {
+            $label->update([
+                'name' => $validated['name_label'],
+                'size' => $validated['size'],
+                'unit' => $request->input('unit'),
+                'desc' => $validated['desc'],
+                'is_live' => $request->boolean('is_live_label', true)
+            ]);
 
-        foreach ($validated['name'] as $i => $nm) {
-            $productId = $request->product_id[$i] ?? null;
-            $productData = [
-                'name' => $nm,
-                'long_product' => $request->input('long_product')[$i] ?? null,
-                'width_product' => $request->input('width_product')[$i] ?? null,
-                'additional_size' => $request->additional_size[$i] ?? null,
-                'additional_unit' => $request->additional_unit[$i] ?? null,
-                'price' => $validated['price'][$i] ?? null,
-                'min_qty' => $request->input('min_qty')[$i] ?? null,
-                'max_qty' => $request->input('max_qty')[$i] ?? null,
-                'production_time' => $request->production_time[$i] ?? null,
-                'description' => $request->description[$i] ?? null,
-                'spesification_desc' => $request->spesification_desc[$i] ?? null,
-                'slug' => Str::slug($nm),
-                'is_live' => $request->boolean("is_live_product.{$i}", true)
-            ];
+            $existingProductIds = $label->products()->pluck('id')->toArray();
+            $submittedProductIds = [];
 
-            $product = $label->products()->updateOrCreate(['id' => $productId], $productData);
+            foreach ($validated['name'] as $i => $nm) {
+                $productId = $request->product_id[$i] ?? null;
+                $hasVariants = $request->boolean("has_variants.{$i}", false);
+                
+                $productData = [
+                    'name' => $nm,
+                    'long_product' => $request->input('long_product')[$i] ?? null,
+                    'width_product' => $request->input('width_product')[$i] ?? null,
+                    'additional_size' => $request->additional_size[$i] ?? null,
+                    'additional_unit' => $request->additional_unit[$i] ?? null,
+                    'price' => $validated['price'][$i] ?? null,
+                    'min_qty' => $request->input('min_qty')[$i] ?? null,
+                    'max_qty' => $request->input('max_qty')[$i] ?? null,
+                    'production_time' => $request->production_time[$i] ?? null,
+                    'description' => $request->description[$i] ?? null,
+                    'spesification_desc' => $request->spesification_desc[$i] ?? null,
+                    'slug' => Str::slug($nm),
+                    'has_category' => $hasVariants ? 1 : 0,
+                    'is_live' => $request->boolean("is_live_product.{$i}", true)
+                ];
 
-            if (!$product->slug || !Str::endsWith($product->slug, "-{$product->id}")) {
-                $product->slug = Str::slug($nm) . '-' . $product->id;
-                $product->save();
+                $product = $label->products()->updateOrCreate(['id' => $productId], $productData);
+
+                if (!$product->slug || !Str::endsWith($product->slug, "-{$product->id}")) {
+                    $product->slug = Str::slug($nm) . '-' . $product->id;
+                    $product->save();
+                }
+                
+                $submittedProductIds[] = $product->id;
+
+                $existingImages = $product->images;
+                $keptImages = $request->input("existing_images.{$i}", []);
+                foreach ($existingImages as $image) {
+                    if (!in_array($image->id, $keptImages)) {
+                        Storage::disk('public')->delete($image->image_product);
+                        $image->delete();
+                    }
+                }
+
+                if ($request->hasFile("product_images.{$i}")) {
+                    $files = $request->file("product_images.{$i}");
+                    
+                    if (!is_array($files)) {
+                        $files = [$files];
+                    }
+                    
+                    $currentImageCount = $product->images()->count();
+                    $availableSlots = 4 - $currentImageCount;
+                    
+                    $files = array_slice($files, 0, $availableSlots);
+                    
+                    foreach ($files as $imagefile) {
+                        if ($imagefile && $imagefile->isValid()) {
+                            $path = $imagefile->store('product_images', 'public');
+                            $product->images()->create(['image_product' => $path]);
+                        }
+                    }
+                }
+
+                if ($hasVariants) {
+                    $this->updateProductVariants($product, $request, $i);
+                } else {
+                    $product->variants()->delete();
+                }
             }
             
-            $submittedProductIds[] = $product->id;
-
-            $existingImages = $product->images;
-            $keptImages = $request->input("existing_images.{$i}", []);
-            foreach ($existingImages as $image) {
-                if (!in_array($image->id, $keptImages)) {
-                    Storage::disk('public')->delete($image->image_product);
-                    $image->delete();
+            $productsToDelete = array_diff($existingProductIds, $submittedProductIds);
+            if (!empty($productsToDelete)) {
+                $products = Product::whereIn('id', $productsToDelete)->with('images', 'variants')->get();
+                foreach ($products as $product) {
+                    foreach ($product->images as $image) {
+                        Storage::disk('public')->delete($image->image_product);
+                    }
+                    $product->variants()->delete();
                 }
+                Product::destroy($productsToDelete);
             }
 
-            if ($request->hasFile("product_images.{$i}")) {
-                $files = $request->file("product_images.{$i}");
-                
-                if (!is_array($files)) {
-                    $files = [$files];
-                }
-                
-                $currentImageCount = $product->images()->count();
-                $availableSlots = 4 - $currentImageCount;
-                
-                $files = array_slice($files, 0, $availableSlots);
-                
-                foreach ($files as $imagefile) {
-                    if ($imagefile && $imagefile->isValid()) {
-                        $path = $imagefile->store('product_images', 'public');
-                        $product->images()->create(['image_product' => $path]);
+            $label->finishings()->delete();
+            if ($request->has('finishing_name')) {
+                foreach ($request->input('finishing_name') as $i => $nm) {
+                    if ($nm) {
+                        $label->finishings()->create([
+                            'finishing_name' => $nm,
+                            'finishing_price' => $request->input('finishing_price')[$i] ?? null,
+                        ]);
                     }
                 }
             }
-        }
-        
-        $productsToDelete = array_diff($existingProductIds, $submittedProductIds);
-        if (!empty($productsToDelete)) {
-            $products = Product::whereIn('id', $productsToDelete)->with('images')->get();
-            foreach ($products as $product) {
-                foreach ($product->images as $image) {
-                    Storage::disk('public')->delete($image->image_product);
-                }
-            }
-            Product::destroy($productsToDelete);
-        }
 
-        $label->finishings()->delete();
-        if ($request->has('finishing_name')) {
-            foreach ($request->input('finishing_name') as $i => $nm) {
-                if ($nm) {
-                    $label->finishings()->create([
-                        'finishing_name' => $nm,
-                        'finishing_price' => $request->input('finishing_price')[$i] ?? null,
-                    ]);
-                }
-            }
+            DB::commit();
+            return redirect()->route('admin.product.index')->with('success', 'Data berhasil di-update.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()])->withInput();
         }
-        
-        return redirect()->route('admin.product.index')->with('success', 'Data berhasil di-update.');
     }
-
 
     public function adminDestroy(Label $label)
     {
-        $products = Product::where('label_id', $label->id)->with('images')->get();
-        foreach($products as $product) {
-            foreach($product->images as $image) {
-                Storage::disk('public')->delete($image->image_product);
+        DB::beginTransaction();
+        try {
+            $products = Product::where('label_id', $label->id)->with('images', 'variants')->get();
+            
+            foreach($products as $product) {
+                foreach($product->images as $image) {
+                    Storage::disk('public')->delete($image->image_product);
+                }
+                $product->variants()->delete();
             }
+
+            Product::where('label_id', $label->id)->delete();
+            Finishing::where('label_id', $label->id)->delete();
+            
+            $label->delete();
+
+            DB::commit();
+            return redirect()->route('admin.product.index')->with('success', 'Data berhasil dihapus.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
         }
-
-        $label->delete();
-
-        Product::where('label_id', $label->id)->delete();
-        Finishing::where('label_id', $label->id)->delete();
-
-        return redirect()->route('admin.product.index')->with('success', 'Data berhasil dihapus.');
     }
 
     public function toggleLabelLive(Label $label)
@@ -764,10 +889,10 @@ class ProductController extends Controller
         ]);
 
         $status = $label->is_live ? 'ditampilkan' : 'disembunyikan';
-        $message = "Produk {$label->name} berhasil {$status} dari website.";
+        $message = "Kategori produk {$label->name} berhasil {$status} dari website.";
         
         if (!$label->is_live) {
-            $message .= " Semua sub produk dalam kategori ini juga tidak akan tampil.";
+            $message .= " Semua sub produk dalam kategori ini juga tidak akan tampil di website.";
         }
 
         return redirect()->back()->with('success', $message);
@@ -806,6 +931,73 @@ class ProductController extends Controller
         $count = count($request->product_ids);
         
         return redirect()->back()->with('success', "{$count} produk berhasil {$action}.");
+    }
+
+    private function storeProductVariants(Product $product, Request $request, int $productIndex)
+    {
+        if (!$request->has("variant_categories.{$productIndex}")) {
+            return;
+        }
+
+        $categories = $request->input("variant_categories.{$productIndex}", []);
+        $values = $request->input("variant_values.{$productIndex}", []);
+        $prices = $request->input("variant_prices.{$productIndex}", []);
+        $availabilities = $request->input("variant_availability.{$productIndex}", []);
+
+        foreach ($categories as $index => $category) {
+            if (empty($category) || empty($values[$index])) {
+                continue;
+            }
+
+            $isAvailable = isset($availabilities[$index]) && $availabilities[$index] == '1';
+
+            ProductVariant::create([
+                'product_id' => $product->id,
+                'category' => $category,
+                'value' => $values[$index],
+                'price' => $prices[$index] ?? 0,
+                'is_available' => $isAvailable
+            ]);
+        }
+    }
+
+    private function updateProductVariants(Product $product, Request $request, int $productIndex)
+    {
+        $variantIds = $request->input("variant_ids.{$productIndex}", []);
+        $categories = $request->input("variant_categories.{$productIndex}", []);
+        $values = $request->input("variant_values.{$productIndex}", []);
+        $prices = $request->input("variant_prices.{$productIndex}", []);
+        $availabilities = $request->input("variant_availability.{$productIndex}", []);
+
+        $processedVariantIds = [];
+
+        foreach ($categories as $index => $category) {
+            if (empty($category) || empty($values[$index])) {
+                continue;
+            }
+
+            $isAvailable = isset($availabilities[$index]) && $availabilities[$index] == '1';
+
+            $variantData = [
+                'category' => $category,
+                'value' => $values[$index],
+                'price' => $prices[$index] ?? 0,
+                'is_available' => $isAvailable
+            ];
+
+            if (!empty($variantIds[$index])) {
+                $variant = $product->variants()->find($variantIds[$index]);
+                if ($variant) {
+                    $variant->update($variantData);
+                    $processedVariantIds[] = $variant->id;
+                }
+            } else {
+                $variant = $product->variants()->create($variantData);
+                $processedVariantIds[] = $variant->id;
+            }
+        }
+
+        $product->variants()->whereNotIn('id', $processedVariantIds)->delete();
     }
     
 }

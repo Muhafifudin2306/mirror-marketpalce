@@ -1,4 +1,11 @@
 <?php return array (
+  'ably/laravel-broadcaster' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Ably\\LaravelBroadcaster\\LaravelAblyBroadcasterServiceProvider',
+    ),
+  ),
   'laravel/sail' => 
   array (
     'providers' => 

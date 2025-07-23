@@ -996,7 +996,7 @@
                                                         </option> 
                                                     </select>
                                                     <div class="mt-1">
-                                                        <a href="{{ url('/profile') }}" class="btn-cancel">
+                                                        <a href="{{ url('/profile?#pane-profile') }}" class="btn-cancel">
                                                             <i class="bi bi-geo-alt-fill"></i> Lengkapi Alamat Anda
                                                         </a>
                                                     </div>
@@ -1102,7 +1102,7 @@
                                             <small>Bahan: {{ $item->product->name ?? '-' }}</small>
                                         </div>
                                         <div class="mobile-product-price">
-                                            Rp {{ number_format($item->product->subtotal,0,',','.') }}
+                                            Rp {{ number_format($item->subtotal,0,',','.') }}
                                         </div>
                                     </div>
                                     
@@ -1111,6 +1111,12 @@
                                             <span>Subtotal</span>
                                             <span>Rp {{ number_format($item->subtotal,0,',','.') }}</span>
                                         </div>
+                                        @if($order->express == 1)
+                                            <div class="mobile-cost-item" style="color: #000 !important;">
+                                                <span>Express (+50%)</span>
+                                                <span id="mobile-express-fee">Rp {{ number_format($expressFee,0,',','.') }}</span>
+                                            </div>
+                                        @endif
                                         <div class="mobile-cost-item">
                                             <span>Ongkir</span>
                                             <span id="mobile-shipping-cost">Rp 0</span>
@@ -1121,7 +1127,7 @@
                                         </div>
                                         <div class="mobile-cost-item total">
                                             <span>Total</span>
-                                            <span id="mobile-total-amount">Rp {{ number_format($item->subtotal,0,',','.') }}</span>
+                                            <span id="mobile-total-amount">Rp {{ number_format($item->subtotal + ($expressFee ?? 0),0,',','.') }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -1162,14 +1168,20 @@
                                     <span>Subtotal</span>
                                     <span>Rp {{ number_format($item->subtotal,0,',','.') }}</span>
                                 </div>
-                                <div id="discountLine" class="d-flex justify-content-between mb-2" style="font-family:'Poppins'; font-size:0.9rem !important; font-weight:550 !important; color:#fc2865 !important;">
+                                @if($order->express == 1)
+                                    <div class="d-flex justify-content-between mb-2" style="font-family:'Poppins'; font-size:0.9rem !important; font-weight:550 !important; color:#000 !important;">
+                                        <span>Express (+50%)</span>
+                                        <span id="expressFee">Rp {{ number_format($expressFee,0,',','.') }}</span>
+                                    </div>
+                                @endif
+                                {{-- <div id="discountLine" class="d-flex justify-content-between mb-2" style="font-family:'Poppins'; font-size:0.9rem !important; font-weight:550 !important; color:#fc2865 !important;">
                                     <span>Potongan Promo</span>
                                     <span id="discountAmount">-Rp 0</span>
-                                </div>
+                                </div> --}}
                                 <hr>
                                 <div class="d-flex justify-content-between mb-4" style="font-family:'Poppins'; font-size:1rem !important; font-weight:550 !important; color:#000 !important;">
                                     <strong>Total</strong>
-                                    <strong id="totalAmount">Rp {{ number_format($item->subtotal,0,',','.') }}</strong>
+                                    <strong id="totalAmount">Rp {{ number_format($item->subtotal + ($expressFee ?? 0),0,',','.') }}</strong>
                                 </div>
                                 <button id="btnOrderDesktop" type="button" class="btn-order">Order Sekarang</button>
                                 <br><br>
@@ -1217,278 +1229,164 @@
     <input type="hidden" id="orderId" value="{{ $order->id }}">
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const baseSubtotal   = parseFloat(document.getElementById('subtotal').value) || 0;
-            const deliverySelect = document.getElementById('deliveryMethod');
-            const shippingEl     = document.getElementById('shippingCost');
-            const totalEl        = document.getElementById('totalAmount');
-            const orderId        = document.getElementById('orderId').value;
-            const btnOrder       = document.getElementById('btnOrder');
-            const btnOrderDesktop = document.getElementById('btnOrderDesktop');
-            const loadingOverlay = document.getElementById('loading-overlay');
+        let baseSubtotal, expressAmount, baseWithExpress, ongkirCost, promoDiscount;
+        let deliverySelect, shippingEl, totalEl, mobileShippingEl, mobileTotalEl;
+        let orderId, btnOrder, btnOrderDesktop, loadingOverlay;
+        let mobileDiscountLine, mobileDiscountAmtEl, discountLine, discountAmtEl;
+        let promoInput, applyPromoBtn, promoMessage, mobilePromoInput, mobileApplyPromoBtn, mobilePromoMessage;
+        let hiddenPromo, hiddenPromoDiscount;
 
-            const mobileShippingEl = document.getElementById('mobile-shipping-cost');
-            const mobileTotalEl = document.getElementById('mobile-total-amount');
-            const mobileDiscountLine = document.getElementById('mobile-discount-line');
-            const mobileDiscountAmtEl = document.getElementById('mobile-discount-amount');
+        document.addEventListener('DOMContentLoaded', function() {
+            const subtotalInput = document.getElementById('subtotal');
+            if (!subtotalInput) {
+                console.error('subtotal input not found!');
+                return;
+            }
             
-            const promoInput = document.getElementById('promoCodeInput');
-            const applyPromoBtn = document.getElementById('applyPromoBtn');
-            const promoMessage = document.getElementById('promoMessage');
-            const mobilePromoInput = document.getElementById('mobilePromoCodeInput');
-            const mobileApplyPromoBtn = document.getElementById('mobileApplyPromoBtn');
-            const mobilePromoMessage = document.getElementById('mobilePromoMessage');
+            baseSubtotal = parseFloat(subtotalInput.value) || 0;
+            expressAmount = {{ $expressFee ?? 0 }};
+            baseWithExpress = baseSubtotal + expressAmount;
+            ongkirCost = 0;
+            promoDiscount = 0;
+            
+            deliverySelect = document.getElementById('deliveryMethod');
+            shippingEl = document.getElementById('shippingCost');
+            totalEl = document.getElementById('totalAmount');
+            mobileShippingEl = document.getElementById('mobile-shipping-cost');
+            mobileTotalEl = document.getElementById('mobile-total-amount');
+            mobileDiscountLine = document.getElementById('mobile-discount-line');
+            mobileDiscountAmtEl = document.getElementById('mobile-discount-amount');
+            
+            orderId = document.getElementById('orderId').value;
+            btnOrder = document.getElementById('btnOrder');
+            btnOrderDesktop = document.getElementById('btnOrderDesktop');
+            loadingOverlay = document.getElementById('loading-overlay');
+            
+            promoInput = document.getElementById('promoCodeInput');
+            applyPromoBtn = document.getElementById('applyPromoBtn');
+            promoMessage = document.getElementById('promoMessage');
+            mobilePromoInput = document.getElementById('mobilePromoCodeInput');
+            mobileApplyPromoBtn = document.getElementById('mobileApplyPromoBtn');
+            mobilePromoMessage = document.getElementById('mobilePromoMessage');
 
-            const hiddenPromo = document.createElement('input');
+            hiddenPromo = document.createElement('input');
             hiddenPromo.type = 'hidden';
             hiddenPromo.name = 'promo_code';
             hiddenPromo.id = 'hiddenPromoCode';
             document.body.appendChild(hiddenPromo);
 
-            const hiddenPromoDiscount = document.createElement('input');
+            hiddenPromoDiscount = document.createElement('input');
             hiddenPromoDiscount.type = 'hidden';
             hiddenPromoDiscount.name = 'promo_discount';
             hiddenPromoDiscount.id = 'hiddenPromoDiscount';
             document.body.appendChild(hiddenPromoDiscount);
 
-            let discountLine = document.getElementById('discountLine');
-            let discountAmtEl = document.getElementById('discountAmount');
+            discountLine = null; // Akan dibuat secara dinamis di computeTotal()
+            discountAmtEl = null;
+
+            setupEventListeners();
             
-            if (!discountLine) {
-                discountLine = document.createElement('div');
-                discountLine.id = 'discountLine';
-                discountLine.className = 'd-flex justify-content-between mb-2';
-                discountLine.style.color = '#fc2865';
-                discountLine.style.fontWeight = '600';
-                discountLine.style.display = 'none';
-                
-                const discountLabel = document.createElement('span');
-                discountLabel.style.fontFamily = "'Poppins'";
-                discountLabel.textContent = 'Potongan Promo';
-                
-                discountAmtEl = document.createElement('span');
-                discountAmtEl.id = 'discountAmount';
-                discountAmtEl.style.fontFamily = "'Poppins'";
-                
-                discountLine.appendChild(discountLabel);
-                discountLine.appendChild(discountAmtEl);
-                
-                if (totalEl) {
-                    const totalDiv = totalEl.closest('.d-flex');
-                    const hrBefore = totalDiv.previousElementSibling;
-                    hrBefore.parentNode.insertBefore(discountLine, hrBefore);
-                }
+            computeTotal();
+        });
+
+        function formatRp(x) {
+            return 'Rp ' + Math.round(x).toLocaleString('id-ID');
+        }
+
+        function computeTotal() {            
+            let discountAmount = promoDiscount;
+            if (discountAmount > baseWithExpress) {
+                discountAmount = baseWithExpress;
             }
-
-            let ongkirCost = 0;
-            let promoDiscount = 0;
-
-            function formatRp(x) {
-                return 'Rp ' + Math.round(x).toLocaleString('id-ID');
-            }
-
-            function computeTotal() {
-                const afterDiscount = baseSubtotal - promoDiscount;
-                if (afterDiscount < 0) promoDiscount = baseSubtotal;
+            
+            const afterDiscount = baseWithExpress - discountAmount;
+            const finalTotal = afterDiscount + ongkirCost;
+            
+            const formattedShipping = formatRp(ongkirCost);
+            if (shippingEl) shippingEl.textContent = formattedShipping;
+            if (mobileShippingEl) mobileShippingEl.textContent = formattedShipping;
+            
+            const formattedTotal = formatRp(finalTotal);
+            if (totalEl) totalEl.textContent = formattedTotal;
+            if (mobileTotalEl) mobileTotalEl.textContent = formattedTotal;
+            
+            if (discountAmount > 0) {
+                const formattedDiscount = '-' + formatRp(discountAmount);
                 
-                const total = afterDiscount + ongkirCost;
-                const formattedShipping = formatRp(ongkirCost);
-                const formattedTotal = formatRp(total);
-                
-                if (shippingEl) shippingEl.innerText = formattedShipping;
-                if (totalEl) totalEl.innerText = formattedTotal;
-                
-                if (mobileShippingEl) mobileShippingEl.innerText = formattedShipping;
-                if (mobileTotalEl) mobileTotalEl.innerText = formattedTotal;
-                
-                if (promoDiscount > 0) {
-                    const formattedDiscount = '-' + formatRp(promoDiscount);
+                if (!discountLine) {
+                    discountLine = document.createElement('div');
+                    discountLine.id = 'discountLine';
+                    discountLine.className = 'd-flex justify-content-between mb-2';
+                    discountLine.style.fontFamily = "'Poppins'";
+                    discountLine.style.fontSize = '0.9rem';
+                    discountLine.style.fontWeight = '550';
+                    discountLine.style.color = '#fc2865';
                     
-                    if (discountLine) discountLine.style.display = 'flex';
-                    if (discountAmtEl) discountAmtEl.innerText = formattedDiscount;
+                    const discountLabel = document.createElement('span');
+                    discountLabel.textContent = 'Potongan Promo';
                     
-                    if (mobileDiscountLine) {
-                        mobileDiscountLine.style.display = 'flex';
-                        if (mobileDiscountAmtEl) mobileDiscountAmtEl.innerText = formattedDiscount;
+                    discountAmtEl = document.createElement('span');
+                    discountAmtEl.id = 'discountAmount';
+                    
+                    discountLine.appendChild(discountLabel);
+                    discountLine.appendChild(discountAmtEl);
+                    
+                    if (totalEl) {
+                        const totalDiv = totalEl.closest('.d-flex');
+                        const hrBefore = totalDiv.previousElementSibling;
+                        hrBefore.parentNode.insertBefore(discountLine, hrBefore);
                     }
-                } else {
-                    if (discountLine) discountLine.style.display = 'none';
-                    
-                    if (mobileDiscountLine) mobileDiscountLine.style.display = 'none';
                 }
                 
-                hiddenPromoDiscount.value = promoDiscount;
+                discountLine.style.display = 'flex';
+                if (discountAmtEl) discountAmtEl.textContent = formattedDiscount;
+                
+                if (mobileDiscountLine) {
+                    mobileDiscountLine.style.display = 'flex';
+                    if (mobileDiscountAmtEl) mobileDiscountAmtEl.textContent = formattedDiscount;
+                }
+            } else {
+                if (discountLine) discountLine.style.display = 'none';
+                if (mobileDiscountLine) mobileDiscountLine.style.display = 'none';
             }
+            
+            if (hiddenPromoDiscount) hiddenPromoDiscount.value = discountAmount;
+            
+            // console.log('Total updated to:', formattedTotal);
+        }
 
+        function setupEventListeners() {
             if (deliverySelect) {
-                deliverySelect.addEventListener('change', () => {
-                    const selectedOption = deliverySelect.selectedOptions[0];
-                    ongkirCost = parseInt(selectedOption.dataset.cost) || 0;
-                    computeTotal();
+                deliverySelect.addEventListener('change', function() {
+                    const selectedOption = this.selectedOptions[0];
+                    if (selectedOption && selectedOption.hasAttribute('data-cost')) {
+                        ongkirCost = parseInt(selectedOption.getAttribute('data-cost')) || 0;
+                        computeTotal();
+                    }
                 });
             }
 
-            function handlePromoApplication(inputElement, messageElement) {
-                const code = inputElement.value.trim();
-                if (!code) {
-                    updatePromoMessage('Masukkan kode promo dulu.', 'error', messageElement);
-                    return;
-                }
-
-                fetch(`/promo/check?code=${encodeURIComponent(code)}&subtotal=${baseSubtotal}`)
-                .then(res => res.json())
-                .then(json => {
-                    if (!json.valid) {
-                        promoDiscount = 0;
-                        hiddenPromo.value = '';
-                        updatePromoMessage(json.message, 'error', messageElement);
-                        
-                        if (inputElement === mobilePromoInput && promoInput) {
-                            promoInput.value = '';
-                        } else if (inputElement === promoInput && mobilePromoInput) {
-                            mobilePromoInput.value = '';
-                        }
-                    } else {
-                        promoDiscount = json.diskon;
-                        hiddenPromo.value = code;
-                        updatePromoMessage(json.message, 'success', messageElement);
-                        
-                        if (inputElement === mobilePromoInput && promoInput) {
-                            promoInput.value = code;
-                        } else if (inputElement === promoInput && mobilePromoInput) {
-                            mobilePromoInput.value = code;
-                        }
-                    }
-                    computeTotal();
-                })
-                .catch(() => {
-                    updatePromoMessage('Gagal cek promo. Coba lagi.', 'error', messageElement);
-                });
-            }
-
-            function updatePromoMessage(message, type, messageElement) {
-                if (!messageElement) return;
-                
-                messageElement.innerText = message;
-                messageElement.classList.remove('text-success', 'text-danger');
-                
-                if (type === 'success') {
-                    messageElement.classList.add('text-success');
-                } else {
-                    messageElement.classList.add('text-danger');
-                }
-                
-                const otherMessageElement = messageElement === mobilePromoMessage ? promoMessage : mobilePromoMessage;
-                if (otherMessageElement) {
-                    otherMessageElement.innerText = message;
-                    otherMessageElement.classList.remove('text-success', 'text-danger');
-                    if (type === 'success') {
-                        otherMessageElement.classList.add('text-success');
-                    } else {
-                        otherMessageElement.classList.add('text-danger');
-                    }
-                }
-            }
-
-            if (applyPromoBtn && promoInput && promoMessage) {
-                applyPromoBtn.addEventListener('click', () => {
+            if (applyPromoBtn && promoInput) {
+                applyPromoBtn.addEventListener('click', function() {
                     handlePromoApplication(promoInput, promoMessage);
                 });
                 
-                promoInput.addEventListener('keypress', (e) => {
+                promoInput.addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') {
                         handlePromoApplication(promoInput, promoMessage);
                     }
                 });
             }
 
-            if (mobileApplyPromoBtn && mobilePromoInput && mobilePromoMessage) {
-                mobileApplyPromoBtn.addEventListener('click', () => {
+            if (mobileApplyPromoBtn && mobilePromoInput) {
+                mobileApplyPromoBtn.addEventListener('click', function() {
                     handlePromoApplication(mobilePromoInput, mobilePromoMessage);
                 });
                 
-                mobilePromoInput.addEventListener('keypress', (e) => {
+                mobilePromoInput.addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') {
                         handlePromoApplication(mobilePromoInput, mobilePromoMessage);
                     }
-                });
-            }
-
-            function handleOrderClick() {
-                if (!deliverySelect || deliverySelect.value === '0') {
-                    alert('Silakan pilih metode pengiriman terlebih dahulu!');
-                    return;
-                }
-
-                const payload = {
-                    kurir: deliverySelect.value,
-                    ongkir: ongkirCost,
-                    notes: document.getElementById('notesInput') ? document.getElementById('notesInput').value : '',
-                    promo_code: hiddenPromo.value,
-                    promo_discount: promoDiscount
-                };
-
-                if (loadingOverlay) loadingOverlay.style.display = 'flex';
-                if (btnOrder) btnOrder.disabled = true;
-                if (btnOrderDesktop) btnOrderDesktop.disabled = true;
-
-                fetch(`/checkout/pay/${orderId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify(payload)
-                })
-                .then(r => r.json())
-                .then(data => {
-                    if (loadingOverlay) loadingOverlay.style.display = 'none';
-                    if (btnOrder) btnOrder.disabled = false;
-                    if (btnOrderDesktop) btnOrderDesktop.disabled = false;
-
-                    if (!data.success) {
-                        alert('Error: ' + data.message);
-                        return;
-                    }
-
-                    // Snap Midtrans
-                    if (typeof snap !== 'undefined') {
-                        snap.pay(data.snap_token, {
-                            onSuccess: res => {
-                                fetch(`/checkout/payment-success/${orderId}`, {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                                    },
-                                    body: JSON.stringify({
-                                        transaction_id: res.transaction_id,
-                                        notes: payload.notes,
-                                        kurir: payload.kurir,
-                                        ongkir: payload.ongkir,
-                                        promo_discount: payload.promo_discount
-                                    })
-                                })
-                                .then(r => {
-                                    if (r.ok) {
-                                        window.location.href = '/keranjang';
-                                    } else {
-                                        alert('Gagal update order');
-                                    }
-                                });
-                            },
-                            onPending: () => window.location.href = '/keranjang',
-                            onError: err => alert('Pembayaran gagal: ' + err.status_message),
-                            onClose: () => alert('Anda menutup popup tanpa membayar')
-                        });
-                    }
-                })
-                .catch(err => {
-                    if (loadingOverlay) loadingOverlay.style.display = 'none';
-                    if (btnOrder) btnOrder.disabled = false;
-                    if (btnOrderDesktop) btnOrderDesktop.disabled = false;
-                    console.error(err);
-                    alert('Kesalahan jaringan, coba ulang.');
                 });
             }
 
@@ -1498,9 +1396,147 @@
             if (btnOrderDesktop) {
                 btnOrderDesktop.addEventListener('click', handleOrderClick);
             }
+        }
 
-            computeTotal();
-        });
+        function handlePromoApplication(inputElement, messageElement) {
+            const code = inputElement.value.trim();
+            if (!code) {
+                updatePromoMessage('Masukkan kode promo dulu.', 'error', messageElement);
+                return;
+            }
+
+            fetch(`/promo/check?code=${encodeURIComponent(code)}&subtotal=${baseSubtotal}&express_fee=${expressAmount}`)
+            .then(res => res.json())
+            .then(json => {
+                if (!json.valid) {
+                    promoDiscount = 0;
+                    hiddenPromo.value = '';
+                    updatePromoMessage(json.message, 'error', messageElement);
+                    
+                    if (inputElement === mobilePromoInput && promoInput) {
+                        promoInput.value = '';
+                    } else if (inputElement === promoInput && mobilePromoInput) {
+                        mobilePromoInput.value = '';
+                    }
+                } else {
+                    promoDiscount = json.diskon;
+                    hiddenPromo.value = code;
+                    updatePromoMessage(json.message, 'success', messageElement);
+                    
+                    if (inputElement === mobilePromoInput && promoInput) {
+                        promoInput.value = code;
+                    } else if (inputElement === promoInput && mobilePromoInput) {
+                        mobilePromoInput.value = code;
+                    }
+                }
+                computeTotal();
+            })
+            .catch(() => {
+                updatePromoMessage('Gagal cek promo. Coba lagi.', 'error', messageElement);
+            });
+        }
+
+        function updatePromoMessage(message, type, messageElement) {
+            if (!messageElement) return;
+            
+            messageElement.innerText = message;
+            messageElement.classList.remove('text-success', 'text-danger');
+            
+            if (type === 'success') {
+                messageElement.classList.add('text-success');
+            } else {
+                messageElement.classList.add('text-danger');
+            }
+            
+            const otherMessageElement = messageElement === mobilePromoMessage ? promoMessage : mobilePromoMessage;
+            if (otherMessageElement) {
+                otherMessageElement.innerText = message;
+                otherMessageElement.classList.remove('text-success', 'text-danger');
+                if (type === 'success') {
+                    otherMessageElement.classList.add('text-success');
+                } else {
+                    otherMessageElement.classList.add('text-danger');
+                }
+            }
+        }
+
+        function handleOrderClick() {
+            if (!deliverySelect || deliverySelect.value === '0') {
+                alert('Silakan pilih metode pengiriman terlebih dahulu!');
+                return;
+            }
+
+            const payload = {
+                kurir: deliverySelect.value,
+                ongkir: ongkirCost,
+                notes: document.getElementById('notesInput') ? document.getElementById('notesInput').value : '',
+                promo_code: hiddenPromo.value,
+                promo_discount: promoDiscount
+            };
+
+            if (loadingOverlay) loadingOverlay.style.display = 'flex';
+            if (btnOrder) btnOrder.disabled = true;
+            if (btnOrderDesktop) btnOrderDesktop.disabled = true;
+
+            fetch(`/checkout/pay/${orderId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (loadingOverlay) loadingOverlay.style.display = 'none';
+                if (btnOrder) btnOrder.disabled = false;
+                if (btnOrderDesktop) btnOrderDesktop.disabled = false;
+
+                if (!data.success) {
+                    alert('Error: ' + data.message);
+                    return;
+                }
+
+                // Snap Midtrans
+                if (typeof snap !== 'undefined') {
+                    snap.pay(data.snap_token, {
+                        onSuccess: res => {
+                            fetch(`/checkout/payment-success/${orderId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                },
+                                body: JSON.stringify({
+                                    transaction_id: res.transaction_id,
+                                    notes: payload.notes,
+                                    kurir: payload.kurir,
+                                    ongkir: payload.ongkir,
+                                    promo_discount: payload.promo_discount
+                                })
+                            })
+                            .then(r => {
+                                if (r.ok) {
+                                    window.location.href = '/keranjang';
+                                } else {
+                                    alert('Gagal update order');
+                                }
+                            });
+                        },
+                        onPending: () => window.location.href = '/keranjang',
+                        onError: err => alert('Pembayaran gagal: ' + err.status_message),
+                        onClose: () => alert('Anda menutup popup tanpa membayar')
+                    });
+                }
+            })
+            .catch(err => {
+                if (loadingOverlay) loadingOverlay.style.display = 'none';
+                if (btnOrder) btnOrder.disabled = false;
+                if (btnOrderDesktop) btnOrderDesktop.disabled = false;
+                // console.error(err);
+                alert('Kesalahan jaringan, coba ulang.');
+            });
+        }
     </script>
 
     @if ($isset)
@@ -1519,7 +1555,6 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Ongkir response', data);
                     deliveryMethod.innerHTML = '';
 
                     const services = Array.isArray(data.details)
@@ -1542,8 +1577,7 @@
 
                             const option = document.createElement('option');
                             option.value = `${item.code}:${item.service}`;
-                            option.textContent =
-                                `${item.name || item.code} - ${item.service} (Rp ${costValue.toLocaleString('id-ID')})`;
+                            option.textContent = `${item.name || item.code} - ${item.service} (Rp ${costValue.toLocaleString('id-ID')})`;
                             option.setAttribute('data-cost', costValue);
                             deliveryMethod.appendChild(option);
                         });
@@ -1556,7 +1590,7 @@
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    // console.error('Error:', error);
                     deliveryMethod.innerHTML = '<option value="0">Gagal memuat ongkir</option>';
                 });
             });

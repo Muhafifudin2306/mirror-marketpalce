@@ -17,8 +17,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&family=Lora:wght@600;700&display=swap" rel="stylesheet"> 
     <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
-    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
+   
+    {{-- <script type="text/javascript" 
+  src="https://app.midtrans.com/snap/snap.js"
+  data-client-key="{{ config('midtrans.client_key') }}">
+</script> --}}
+
+<script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
         data-client-key="{{ config('midtrans.client_key') }}"></script>
+
         
     <!-- Icon Font Stylesheet -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" rel="stylesheet">
@@ -43,9 +50,12 @@
     <link rel="stylesheet" href="{{  asset('bootstrap/bootstrap.min.css') }}" />
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <!-- Midtrans Snap JS -->
+{{-- <script src="https://app.midtrans.com/snap/snap.js"
+        data-client-key="{{ config('midtrans.client_key') }}">
+</script> --}}
+<!-- Midtrans Snap JS -->
     <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
+
 
     <style>
         /* WhatsApp Floating Button */

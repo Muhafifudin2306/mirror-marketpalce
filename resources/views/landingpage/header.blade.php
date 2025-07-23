@@ -346,12 +346,12 @@
                                                     <p class="cart-item-note">{{ Str::limit($item->order->notes, 25) }}</p>
                                                 @endif
                                                 <div class="cart-item-price">
-                                                    {{ $item->qty }} × Rp {{ number_format($finalPrice, 0, ',', '.') }}
-                                                    @if($prod->isOnSale())
+                                                    {{ $item->qty }} × Rp {{ number_format($item->subtotal / $item->qty, 0, ',', '.') }}
+                                                    {{-- @if($prod->isOnSale())
                                                         <small class="text-muted" style="text-decoration: line-through; font-size: 0.65rem;">
                                                             Rp {{ number_format($prod->price * $area, 0, ',', '.') }}
                                                         </small>
-                                                    @endif
+                                                    @endif --}}
                                                 </div>
                                             </div>
                                         </div>
@@ -506,13 +506,17 @@
                 <h2 class="mb-0 search-title-1">Udah Siap</h2>
                 <h2 class="mb-4 search-title-2">Cetak Hari Ini?</h2>
 
-                <!-- Input minimalis -->
                 <form action="{{ route('landingpage.products') }}" method="GET" class="w-100 search-form">
                     <div class="position-relative">
-                        <input type="text" name="search"
+                        <input type="text" name="search" id="searchInput"
                             class="form-control search-input"
                             placeholder="lagi cari produk apa?"
                             value="{{ $search }}">
+                        
+                        <button type="button" id="clearSearchBtn" class="search-clear-btn" style="display: none;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        
                         <button type="submit" class="search-btn">
                             <i class="fas fa-search"></i>
                         </button>
@@ -976,6 +980,35 @@ document.head.appendChild(style);
     }
 </script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const clearBtn = document.getElementById('clearSearchBtn');
+        
+        if (searchInput && clearBtn) {
+            function toggleClearButton() {
+                if (searchInput.value.trim().length > 0) {
+                    clearBtn.style.display = 'block';
+                } else {
+                    clearBtn.style.display = 'none';
+                }
+            }
+            
+            toggleClearButton();
+            
+            searchInput.addEventListener('input', toggleClearButton);
+            
+            clearBtn.addEventListener('click', function() {
+                searchInput.value = '';
+                clearBtn.style.display = 'none';
+                searchInput.focus();
+            });
+            
+            searchInput.addEventListener('focus', toggleClearButton);
+        }
+    });
+</script>
+
 <style>
 /* ===== NAVBAR ICON SPACING ===== */
 .nav-icon-btn {
@@ -1347,13 +1380,56 @@ document.head.appendChild(style);
     right: 1rem !important;
     opacity: 1 !important;
     pointer-events: auto !important;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
     border-radius: 50%;
-    width: 36px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+#searchCloseBtn:hover {
+    background: rgba(0, 0, 0, 0.5);
+    transform: scale(1.05);
+}
+
+#searchCloseBtn::before {
+    content: '×';
+    color: #ffffff !important;
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 1;
+}
+
+.search-clear-btn {
+    position: absolute;
+    top: 50%;
+    right: 45px;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.8rem;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.search-clear-btn:hover {
+    background: rgba(255, 199, 76, 0.2);
+    border-color: #ffc74c;
+    color: #ffc74c;
+    transform: translateY(-50%) scale(1.1);
 }
 
 .search-title-1,

@@ -194,6 +194,17 @@
     text-decoration: underline;
   }
 
+  .express-badge {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    margin-left: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
   /* Responsive adjustments */
   @media (max-width: 768px) {
     .cart-item {
@@ -706,6 +717,13 @@
           </div>
         @else
           @foreach($items as $item)
+          @php
+            $baseSubtotal = $item->subtotal;
+            $isExpress = $item->order->express == 1;
+            $finalSubtotal = $isExpress ? $baseSubtotal * 1.5 : $baseSubtotal;
+            
+            $pricePerUnit = $baseSubtotal / $item->qty;
+          @endphp
           <div class="cart-item">
             <div class="flex-shrink-0">
                 @php
@@ -724,6 +742,9 @@
                   @if($item->product->additional_size && $item->product->additional_unit)
                       {{ $item->product->additional_size }} {{ $item->product->additional_unit }}
                   @endif
+                  @if($isExpress)
+                    <span class="express-badge">EXPRESS</span>
+                  @endif
                 </h5>
                 <ul class="details">
                   @if(in_array($item->product->additional_unit, ['cm','m']))
@@ -739,18 +760,21 @@
                     @endif
                   </li>
                   <li>Catatan: {{ Str::limit($item->order->notes ?? '-', 30) }}</li>
-                  <li class="d-none d-md-block">Jumlah: <input type="number" class="qty-input" data-id="{{ $item->id }}" value="{{ $item->qty }}" min="1"></li>
+                  <li class="d-none d-md-block">Jumlah: <input type="number" class="qty-input" data-id="{{ $item->id }}" data-is-express="{{ $isExpress ? 1 : 0 }}" data-base-price="{{ $pricePerUnit }}" value="{{ $item->qty }}" min="1"></li>
                 </ul>
               </div>
               
               <div class="cart-item-bottom d-md-none">
                 <div class="qty-wrapper">
                   <span class="qty-label">Qty:</span>
-                  <input type="number" class="qty-input" data-id="{{ $item->id }}" value="{{ $item->qty }}" min="1">
+                  <input type="number" class="qty-input" data-id="{{ $item->id }}" data-is-express="{{ $isExpress ? 1 : 0 }}" data-base-price="{{ $pricePerUnit }}" value="{{ $item->qty }}" min="1">
                 </div>
                 <div class="subtotal-mobile">
                   <span class="subtotal-item">Subtotal</span>
-                  <span class="subtotal-item"><strong>Rp {{ number_format($item->subtotal,0,',','.') }}</strong></span>
+                  <span class="subtotal-item item-subtotal-display"><strong>Rp {{ number_format($finalSubtotal,0,',','.') }}</strong></span>
+                  @if($isExpress)
+                    <small style="color: #ff6b6b; font-size: 0.6rem; display: block;">Termasuk biaya express (+50%)</small>
+                  @endif
                 </div>
               </div>
               
@@ -772,9 +796,12 @@
                     </button>
                   </form>
                 </div>
-                <div>
+                <div style="text-align: right;">
                   <span class="subtotal-item">Subtotal:</span>
-                  <strong class="subtotal-item">Rp {{ number_format($item->order->subtotal,0,',','.') }}</strong>
+                  <strong class="subtotal-item item-subtotal-display">Rp {{ number_format($finalSubtotal,0,',','.') }}</strong>
+                  @if($isExpress)
+                    <br><small style="color: #ff6b6b; font-size: 0.65rem;">Termasuk biaya express (+50%)</small>
+                  @endif
                 </div>
               </div>
               
@@ -811,7 +838,10 @@
               </strong>
             </div>
           </div>
-          <small style="color:#555; font-size:0.75rem; font-family: 'Poppins', sans-serif;">Gunakan tombol Checkout di setiap produk</small>
+          <small style="color:#555; font-size:0.75rem; font-family: 'Poppins', sans-serif;">
+            {{-- Sudah termasuk biaya express untuk item yang dipilih.<br> --}}
+            Gunakan tombol Checkout di setiap produk
+          </small>
         </div>
       </div>
 
@@ -844,23 +874,27 @@
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.qty-input').forEach(input => {
-      if (!input.dataset.origQty) {
-        input.dataset.origQty = input.defaultValue;
-        const subtotalEl = input.closest('.cart-item').querySelector('strong');
-        input.dataset.origSubtotal = subtotalEl.innerText.replace(/[^\d]/g, '');
-      }
-
       input.addEventListener('change', function () {
-        const itemId       = this.dataset.id;
-        const newQty       = parseInt(this.value, 10);
-        const origQty      = parseInt(this.dataset.origQty, 10);
-        const origSubtotal = parseInt(this.dataset.origSubtotal, 10);
+        const itemId = this.dataset.id;
+        const newQty = parseInt(this.value, 10);
+        const isExpress = parseInt(this.dataset.isExpress, 10);
+        const basePrice = parseFloat(this.dataset.basePrice);
 
-        const pricePerUnit = origSubtotal / origQty;
-        const newSubtotal  = Math.round(pricePerUnit * newQty);
+        const newBaseSubtotal = basePrice * newQty;
+        
+        const newFinalSubtotal = isExpress ? newBaseSubtotal * 1.5 : newBaseSubtotal;
 
-        const subtotalEl = this.closest('.cart-item').querySelector('strong');
-        subtotalEl.innerText = 'Rp ' + newSubtotal.toLocaleString();
+        const cartItem = this.closest('.cart-item');
+        
+        const desktopSubtotal = cartItem.querySelector('.d-none.d-md-flex .item-subtotal-display');
+        if (desktopSubtotal) {
+          desktopSubtotal.innerHTML = 'Rp ' + newFinalSubtotal.toLocaleString('id-ID');
+        }
+        
+        const mobileSubtotal = cartItem.querySelector('.subtotal-mobile .item-subtotal-display');
+        if (mobileSubtotal) {
+          mobileSubtotal.innerHTML = '<strong>Rp ' + newFinalSubtotal.toLocaleString('id-ID') + '</strong>';
+        }
 
         fetch(`/keranjang/itemqty/${itemId}`, {
           method: 'POST',
@@ -874,10 +908,35 @@
         .then(data => {
           if (!data.success) {
             alert('Gagal update qty');
+            this.value = this.defaultValue;
+            
+            const originalSubtotal = isExpress ? (basePrice * this.defaultValue * 1.5) : (basePrice * this.defaultValue);
+            if (desktopSubtotal) {
+              desktopSubtotal.innerHTML = 'Rp ' + originalSubtotal.toLocaleString('id-ID');
+            }
+            if (mobileSubtotal) {
+              mobileSubtotal.innerHTML = '<strong>Rp ' + originalSubtotal.toLocaleString('id-ID') + '</strong>';
+            }
             return;
           }
+          
           document.getElementById('cart-summary').innerText =
-            'Rp ' + parseInt(data.newCartSubtotal,10).toLocaleString();
+            'Rp ' + parseInt(data.newCartSubtotal, 10).toLocaleString('id-ID');
+            
+          this.defaultValue = newQty;
+        })
+        .catch(err => {
+          console.error('Error:', err);
+          alert('Terjadi kesalahan saat update qty');
+          
+          this.value = this.defaultValue;
+          const originalSubtotal = isExpress ? (basePrice * this.defaultValue * 1.5) : (basePrice * this.defaultValue);
+          if (desktopSubtotal) {
+            desktopSubtotal.innerHTML = 'Rp ' + originalSubtotal.toLocaleString('id-ID');
+          }
+          if (mobileSubtotal) {
+            mobileSubtotal.innerHTML = '<strong>Rp ' + originalSubtotal.toLocaleString('id-ID') + '</strong>';
+          }
         });
       });
     });

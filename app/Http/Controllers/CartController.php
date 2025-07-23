@@ -24,6 +24,25 @@ class CartController extends Controller
         $this->midtransService = $midtransService;
     }
 
+    private function calculateSubtotalWithExpress($orderProduct)
+    {
+        $baseSubtotal = $orderProduct->subtotal;
+        $isExpress = $orderProduct->order->express == 1;
+        
+        return $isExpress ? $baseSubtotal * 1.5 : $baseSubtotal;
+    }
+
+    private function calculateCartTotal($orders)
+    {
+        $total = 0;
+        foreach ($orders as $order) {
+            foreach ($order->orderProducts as $orderProduct) {
+                $total += $this->calculateSubtotalWithExpress($orderProduct);
+            }
+        }
+        return $total;
+    }
+
     public function index()
     {
         $orders = Order::with('orderProducts.product.images')
@@ -32,13 +51,12 @@ class CartController extends Controller
                ->get();
 
         $items = $orders->pluck('orderProducts')->flatten();
-        $subTotal = $orders->sum('subtotal');
+        $subTotal = $this->calculateCartTotal($orders);
 
         return view('landingpage.keranjang', [
             'items'    => $items,
             'subTotal' => $subTotal,
         ]);
-
     }
 
     /**
@@ -65,20 +83,35 @@ class CartController extends Controller
             'qty' => 'required|integer|min:1'
         ]);
 
-        $orderProduct->qty = $request->qty;
-        $orderProduct->subtotal = $orderProduct->qty * ($orderProduct->product->price ?? 0);
+        $oldQty = $orderProduct->qty;
+        $newQty = $request->qty;
+        
+        $pricePerUnit = $oldQty > 0 ? ($orderProduct->subtotal / $oldQty) : 0;
+        
+        $orderProduct->qty = $newQty;
+        $orderProduct->subtotal = $pricePerUnit * $newQty;
         $orderProduct->save();
 
         $order = $orderProduct->order;
         $order->subtotal = $order->orderProducts->sum('subtotal');
         $order->save();
 
-        return response()->json(['success' => true]);
+        $orders = Order::with('orderProducts')
+                     ->where('user_id', Auth::id())
+                     ->where('order_status', 0)
+                     ->get();
+        
+        $newCartSubtotal = $this->calculateCartTotal($orders);
+        
+        $itemSubtotalWithExpress = $this->calculateSubtotalWithExpress($orderProduct);
+
+        return response()->json([
+            'success' => true,
+            'newCartSubtotal' => $newCartSubtotal,
+            'itemSubtotal' => $itemSubtotalWithExpress
+        ]);
     }
 
-    /**
-     * Hapus satu item dari keranjang
-     */
     public function remove($orderProductId)
     {
         $orderProduct = OrderProduct::with('order')
@@ -105,38 +138,65 @@ class CartController extends Controller
 
     public function editOrderProduct(OrderProduct $orderProduct)
     {
-        $product = $orderProduct->product->load('label.finishings', 'images', 'discounts');
-
-        // Ambil diskon aktif pertama (jika ada)
-        $discount = $product->discounts->first();
-        $basePrice = $product->price;
-
-        // Hitung diskon (fix atau persen)
-        $finalBase = $basePrice;
-        if ($discount) {
-            if ($discount->discount_percent) {
-                $finalBase -= $basePrice * $discount->discount_percent / 100;
-            } elseif ($discount->discount_fix) {
-                $finalBase -= $discount->discount_fix;
+        $product = $orderProduct->product->load([
+            'label.finishings', 
+            'images', 
+            'variants' => function($q) {
+                $q->orderBy('category')->orderBy('value');
+            },
+            'discounts' => function($q) {
+                $q->where('start_discount', '<=', now())
+                ->where('end_discount', '>=', now());
             }
+        ]);
+
+        $bestDiscount = $product->getBestDiscount();
+        $finalBase = $product->getDiscountedPrice();
+
+        $variantCategories = collect();
+        if ($product->hasVariants()) {
+            $selectedVariantIds = json_decode($orderProduct->selected_variants ?? '[]', true);
+            
+            $variantCategories = $product->variants->groupBy('category')->map(function($variants, $category) use ($selectedVariantIds) {
+                return [
+                    'category' => $category,
+                    'display_name' => ucfirst($category),
+                    'variants' => $variants->map(function($variant) use ($selectedVariantIds) {
+                        $numericPrice = (float) str_replace(',', '', $variant->price);
+                        return [
+                            'id' => $variant->id,
+                            'value' => $variant->value,
+                            'price' => $numericPrice,
+                            'formatted_price' => $numericPrice > 0 ? '+' . number_format($numericPrice, 0, ',', '.') : '',
+                            'is_available' => $variant->is_available == 1,
+                            'is_selected' => in_array($variant->id, $selectedVariantIds)
+                        ];
+                    })
+                ];
+            })->values();
         }
 
-        return view('landingpage.product_detail', [
-            'product'        => $product,
-            'orderProduct'   => $orderProduct,
-            'finalBase'      => $finalBase,
-            'isEdit'         => true,
-            'bestProducts'   => Product::with('images')
-                                    ->withCount('orderProducts')
-                                    ->orderByDesc('order_products_count')
-                                    ->limit(4)
-                                    ->get(),
-        ]);
+        $bestProducts = Product::with('images')
+                            ->withCount('orderProducts')
+                            ->orderByDesc('order_products_count')
+                            ->limit(4)
+                            ->get();
+
+        return view('landingpage.product_detail', compact(
+            'product',
+            'orderProduct',
+            'finalBase',
+            'bestProducts',
+            'bestDiscount',
+            'variantCategories'
+        ))->with('isEdit', true);
     }
 
     public function updateOrderProduct(Request $request, OrderProduct $orderProduct)
     {
         $validated = $request->validate([
+            'selected_variants' => 'nullable|array',
+            'selected_variants.*' => 'exists:product_variants,id',
             'finishing_id'   => 'nullable|exists:finishings,id',
             'express'        => 'required|in:0,1',
             'waktu_deadline'  => 'nullable|required_if:express,1|date_format:H:i',
@@ -153,7 +213,23 @@ class CartController extends Controller
         DB::beginTransaction();
         try {
             $order = $orderProduct->order;
-            $product = $orderProduct->product->load('label.finishings', 'discounts');
+            $product = $orderProduct->product->load(['label.finishings', 'variants', 'discounts']);
+
+            if ($product->hasVariants()) {
+                $categories = $product->getAvailableCategories();
+                $selectedVariants = $validated['selected_variants'] ?? [];
+                
+                if (count($selectedVariants) !== count($categories)) {
+                    return back()->withErrors(['error' => 'Silakan pilih semua varian yang tersedia.'])->withInput();
+                }
+
+                foreach ($selectedVariants as $variantId) {
+                    $variant = $product->variants()->find($variantId);
+                    if (!$variant || $variant->is_available != 1) {
+                        return back()->withErrors(['error' => 'Varian yang dipilih tidak tersedia.'])->withInput();
+                    }
+                }
+            }
 
             if ($request->hasFile('order_design')) {
                 if ($order->order_design) {
@@ -182,9 +258,8 @@ class CartController extends Controller
             $order->proof_qty      = $validated['proof_qty'] ?? null;
             $order->notes          = $validated['notes'] ?? null;
 
-            // Hitung ulang subtotal
-            $basePrice = $product->price;
-            $discount  = $product->discounts->first();
+            $basePrice = (float) $product->price;
+            $discount  = $product->getBestDiscount();
 
             if ($discount) {
                 if ($discount->discount_percent) {
@@ -194,7 +269,19 @@ class CartController extends Controller
                 }
             }
 
-            // Hitung luas
+            $variantPrice = 0;
+            $variantDetails = [];
+            if ($product->hasVariants() && !empty($validated['selected_variants'])) {
+                foreach ($validated['selected_variants'] as $variantId) {
+                    $variant = $product->variants()->find($variantId);
+                    if ($variant) {
+                        $numericPrice = (float) str_replace(',', '', $variant->price);
+                        $variantPrice += $numericPrice;
+                        $variantDetails[] = $variant->category . ': ' . $variant->value;
+                    }
+                }
+            }
+
             $area = 1;
             if (in_array($product->additional_unit, ['cm', 'm'])
                 && $validated['length'] && $validated['width']
@@ -206,32 +293,29 @@ class CartController extends Controller
                     : $l * $w;
             }
 
-            $subtotalHpl = $basePrice * $area * $validated['qty'];
+            $subtotalHpl = ($basePrice + $variantPrice) * $area * $validated['qty'];
 
-            // Finishing
             $finishing = null;
             $finPrice  = 0;
             if ($validated['finishing_id']) {
                 $finishing = $product->label->finishings->find($validated['finishing_id']);
-                $finPrice  = $finishing->finishing_price;
+                $finPrice  = $finishing ? $finishing->finishing_price : 0;
             }
             $subtotalFin = $finPrice * $validated['qty'];
 
-            // Total + express jika ada
-            $newSubtotal = $subtotalHpl + $subtotalFin;
-            if ($validated['express'] == 1) {
-                $newSubtotal *= 1.5;
-            }
+            $newSubtotalWithoutExpress = $subtotalHpl + $subtotalFin;
 
             $orderProduct->update([
-                'finishing_type' => $finishing->finishing_name ?? null,
+                'finishing_type' => $finishing ? $finishing->finishing_name : null,
+                'jenis_finishing' => $validated['finishing_id'] ?? null,
                 'length'         => $validated['length'] ?? null,
                 'width'          => $validated['width']  ?? null,
                 'qty'            => $validated['qty'],
-                'subtotal'       => round($newSubtotal),
+                'subtotal'       => round($newSubtotalWithoutExpress),
+                'variant_details' => !empty($variantDetails) ? implode(', ', $variantDetails) : null,
+                'selected_variants' => !empty($validated['selected_variants']) ? json_encode($validated['selected_variants']) : null,
             ]);
 
-            // Update subtotal total
             $order->subtotal = $order->orderProducts->sum('subtotal');
             $order->save();
 
@@ -268,13 +352,19 @@ class CartController extends Controller
             ? DB::table('d_kecamatan')->where('id', $user->city)->value('nama')
             : null;
 
+        $expressFee = 0;
+        if ($order->express == 1) {
+            $expressFee = $item->subtotal * 0.5;
+        }
+
         return view('landingpage.checkout', [
             'item'  => $item,
             'order' => $order,
             'isset' => $isset,
             'provinceName' => $provinceName,
             'cityName'     => $cityName,
-            'districtName' => $districtName
+            'districtName' => $districtName,
+            'expressFee' => $expressFee
         ]);
     }
 
@@ -288,6 +378,11 @@ class CartController extends Controller
         $subtotal = $items->sum('subtotal');
         $item     = $items->first();
 
+        $expressFee = 0;
+        if ($order->express == 1) {
+            $expressFee = $subtotal * 0.5;
+        }
+
         $user  = Auth::user();
         $isset = $user->province && $user->city && $user->address && $user->postal_code;
 
@@ -299,7 +394,7 @@ class CartController extends Controller
             : null;
 
         return view('landingpage.checkout', compact(
-            'order','items','subtotal','isset','item','provinceName', 'cityName'
+            'order','items','subtotal','isset','item','provinceName', 'cityName','expressFee'
         ));
     }
 
@@ -326,8 +421,12 @@ class CartController extends Controller
             $promoCode = $request->input('promo_code', '');
             $promoDiscount = 0;
 
+            // dd($promoCode);
+
             if ($promoCode) {
                 $subtotal = $order->orderProducts->sum('subtotal');
+                $expressFee = $order->express == 1 ? $subtotal * 0.5 : 0;
+                $baseForDiscount = $subtotal + $expressFee;
                 $now = now();
 
                 $promo = PromoCode::where('code', $promoCode)
@@ -336,9 +435,11 @@ class CartController extends Controller
                     ->first();
 
                 if ($promo) {
-                    $promoDiscount = $promo->discount_percent
-                        ? $subtotal * ($promo->discount_percent / 100)
-                        : $promo->discount_fix;
+                    if ($promo->discount_percent) {
+                        $promoDiscount = $baseForDiscount * ($promo->discount_percent / 100);
+                    } else {
+                        $promoDiscount = $promo->discount_fix;
+                    }
 
                     if ($promo->max_discount && $promoDiscount > $promo->max_discount) {
                         $promoDiscount = $promo->max_discount;
@@ -424,23 +525,22 @@ class CartController extends Controller
             $ongkir = $request->input('ongkir', 0);
 
             $newSubTotal = $currentSubTotal + $ongkir;
-
             $order->update([
-                'order_status'        => 1,
-                'payment_status'      => 1,
-                'paid_at'             => now(),
-                'status_pengerjaan'   => 'verif_pesanan',
-                'status_pembayaran'   => 2,
-                'transaction_id'      => $request->input('transaction_id'),
-                'transaction_method'  => 1, // paid
-                'metode_transaksi'    => 3,
-                'metode_transaksi_paid' => 3,
-                'notes'               => $request->input('notes'),
-                'kurir'               => $request->input('kurir'),
-                'ongkir'              => $ongkir, 
-                'promocode_deduct'    => $request->input('promo_discount', 0),
-                'payment_at'          => Carbon::now(),
-                'paid_at'             => Carbon::now(),
+                'order_status'       => 1,
+                'payment_status'     => 1,
+                'paid_at'            => now(),
+                'status_pengerjaan'  => 'verif_pesanan',
+                'status_pembayaran'  => 2,
+                'transaction_id'     => $request->input('transaction_id'),
+                'transaction_method' => 1, //paid
+                'metode_transaksi'   => 3,
+                'metode_transaksi_paid'   => 3,
+                'notes'              => $request->input('notes'),
+                'kurir'              => $request->input('kurir'),
+                'ongkir'             => $ongkir,
+                'promocode_deduct'   => $request->input('promo_discount', 0),
+                'payment_at'         => Carbon::now(),
+                'paid_at'            => Carbon::now(),
                 'subtotal'           => $newSubTotal,
             ]);
 
@@ -587,9 +687,13 @@ class CartController extends Controller
             return response()->json(['valid'=>false,'message'=>'Kode promo tidak valid atau kadaluarsa.']);
         }
 
-        $diskon = $promo->discount_percent
-            ? $subtotal * ($promo->discount_percent/100)
-            : $promo->discount_fix;
+        if ($promo->discount_percent) {
+            $expressAmount = floatval($request->query('express_fee', 0));
+            $baseForDiscount = $subtotal + $expressAmount;
+            $diskon = $baseForDiscount * ($promo->discount_percent/100);
+        } else {
+            $diskon = $promo->discount_fix;
+        }
 
         if ($promo->max_discount && $diskon > $promo->max_discount) {
             $diskon = $promo->max_discount;

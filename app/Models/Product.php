@@ -28,12 +28,14 @@ class Product extends Model
         'description',
         'spesification_desc',
         'is_live',
+        'has_category'
     ];
 
     protected $casts = [
         'price'            => 'decimal:2',
         'long_product'     => 'decimal:2',
         'width_product'    => 'decimal:2',
+        'has_category' => 'boolean',
     ];
 
     public function label()
@@ -44,6 +46,164 @@ class Product extends Model
     public function images()
     {
         return $this->hasMany(ProductImage::class);
+    }
+
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class);
+    }
+
+    public function availableVariants()
+    {
+        return $this->hasMany(ProductVariant::class)->where('is_available', true);
+    }
+
+    public function getVariantsByCategoryAttribute()
+    {
+        return $this->variants->groupBy('category');
+    }
+
+    public function hasVariants()
+    {
+        return $this->has_category && $this->variants()->exists();
+    }
+
+    public function getMinVariantPrice()
+    {
+        if (!$this->hasVariants()) {
+            return 0;
+        }
+        
+        $variants = $this->variants()->get();
+        if ($variants->isEmpty()) {
+            return 0;
+        }
+        
+        $prices = $variants->map(function($variant) {
+            return (float) str_replace(',', '', $variant->price);
+        });
+        
+        return $prices->min();
+    }
+
+    public function getMaxVariantPrice()
+    {
+        if (!$this->hasVariants()) {
+            return 0;
+        }
+        
+        $variants = $this->variants()->get();
+        if ($variants->isEmpty()) {
+            return 0;
+        }
+        
+        $prices = $variants->map(function($variant) {
+            return (float) str_replace(',', '', $variant->price);
+        });
+        
+        return $prices->max();
+    }
+
+    public function getPriceRangeAttribute()
+    {
+        if (!$this->hasVariants()) {
+            return 'Rp ' . number_format($this->price, 0, ',', '.');
+        }
+
+        $minPrice = $this->price + $this->getMinVariantPrice();
+        $maxPrice = $this->price + $this->getMaxVariantPrice();
+
+        if ($minPrice == $maxPrice) {
+            return 'Rp ' . number_format($minPrice, 0, ',', '.');
+        }
+
+        return 'Rp ' . number_format($minPrice, 0, ',', '.') . ' - ' . number_format($maxPrice, 0, ',', '.');
+    }
+
+    public function getMinimumPrice()
+    {
+        if (!$this->hasVariants()) {
+            return $this->price;
+        }
+
+        return $this->price + $this->getMinVariantPrice();
+    }
+
+    public function getMaximumPrice()
+    {
+        if (!$this->hasVariants()) {
+            return $this->price;
+        }
+
+        return $this->price + $this->getMaxVariantPrice();
+    }
+
+    public function calculateFinalPrice($selectedVariants = [])
+    {
+        $basePrice = $this->getDiscountedPrice();
+        $variantPrice = 0;
+
+        if (!empty($selectedVariants) && $this->hasVariants()) {
+            foreach ($selectedVariants as $variantId) {
+                $variant = $this->variants()->find($variantId);
+                if ($variant && $variant->is_available == 1) {
+                    $variantPrice += (float) str_replace(',', '', $variant->price);
+                }
+            }
+        }
+
+        return $basePrice + $variantPrice;
+    }
+
+    public function getAvailableCategories()
+    {
+        return $this->variants()
+            ->select('category')
+            ->distinct()
+            ->pluck('category')
+            ->toArray();
+    }
+
+    public function getVariantsByCategory($category)
+    {
+        return $this->variants()->where('category', $category)->get();
+    }
+
+    public function hasAvailableVariantsInAllCategories()
+    {
+        if (!$this->hasVariants()) {
+            return true;
+        }
+
+        $categories = $this->getAvailableCategories();
+        
+        foreach ($categories as $category) {
+            $hasAvailable = $this->variants()
+                ->where('category', $category)
+                ->where('is_available', 1)
+                ->exists();
+                
+            if (!$hasAvailable) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    public function scopeLive($query)
+    {
+        return $query->where('is_live', true);
+    }
+
+    public function scopeWithVariants($query)
+    {
+        return $query->where('has_category', true)->has('variants');
+    }
+
+    public function scopeSingleProducts($query)
+    {
+        return $query->where('has_category', false);
     }
 
     public function orderProducts()

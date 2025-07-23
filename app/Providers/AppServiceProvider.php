@@ -132,18 +132,8 @@ class AppServiceProvider extends ServiceProvider
 
                 $cartCount = $cartItems->count();
                 
-                $subtotal = $cartItems->sum(function($item) {
-                    $basePrice = $item->product->getDiscountedPrice();
-                    
-                    $area = 1;
-                    if (in_array($item->product->additional_unit, ['cm', 'm']) && $item->length && $item->width) {
-                        $area = $item->product->additional_unit == 'cm'
-                            ? ($item->length / 100) * ($item->width / 100)
-                            : $item->length * $item->width;
-                    }
-                    
-                    return $basePrice * $area * $item->qty;
-                });
+                // ✅ GUNAKAN SUBTOTAL DARI DATABASE (sudah termasuk finishing + varian)
+                $subtotal = $cartItems->sum('subtotal');
 
                 $view->with(compact('cartItems', 'cartCount', 'subtotal'));
             }

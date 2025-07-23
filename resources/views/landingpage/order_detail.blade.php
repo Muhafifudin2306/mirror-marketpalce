@@ -40,7 +40,7 @@
   .status-processing { background-color: #5ee3e3; color: #444444; }
   .status-shipping { background-color: #abceff; color: #444444; }
   .status-completed { background-color: #0258d3; color: #ffffff; }
-  .status-cancelled { background-color: #721c24; color: #ffffff; }
+  .status-cancelled { background-color: #fc2865; color: #ffffff; }
 
   @media (max-width: 768px) {
       main .container.product-card {
@@ -473,6 +473,22 @@
               @endif
             </div>
           </div>
+
+          @if($variantCategories->isNotEmpty())
+            <div class="mb-2">
+              <label class="form-label"><b>VARIAN</b></label>
+              @foreach($variantCategories as $category)
+                @if($category['selected_variant'])
+                  <div class="form-control mb-1" style="height:40px; border-radius:56px; display:flex; align-items:center; background-color:#f8f9fa; font-size: 0.8rem;">
+                    <strong>{{ $category['display_name'] }}:</strong><span class="ms-2">{{ $category['selected_variant']->value }}</span>
+                    {{-- @if($category['selected_variant']->price > 0)
+                      <span class="ms-2 text-success">(+{{ number_format($category['selected_variant']->price, 0, ',', '.') }})</span>
+                    @endif --}}
+                  </div>
+                @endif
+              @endforeach
+            </div>
+          @endif
           
           @if($orderProduct->finishing_type)
           <div class="mb-2">
@@ -525,8 +541,8 @@
               <label class="form-label"><b>DESAIN CETAK</b></label>
               <div class="d-flex align-items-center" style="padding: 10px 16px; background-color:#f8f9fa; border-radius:12px;">
                 <i class="bi bi-file-earmark" style="margin-right:8px; font-size:1rem;"></i>
-                <a href="{{ asset('storage/landingpage/img/order_design/' . $order->order_design) }}" 
-                   target="_blank" class="text-decoration-none" style="font-size: 0.8rem;">
+                <a href="#" class="text-decoration-none" style="font-size: 0.8rem;"
+                  onclick="showFilePreview('{{ asset('storage/landingpage/img/order_design/' . $order->order_design) }}', '{{ $order->order_design }}')">
                   {{ $order->order_design }}
                 </a>
               </div>
@@ -537,8 +553,8 @@
               <label class="form-label"><b>DESAIN PREVIEW</b></label>
               <div class="d-flex align-items-center" style="padding: 10px 16px; background-color:#f8f9fa; border-radius:12px;">
                 <i class="bi bi-file-earmark-image" style="margin-right:8px; font-size:1rem;"></i>
-                <a href="{{ asset('storage/landingpage/img/order_design/' . $order->preview_design) }}" 
-                   target="_blank" class="text-decoration-none" style="font-size: 0.8rem;">
+                <a href="#" class="text-decoration-none" style="font-size: 0.8rem;"
+                  onclick="showFilePreview('{{ asset('storage/landingpage/img/order_design/' . $order->preview_design) }}', '{{ $order->preview_design }}')">
                   {{ $order->preview_design }}
                 </a>
               </div>
@@ -602,7 +618,12 @@
 
           <!-- Total Price -->
           <div style="border:1px solid #ccc; border-radius:12px; padding:16px 24px; display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-family:'Poppins'; font-size:0.72rem; color:#888; font-weight:500;">Total Harga</div>
+            <div>
+              <div style="font-family:'Poppins'; font-size:0.72rem; color:#888; font-weight:500;">Total Harga</div>
+              @if($order->express == 1)
+                <small style="color: #ff6b6b; font-size: 0.6rem;">Termasuk express (+50%)</small>
+              @endif
+            </div>
             <div style="font-family:'Poppins'; font-size:1.76rem; font-weight:600; color:#0439a0;">
               Rp {{ number_format($order->subtotal, 0, ',', '.') }}
             </div>
@@ -729,9 +750,69 @@
       </div>
     </div>
   </div>
+  <div class="modal fade" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="filePreviewModalLabel">Preview File</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <div id="filePreviewContent">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a id="downloadFileBtn" href="#" class="btn btn-success" download>
+            <i class="bi bi-download"></i> Download
+          </a>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </main>
 
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+  function showFilePreview(fileUrl, fileName) {
+    const modal = new bootstrap.Modal(document.getElementById('filePreviewModal'));
+    const modalTitle = document.getElementById('filePreviewModalLabel');
+    const previewContent = document.getElementById('filePreviewContent');
+    const downloadBtn = document.getElementById('downloadFileBtn');
+    
+    modalTitle.textContent = `Preview: ${fileName}`;
+    downloadBtn.href = fileUrl;
+    downloadBtn.download = fileName;
+    
+    const extension = fileName.split('.').pop().toLowerCase();
+    previewContent.innerHTML = '';
+    
+    if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
+      previewContent.innerHTML = `
+        <img src="${fileUrl}" class="img-fluid" style="max-height: 500px;" alt="Preview">
+      `;
+    } else if (extension === 'pdf') {
+      previewContent.innerHTML = `
+        <embed src="${fileUrl}" width="100%" height="500px" type="application/pdf">
+        <p class="mt-2 text-muted">Jika PDF tidak tampil, <a href="${fileUrl}" target="_blank">klik di sini</a></p>
+      `;
+    } else if (['svg'].includes(extension)) {
+      previewContent.innerHTML = `
+        <img src="${fileUrl}" class="img-fluid" style="max-height: 500px;" alt="SVG Preview">
+      `;
+    } else {
+      previewContent.innerHTML = `
+        <div class="text-center py-5">
+          <i class="bi bi-file-earmark-zip" style="font-size: 4rem; color: #6c757d;"></i>
+          <h5 class="mt-3">${fileName}</h5>
+          <p class="text-muted">File ini tidak dapat di-preview.<br>Silakan download untuk melihat isi file.</p>
+        </div>
+      `;
+    }
+    
+    modal.show();
+  }
+</script>
 <script>
   // Carousel thumbnail functionality
   const carousel = document.getElementById('productCarousel');

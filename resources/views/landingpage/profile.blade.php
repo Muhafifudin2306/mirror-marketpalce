@@ -792,14 +792,10 @@
                     <div class="col-lg-3">
                         <div class="sidebar-filter nav flex-column nav-pills me-3" id="sidebarTabs" role="tablist"
                             style="font-weight: 200 !important;">
-                            <a class="nav-link active" id="tab-orders" data-bs-toggle="pill" data-bs-target="#pane-orders">Pesanan
-                                Saya</a>
-                            <a class="nav-link" id="tab-profile" data-bs-toggle="pill"
-                                data-bs-target="#pane-profile">Profil Saya</a>
-                            <a class="nav-link" href="{{ route('landingpage.chats') }}">Chat
-                                Saya</a>
-                            <a class="nav-link" id="tab-notif" data-bs-toggle="pill"
-                                data-bs-target="#pane-notif">Notifikasi</a>
+                            <a class="nav-link active" id="tab-orders" data-bs-toggle="pill" data-bs-target="#pane-orders">Pesanan Saya</a>
+                            <a class="nav-link" id="tab-profile" data-bs-toggle="pill" data-bs-target="#pane-profile" href="#pane-profile">Profil Saya</a>
+                            <a class="nav-link" href="{{ route('landingpage.chats') }}">Chat Saya</a>
+                            <a class="nav-link" id="tab-notif" data-bs-toggle="pill" data-bs-target="#pane-notif">Notifikasi</a>
                         </div>
                     </div>
 
@@ -825,7 +821,12 @@
                                                 <tr class="border-bottom">
                                                     <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{{ 'INV' . substr($order->spk, 3, strpos($order->spk, '-') - 3) }}</td>
                                                     <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{!! $order->created_at->locale('id')->translatedFormat('l, d M') . '<br>' . $order->created_at->translatedFormat('Y') !!}</td>
-                                                    <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Rp {{ number_format($order->subtotal, 0, ',', '.') }}</td>
+                                                    <td>
+                                                        Rp {{ number_format($order->subtotal, 0, ',', '.') }}
+                                                        @if($order->express == 1)
+                                                            <br><small style="color: #ff6b6b; font-size: 0.55rem;">Termasuk express (+50%)</small>
+                                                        @endif
+                                                    </td>
                                                     <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">
                                                         @php
                                                         switch 
@@ -861,7 +862,7 @@
                                                             $seclabel = 'Diterima';
                                                             break;
                                                         case 9:
-                                                            $badge = '#721c24';
+                                                            $badge = '#fc2865';
                                                             $foncol = '#fffff';
                                                             $firlabel = 'Order';
                                                             $seclabel = 'Dibatalkan';
@@ -1208,6 +1209,12 @@
                 document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
                 document.getElementById('tab-orders')?.classList.add('active');
                 document.getElementById('pane-orders')?.classList.add('show', 'active');
+            }
+            else if (hash === '#pane-profile') {
+                document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('show', 'active'));
+                document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+                document.getElementById('tab-profile')?.classList.add('active');
+                document.getElementById('pane-profile')?.classList.add('show', 'active');
             }
 
             const btnEdit = document.getElementById('btnEdit');

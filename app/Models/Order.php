@@ -63,7 +63,9 @@ class Order extends Model
         'payment_at',
         'pickup',
         'bukti_bayar',
-        'bukti_lunas'
+        'bukti_lunas',
+        'design_link',
+        'preview_link'
     ];
 
     public function getOriginalPrice()

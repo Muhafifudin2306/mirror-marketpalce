@@ -26,6 +26,14 @@ class ProfileController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        $orders = $orders->map(function ($order) {
+            $order->total_with_express = $order->express == 1 
+                ? $order->subtotal * 1.5 
+                : $order->subtotal;
+            
+            return $order;
+        });
+
         $provinsiId = DB::table('d_provinsi')
                      ->where('id', $user->province)
                      ->pluck('id')
@@ -93,6 +101,31 @@ class ProfileController extends Controller
             }
         ]);
 
+        $product->load([
+            'variants' => function($q) {
+                $q->orderBy('category')->orderBy('value');
+            },
+            'discounts' => function($q) {
+                $q->where('start_discount', '<=', now())
+                ->where('end_discount', '>=', now());
+            }
+        ]);
+
+        $variantCategories = collect();
+        if ($product->hasVariants()) {
+            $selectedVariantIds = json_decode($orderProduct->selected_variants ?? '[]', true);
+            
+            $variantCategories = $product->variants->groupBy('category')->map(function($variants, $category) use ($selectedVariantIds) {
+                return [
+                    'category' => $category,
+                    'display_name' => ucfirst($category),
+                    'selected_variant' => $variants->first(function($variant) use ($selectedVariantIds) {
+                        return in_array($variant->id, $selectedVariantIds);
+                    })
+                ];
+            })->values();
+        }
+
         switch ($order->order_status) {
             case 0:
                 $badge = '#ffd782';
@@ -156,6 +189,10 @@ class ProfileController extends Controller
 
         $isEdit = false;
 
+        $totalWithExpress = $order->express == 1 
+            ? $order->subtotal * 1.5 
+            : $order->subtotal;
+
         return view('landingpage.order_detail', compact(
             'order',
             'orderProduct',
@@ -165,7 +202,9 @@ class ProfileController extends Controller
             'badge',
             'foncol',
             'firlabel',
-            'seclabel'
+            'seclabel',
+            'variantCategories',
+            'totalWithExpress'
         ));
     }
 

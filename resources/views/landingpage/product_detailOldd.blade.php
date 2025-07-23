@@ -274,77 +274,6 @@
     font-weight: bold;
     color: #fff;
   }
-
-  .variant-section {
-    margin-bottom: 1.5rem;
-  }
-  .variant-category {
-    margin-bottom: 1rem;
-  }
-  .variant-category-title {
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 0.5rem;
-    text-transform: capitalize;
-  }
-  .variant-options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .variant-option {
-    padding: 8px 16px;
-    border: 2px solid #e9ecef;
-    border-radius: 20px;
-    background: #fff;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 500;
-    text-align: center;
-    min-width: 60px;
-    position: relative;
-  }
-  .variant-option:hover {
-    border-color: #0439a0;
-    transform: translateY(-1px);
-  }
-  .variant-option.selected {
-    background: #0439a0;
-    border-color: #0439a0;
-    color: #fff;
-  }
-  .variant-option.disabled {
-    background: #f8f9fa;
-    border-color: #e9ecef;
-    color: #adb5bd;
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
-  .variant-option.disabled:hover {
-    transform: none;
-    border-color: #e9ecef;
-  }
-  .variant-option .price-add {
-    display: block;
-    font-size: 0.65rem;
-    font-weight: 400;
-    margin-top: 2px;
-    opacity: 0.8;
-  }
-  .variant-option.disabled .price-add {
-    opacity: 0.5;
-  }
-  .variant-option .stock-status {
-    font-size: 0.6rem;
-    font-weight: 400;
-    color: #dc3545;
-    margin-top: 2px;
-  }
-
 @media (max-width: 768px) {
   .container-fluid.px-4 {
     padding-left: 8px !important;
@@ -358,6 +287,7 @@
   
   .cta-overlay {
     left: -10% !important;
+    /* padding: 0 16px; */
     top: 50% !important;
   }
   
@@ -603,21 +533,6 @@
   top: 30% !important;
   transform: translateY(-50%) !important;
 }
-
-.variant-options {
-  gap: 6px !important;
-}
-.variant-option {
-  padding: 6px 12px !important;
-  font-size: 0.7rem !important;
-  min-width: 50px !important;
-}
-.variant-option .price-add {
-  font-size: 0.6rem !important;
-}
-.variant-option .stock-status {
-  font-size: 0.55rem !important;
-}
 }
 
 @media (max-width: 480px) {
@@ -732,12 +647,14 @@
     <div class="container product-card mobile-spacing" style="margin-top:-150px;">
       @php
         $base = $product->price;
-        $final = $product->getDiscountedPrice();
+        $final = $product->getDiscountedPrice(); // Gunakan method dari model
         $bestDiscount = $product->getBestDiscount();
       @endphp
       <div class="row g-5 g-md-5 g-2">
+        <!-- Carousel and thumbnails -->
         @php $thumbs = $product->images->take(4); @endphp
         <div class="col-lg-7">
+          <!-- Sticky wrapper -->
           <div class="sticky-left">
             <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
               <div class="carousel-inner carousel-container">
@@ -787,6 +704,7 @@
               </button>
             </div>
 
+            {{-- Container thumbnail --}}
             <div class="d-flex mt-3 thumb-container"
                 style="justify-content: start; padding-left: 12px;">
               @if($thumbs->isEmpty())
@@ -820,6 +738,7 @@
             </div>
           </div>
         </div>
+        <!-- Form and details -->
         <div class="col-lg-5">
           <p class="price-label">*Mulai dari</p>
           @if($finalBase < $product->price)
@@ -865,6 +784,7 @@
               @method('PUT')
             @endif
 
+            {{-- Global alert error --}}
             @if($errors->any())
               <div class="alert alert-danger">
                 <ul class="mb-0">
@@ -899,6 +819,7 @@
                 @endif
             @endif
 
+            {{-- BAHAN --}}
             <div class="mb-3">
               <label class="form-label"><b>BAHAN</b><span class="required-asterisk">*</span></label>
               <select 
@@ -920,38 +841,7 @@
               <div class="field-error-message" id="product_id_error">Pilih bahan produk</div>
             </div>
 
-            @if($variantCategories->isNotEmpty())
-              <div class="variant-section">
-                @foreach($variantCategories as $category)
-                  <div class="variant-category">
-                    <div class="variant-category-title">
-                      {{ $category['display_name'] }}<span class="required-asterisk">*</span>
-                    </div>
-                    <div class="variant-options">
-                      @foreach($category['variants'] as $variant)
-                        <div class="variant-option {{ !$variant['is_available'] ? 'disabled' : '' }}" 
-                             data-variant-id="{{ $variant['id'] }}"
-                             data-category="{{ $category['category'] }}"
-                             data-price="{{ $variant['price'] }}"
-                             data-available="{{ $variant['is_available'] ? 'true' : 'false' }}">
-                          <div>{{ $variant['value'] }}</div>
-                          {{-- @if($variant['price'] > 0)
-                            <span class="price-add">{{ $variant['formatted_price'] }}</span>
-                          @endif
-                          @if(!$variant['is_available'])
-                            <span class="stock-status">(Kosong)</span>
-                          @endif --}}
-                        </div>
-                      @endforeach
-                    </div>
-                    <div class="field-error-message" id="variant_{{ $category['category'] }}_error">
-                      Pilih {{ strtolower($category['display_name']) }}
-                    </div>
-                  </div>
-                @endforeach
-              </div>
-            @endif
-
+            {{-- FINISHING --}}
             @if($product->label->finishings->isNotEmpty())
               <div class="mb-3">
                 <label class="form-label"><b>FINISHING</b></label>
@@ -965,7 +855,7 @@
                     <option 
                       value="{{ $fin->id }}" 
                       data-price="{{ $fin->finishing_price }}"
-                      {{ old('finishing_id', $currentFinishingId) == $fin->id ? 'selected':'' }}>
+                      {{ old('finishing_id', $currentFinishingId) == $fin->id ? 'selected':'' }} data-price="{{ $fin->finishing_price }}">
                       {{ $fin->finishing_name }} (Rp {{ number_format($fin->finishing_price,0,',','.') }})
                     </option>
                   @endforeach
@@ -976,6 +866,7 @@
               </div>
             @endif
 
+            {{-- EXPRESS & DEADLINE --}}
             <div class="row g-2 mb-3">
               <div class="col">
                 <label class="form-label"><b>KEBUTUHAN EXPRESS</b></label>
@@ -1006,6 +897,7 @@
               </div>
             </div>
 
+            {{-- PROOFING --}}
             <div class="row g-2 mb-3">
               <div class="col">
                 <label class="form-label"><b>KEBUTUHAN PROOFING</b></label>
@@ -1036,6 +928,7 @@
               </div>
             </div>
 
+            {{-- UPLOAD DESAIN --}}
             <div class="row g-2 mb-3">
               <div class="col">
                 <label class="form-label"><b>DESAIN CETAK</b><span class="required-asterisk">*</span></label>
@@ -1045,22 +938,12 @@
                   accept=".jpeg,.jpg,.png,.pdf,.svg,.cdr,.psd,.ai,.tiff,.rar,.zip" 
                   class="form-control @error('order_design') is-invalid @enderror custom-file-input-fix"
                   id="order_design"
-                  {{ !$isEdit ? 'required' : '' }}
+                  required
                 >
                 @error('order_design')
                   <span class="invalid-feedback" role="alert">{{ $message }}</span>
                 @enderror
                 <div class="field-error-message" id="order_design_error">File desain cetak wajib diupload</div>
-                @if($isEdit && $orderProduct && $orderProduct->order->order_design)
-                  <small class="text-success mt-1 d-block">
-                    <i class="bi bi-check-circle"></i> 
-                    File saat ini: 
-                    <a href="#" class="text-primary text-decoration-underline" 
-                      onclick="showFilePreview('{{ asset('storage/landingpage/img/order_design/' . $orderProduct->order->order_design) }}', '{{ $orderProduct->order->order_design }}')">
-                      {{ $orderProduct->order->order_design }}
-                    </a>
-                  </small>
-                @endif
               </div>
               <div class="col">
                 <label class="form-label"><b>DESAIN PREVIEW</b></label>
@@ -1074,16 +957,6 @@
                 @error('preview_design')
                   <span class="invalid-feedback" role="alert">{{ $message }}</span>
                 @enderror
-                @if($isEdit && $orderProduct && $orderProduct->order->preview_design)
-                  <small class="text-success mt-1 d-block">
-                    <i class="bi bi-check-circle"></i> 
-                    File saat ini: 
-                    <a href="#" class="text-primary text-decoration-underline" 
-                      onclick="showFilePreview('{{ asset('storage/landingpage/img/order_design/' . $orderProduct->order->preview_design) }}', '{{ $orderProduct->order->preview_design }}')">
-                      {{ $orderProduct->order->preview_design }}
-                    </a>
-                  </small>
-                @endif
               </div>
               <small class="form-text text-muted mt-2" style="font-family: 'Poppins', sans-serif; font-size: 0.7rem;">
                 Format yang diterima: .jpeg, .jpg, .png, .pdf, .svg, .cdr, .psd, .ai, .tiff.<br>
@@ -1091,6 +964,7 @@
               </small>
             </div>
 
+            {{-- DIMENSI (jika ada) --}}
             @if($product->width_product && $product->long_product)
               <div class="row g-2 mb-3">
                 <div class="col">
@@ -1102,14 +976,17 @@
                       id="panjang"
                       class="form-control @error('length') is-invalid @enderror"
                       placeholder="Panjang"
-                      value="{{ old('length', optional($orderProduct)->length ?? intval($product->long_product)) }}"
+                      value="{{ old('length', intval($product->long_product)) }}"
                       style="height:40px; border-radius:50px 0 0 50px; font-size:0.8rem; padding:0 1.6rem;"
-                      @if ($product->label->type != 'khusus')
+                      @if ($product->type != 'khusus')
                       readonly
                       @endif
                       required
                     >
-                    <span class="input-group-text">cm</span>
+                    <span class="input-group-text">
+                      {{-- {{ $product->additional_unit }} --}}
+                      cm
+                    </span>
                   </div>
                   @error('length')
                     <span class="invalid-feedback" role="alert">{{ $message }}</span>
@@ -1125,14 +1002,17 @@
                       id="lebar"
                       class="form-control @error('width') is-invalid @enderror"
                       placeholder="Lebar"
-                      value="{{ old('width', optional($orderProduct)->width ?? intval($product->width_product)) }}"
+                      value="{{ old('width', intval($product->width_product) ) }}"
                       style="height:40px; border-radius:50px 0 0 50px; font-size:0.8rem; padding:0 1.6rem;"
-                      @if ($product->label->type != 'khusus')
+                      @if ($product->type != 'khusus')
                       readonly
                       @endif
                       required
                     >
-                    <span class="input-group-text">cm</span>
+                    <span class="input-group-text">
+                      {{-- {{ $product->additional_unit }} --}}
+                      cm
+                    </span>
                   </div>
                   @error('width')
                     <span class="invalid-feedback" role="alert">{{ $message }}</span>
@@ -1142,6 +1022,7 @@
               </div>
             @endif
 
+            {{-- CATATAN --}}
             <div class="mb-3">
               <label class="form-label"><b>CATATAN</b></label>
               <textarea
@@ -1153,6 +1034,7 @@
               @enderror
             </div>
 
+            {{-- QTY & SUBMIT --}}
             <div class="row mb-3">
               <div class="col-12 col-md-auto mb-2 mb-md-0">
                 <label class="form-label"><b>QTY</b><span class="required-asterisk">*</span></label>
@@ -1179,12 +1061,14 @@
               </div>
             </div>
 
+            {{-- TOTAL HARGA --}}
             <div class="total-container">
               <div class="total-label">Total Harga</div>
               <div class="total-price">Rp <span id="totalHarga">0</span></div>
             </div>
           </form>
 
+          <!-- Informasi Produk custom -->
           <div class="mt-4">
             <div class="d-flex align-items-center justify-content-between w-100 border-0 bg-transparent pb-2 mb-2 border-bottom product-info-header" data-bs-toggle="collapse" data-bs-target="#collapseInfo" aria-expanded="false" aria-controls="collapseInfo">
               <div class="d-flex align-items-center">
@@ -1226,7 +1110,7 @@
       </div>
     </div>
   </div>
-  
+  <!-- Produk Lainnya -->
   <div class="container-fluid footer mt-5 pt-5 wow fadeIn other-products-section" data-wow-delay="0.1s">
     <div class="position-relative">
       <img
@@ -1310,72 +1194,12 @@
       </div>
     </div>
   </div>
-  <div class="modal fade" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="filePreviewModalLabel">Preview File</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body text-center">
-          <div id="filePreviewContent">
-          </div>
-        </div>
-        <div class="modal-footer">
-          <a id="downloadFileBtn" href="#" class="btn btn-success" download>
-            <i class="bi bi-download"></i> Download
-          </a>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-        </div>
-      </div>
-    </div>
-  </div>
 </main>
 
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
-<script>
-  function showFilePreview(fileUrl, fileName) {
-    const modal = new bootstrap.Modal(document.getElementById('filePreviewModal'));
-    const modalTitle = document.getElementById('filePreviewModalLabel');
-    const previewContent = document.getElementById('filePreviewContent');
-    const downloadBtn = document.getElementById('downloadFileBtn');
-    
-    modalTitle.textContent = `Preview: ${fileName}`;
-    
-    downloadBtn.href = fileUrl;
-    downloadBtn.download = fileName;
-    
-    const extension = fileName.split('.').pop().toLowerCase();
-    
-    previewContent.innerHTML = '';
-    
-    if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
-      previewContent.innerHTML = `
-        <img src="${fileUrl}" class="img-fluid" style="max-height: 500px;" alt="Preview">
-      `;
-    } else if (extension === 'pdf') {
-      previewContent.innerHTML = `
-        <embed src="${fileUrl}" width="100%" height="500px" type="application/pdf">
-        <p class="mt-2 text-muted">Jika PDF tidak tampil, <a href="${fileUrl}" target="_blank">klik di sini</a></p>
-      `;
-    } else if (['svg'].includes(extension)) {
-      previewContent.innerHTML = `
-        <img src="${fileUrl}" class="img-fluid" style="max-height: 500px;" alt="SVG Preview">
-      `;
-    } else {
-      previewContent.innerHTML = `
-        <div class="text-center py-5">
-          <i class="bi bi-file-earmark-zip" style="font-size: 4rem; color: #6c757d;"></i>
-          <h5 class="mt-3">${fileName}</h5>
-          <p class="text-muted">File ini tidak dapat di-preview.<br>Silakan download untuk melihat isi file.</p>
-        </div>
-      `;
-    }
-    
-    modal.show();
-  }
-</script>
+    @php
+        $productSizes = $product->toArray();
+    @endphp
 
 <script>
   document.getElementById('add-to-cart')?.addEventListener('submit', function(e) {
@@ -1473,318 +1297,236 @@
     }
   });
 
-  let selectedVariants = {};
-
-  document.addEventListener('DOMContentLoaded', function() {
-    const variantOptions = document.querySelectorAll('.variant-option');
-    const form = document.getElementById('orderForm');
+  // Form validation
+  document.getElementById('orderForm').addEventListener('submit', function(e) {
+    let hasError = false;
     
-    @if($variantCategories->isNotEmpty())
-      const requiredCategories = @json($variantCategories->pluck('category')->toArray());
-    @else
-      const requiredCategories = [];
-    @endif
-
-    @if($isEdit && isset($orderProduct))
-      @foreach($variantCategories as $category)
-        @foreach($category['variants'] as $variant)
-          @if($variant['is_selected'] ?? false)
-            selectedVariants['{{ $category['category'] }}'] = {
-              id: '{{ $variant['id'] }}',
-              price: {{ $variant['price'] }}
-            };
-          @endif
-        @endforeach
-      @endforeach
-      
-      variantOptions.forEach(option => {
-        const category = option.dataset.category;
-        if(selectedVariants[category] && selectedVariants[category].id == option.dataset.variantId) {
-          option.classList.add('selected');
-        }
-      });
-    @endif
-
-    variantOptions.forEach(option => {
-      option.addEventListener('click', function() {
-        if(this.classList.contains('disabled')) {
-          return;
-        }
-
-        const category = this.dataset.category;
-        const variantId = this.dataset.variantId;
-        const price = parseFloat(this.dataset.price) || 0;
-
-        const categoryOptions = document.querySelectorAll(`.variant-option[data-category="${category}"]`);
-        categoryOptions.forEach(opt => opt.classList.remove('selected'));
-        
-        this.classList.add('selected');
-        selectedVariants[category] = {
-          id: variantId,
-          price: price
-        };
-
-        computeTotal();
-      });
+    // Reset all error messages
+    document.querySelectorAll('.field-error-message').forEach(msg => {
+      msg.style.display = 'none';
     });
-
-    function validateVariants() {
-      let isValid = true;
-      let errorMessages = [];
-
-      document.querySelectorAll('.field-error-message[id^="variant_"]').forEach(msg => {
-        msg.style.display = 'none';
-      });
-
-      requiredCategories.forEach(category => {
-        if(!selectedVariants[category]) {
-          isValid = false;
-          const errorElement = document.getElementById(`variant_${category}_error`);
-          if(errorElement) {
-            errorElement.style.display = 'block';
-          }
-          errorMessages.push(`Pilih ${category}`);
-        }
-      });
-
-      return {isValid, errorMessages};
+    
+    // Check required fields
+    const productId = document.getElementById('product_id');
+    if(!productId.value) {
+      document.getElementById('product_id_error').style.display = 'block';
+      hasError = true;
     }
-
-    form.addEventListener('submit', function(e) {
-      let hasError = false;
-      let errorMessages = [];
-      
-      document.querySelectorAll('.field-error-message').forEach(msg => {
-        msg.style.display = 'none';
-      });
-
-      if(requiredCategories.length > 0) {
-        const variantValidation = validateVariants();
-        if(!variantValidation.isValid) {
-          hasError = true;
-          errorMessages = errorMessages.concat(variantValidation.errorMessages);
-        }
-      }
-
-      const productId = document.getElementById('product_id');
-      if(!productId.value) {
-        document.getElementById('product_id_error').style.display = 'block';
-        hasError = true;
-        errorMessages.push('Pilih bahan produk');
-      }
-      
-      const deadlineTime = document.getElementById('deadlineTime');
-      const needExpress = document.getElementById('needExpress');
-      if(needExpress.value === '1' && !deadlineTime.value) {
-        document.getElementById('deadline_error').style.display = 'block';
-        hasError = true;
-        errorMessages.push('Deadline jam wajib diisi jika memilih express');
-      }
-      
-      const proofQty = document.getElementById('proofQty');
-      const needProofing = document.getElementById('needProofing');
-      if(needProofing.value === '1' && (!proofQty.value || proofQty.value < 1)) {
-        document.getElementById('proof_qty_error').style.display = 'block';
-        hasError = true;
-        errorMessages.push('Qty proofing wajib diisi jika memilih proofing');
-      }
-      
-      const orderDesign = document.getElementById('order_design');
-      const isEdit = {{ $isEdit ? 'true' : 'false' }};
-      if(!isEdit && !orderDesign.files.length) {
-        document.getElementById('order_design_error').style.display = 'block';
-        hasError = true;
-        errorMessages.push('File desain cetak wajib diupload');
-      }
-      
-      const panjang = document.getElementById('panjang');
-      const lebar = document.getElementById('lebar');
-      
+    
+    const deadlineTime = document.getElementById('deadlineTime');
+    const needExpress = document.getElementById('needExpress');
+    if(needExpress.value === '1' && !deadlineTime.value) {
+      document.getElementById('deadline_error').style.display = 'block';
+      hasError = true;
+    }
+    
+    const proofQty = document.getElementById('proofQty');
+    const needProofing = document.getElementById('needProofing');
+    if(needProofing.value === '1' && (!proofQty.value || proofQty.value < 1)) {
+      document.getElementById('proof_qty_error').style.display = 'block';
+      hasError = true;
+    }
+    
+    const orderDesign = document.getElementById('order_design');
+    if(!orderDesign.files.length) {
+      document.getElementById('order_design_error').style.display = 'block';
+      hasError = true;
+    }
+    
+    const panjang = document.getElementById('panjang');
+    const lebar = document.getElementById('lebar');
+    const unit = document.getElementById('unit').value;
+    
+    if((panjang || lebar)) {
       if(panjang && (!panjang.value || panjang.value <= 0)) {
         document.getElementById('length_error').style.display = 'block';
         hasError = true;
-        errorMessages.push('Panjang wajib diisi');
       }
       if(lebar && (!lebar.value || lebar.value <= 0)) {
         document.getElementById('width_error').style.display = 'block';
         hasError = true;
-        errorMessages.push('Lebar wajib diisi');
       }
-      
-      const qty = document.getElementById('qty');
-      if(!qty.value || qty.value < 1) {
-        document.getElementById('qty_error').style.display = 'block';
-        hasError = true;
-        errorMessages.push('Qty minimal 1');
-      }
-      
-      if(hasError) {
-        e.preventDefault();
-        return false;
-      }
+    }
+    
+    const qty = document.getElementById('qty');
+    if(!qty.value || qty.value < 1) {
+      document.getElementById('qty_error').style.display = 'block';
+      hasError = true;
+    }
+    
+    if(hasError) {
+      e.preventDefault();
+    }
+  });
 
-      const hiddenInputsContainer = document.createElement('div');
-      for(const [category, variant] of Object.entries(selectedVariants)) {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'selected_variants[]';
-        input.value = variant.id;
-        hiddenInputsContainer.appendChild(input);
-      }
-      form.appendChild(hiddenInputsContainer);
-    });
-
-    const originalPrice = parseFloat(document.getElementById('basePrice').value) || 0;
-    const unit = document.getElementById('unit').value;
-    const finishingSelect = document.getElementById('finishingSelect');
+  // Real-time validation
+  document.getElementById('deadlineTime').addEventListener('blur', function() {
     const needExpress = document.getElementById('needExpress');
-    const panjangInput = document.getElementById('panjang');
-    const lebarInput = document.getElementById('lebar');
-    const qtyInput = document.getElementById('qty');
-    const totalEl = document.getElementById('totalHarga');
-    
-    const discountType = document.getElementById('discountType').value;
-    const discountPercent = discountType === 'percent' ? 
-        (parseFloat(document.getElementById('discountPercent')?.value) || 0) : 0;
-    const discountAmount = discountType === 'fix' ? 
-        (parseFloat(document.getElementById('discountAmount')?.value) || 0) : 0;
-
-    function applyDiscount(price) {
-        if (discountType === 'percent') {
-            return price - (price * (discountPercent / 100));
-        } else if (discountType === 'fix') {
-            return Math.max(0, price - discountAmount);
-        }
-        return price;
+    const errorMsg = document.getElementById('deadline_error');
+    if(needExpress.value === '1' && !this.value) {
+      errorMsg.style.display = 'block';
+    } else {
+      errorMsg.style.display = 'none';
     }
+  });
 
-    function computeTotal() {
-        let basePrice = applyDiscount(originalPrice);
-        
-        let variantPrice = 0;
-        for(const [category, variant] of Object.entries(selectedVariants)) {
-            variantPrice += variant.price;
-        }
-
-        let pricePerUnit = basePrice + variantPrice;
-        let hpl = pricePerUnit;
-
-        const productSizes = @json($product->toArray());
-        const defaultPanjang = productSizes.long_product;
-        const defaultLebar = productSizes.width_product;
-
-        if (panjangInput && lebarInput) {
-            const l = parseFloat(panjangInput.value) || 0;
-            const w = parseFloat(lebarInput.value) || 0;
-
-            let finalP = 0;
-            let finalL = 0;
-
-            if (l > 0 && w > 0) {
-                finalP = l <= defaultPanjang ? 100 : l;
-                finalL = w <= defaultLebar ? 100 : w;
-
-                const areaInM2 = (finalP / 100) * (finalL / 100);
-                hpl = pricePerUnit * areaInM2;
-            }
-        }
-
-        const qty = parseInt(qtyInput.value) || 1;
-        const subtotalHpl = hpl * qty;
-
-        const finishingPrice = finishingSelect
-            ? parseFloat(finishingSelect.selectedOptions[0]?.dataset.price) || 0
-            : 0;
-        const subtotalFinishing = finishingPrice * qty;
-
-        let total = subtotalHpl + subtotalFinishing;
-
-        if (needExpress.value === '1') {
-            total = total * 1.5;
-        }
-
-        totalEl.innerText = Math.round(total).toLocaleString();
+  document.getElementById('proofQty').addEventListener('blur', function() {
+    const needProofing = document.getElementById('needProofing');
+    const errorMsg = document.getElementById('proof_qty_error');
+    if(needProofing.value === '1' && (!this.value || this.value < 1)) {
+      errorMsg.style.display = 'block';
+    } else {
+      errorMsg.style.display = 'none';
     }
+  });
 
-    if (finishingSelect) finishingSelect.addEventListener('change', computeTotal);
-    needExpress.addEventListener('change', computeTotal);
-    if (panjangInput) panjangInput.addEventListener('input', computeTotal);
-    if (lebarInput) lebarInput.addEventListener('input', computeTotal);
-    qtyInput.addEventListener('input', computeTotal);
-
-    computeTotal();
-    
-    const needExpressVal = document.getElementById('needExpress').value;
-    const needProofingVal = document.getElementById('needProofing').value;
-    
-    if(needExpressVal === '1') {
-        document.getElementById('deadline_asterisk').style.display = 'inline';
+  document.getElementById('order_design').addEventListener('change', function() {
+    const errorMsg = document.getElementById('order_design_error');
+    if(!this.files.length) {
+      errorMsg.style.display = 'block';
+    } else {
+      errorMsg.style.display = 'none';
     }
-    
-    if(needProofingVal === '1') {
-        document.getElementById('proof_asterisk').style.display = 'inline';
-    }
+  });
 
-    document.getElementById('deadlineTime')?.addEventListener('blur', function() {
-      const needExpress = document.getElementById('needExpress');
-      const errorMsg = document.getElementById('deadline_error');
-      if(needExpress.value === '1' && !this.value) {
+  const panjangInput = document.getElementById('panjang');
+  const lebarInput = document.getElementById('lebar');
+  
+  if(panjangInput) {
+    panjangInput.addEventListener('blur', function() {
+      const errorMsg = document.getElementById('length_error');
+      if(!this.value || this.value <= 0) {
         errorMsg.style.display = 'block';
       } else {
         errorMsg.style.display = 'none';
       }
     });
-
-    document.getElementById('proofQty')?.addEventListener('blur', function() {
-      const needProofing = document.getElementById('needProofing');
-      const errorMsg = document.getElementById('proof_qty_error');
-      if(needProofing.value === '1' && (!this.value || this.value < 1)) {
+  }
+  
+  if(lebarInput) {
+    lebarInput.addEventListener('blur', function() {
+      const errorMsg = document.getElementById('width_error');
+      if(!this.value || this.value <= 0) {
         errorMsg.style.display = 'block';
       } else {
         errorMsg.style.display = 'none';
       }
     });
+  }
 
-    document.getElementById('order_design')?.addEventListener('change', function() {
-      const errorMsg = document.getElementById('order_design_error');
-      const isEdit = {{ $isEdit ? 'true' : 'false' }};
-      if(!isEdit && !this.files.length) {
-        errorMsg.style.display = 'block';
-      } else {
-        errorMsg.style.display = 'none';
-      }
-    });
-
-    if(panjangInput) {
-      panjangInput.addEventListener('blur', function() {
-        const errorMsg = document.getElementById('length_error');
-        if(!this.value || this.value <= 0) {
-          errorMsg.style.display = 'block';
-        } else {
-          errorMsg.style.display = 'none';
-        }
-      });
+  document.getElementById('qty').addEventListener('blur', function() {
+    const errorMsg = document.getElementById('qty_error');
+    if(!this.value || this.value < 1) {
+      errorMsg.style.display = 'block';
+    } else {
+      errorMsg.style.display = 'none';
     }
-    
-    if(lebarInput) {
-      lebarInput.addEventListener('blur', function() {
-        const errorMsg = document.getElementById('width_error');
-        if(!this.value || this.value <= 0) {
-          errorMsg.style.display = 'block';
-        } else {
-          errorMsg.style.display = 'none';
-        }
-      });
-    }
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+      const originalPrice   = parseFloat(document.getElementById('basePrice').value) || 0;
+      const unit            = document.getElementById('unit').value;
+      const finishingSelect = document.getElementById('finishingSelect');
+      const needExpress     = document.getElementById('needExpress');
+      const panjangInput    = document.getElementById('panjang');
+      const lebarInput      = document.getElementById('lebar');
+      const qtyInput        = document.getElementById('qty');
+      const totalEl         = document.getElementById('totalHarga');
+      
+      // Ambil info diskon
+      const discountType = document.getElementById('discountType').value;
+      const discountPercent = discountType === 'percent' ? 
+          (parseFloat(document.getElementById('discountPercent').value) || 0) : 0;
+      const discountAmount = discountType === 'fix' ? 
+          (parseFloat(document.getElementById('discountAmount').value) || 0) : 0;
 
-    document.getElementById('qty')?.addEventListener('blur', function() {
-      const errorMsg = document.getElementById('qty_error');
-      if(!this.value || this.value < 1) {
-        errorMsg.style.display = 'block';
-      } else {
-        errorMsg.style.display = 'none';
+      function applyDiscount(price) {
+          if (discountType === 'percent') {
+              return price - (price * (discountPercent / 100));
+          } else if (discountType === 'fix') {
+              return Math.max(0, price - discountAmount);
+          }
+          return price;
       }
-    });
+
+      function computeTotal() {
+          // 1) Hitung harga per unit (sudah termasuk diskon)
+          let pricePerUnit = applyDiscount(originalPrice);
+          
+          // 2) Hitung HPL (Harga per Luas) jika ada dimensi
+          let hpl = pricePerUnit;
+
+          const productSizes = @json($productSizes);
+
+          const master = productSizes;
+
+          console.log(master)
+
+          const defaultPanjang = master.long_product;
+          const defaultLebar = master.width_product;
+
+          if (panjangInput && lebarInput) {
+              const l = parseFloat(panjangInput.value) || 0;
+              const w = parseFloat(lebarInput.value) || 0;
+
+              
+              let finalP = 0;
+              let finalL = 0;
+
+              if (l > 0 && w > 0) {
+                  finalP = l <= defaultPanjang ? 100 : l;
+                  finalL = w <= defaultLebar ? 100 : w;
+
+                  console.log(defaultPanjang)
+                  console.log(defaultLebar)
+
+                  const areaInM2 = (finalP / 100) * (finalL / 100)
+                  hpl = pricePerUnit * areaInM2;
+              }
+          }
+
+          // 3) Kalikan dengan qty
+          const qty = parseInt(qtyInput.value) || 1;
+          const subtotalHpl = hpl * qty;
+
+          // 4) Finishing per item × qty (finishing tidak kena diskon)
+          const finishingPrice = finishingSelect
+              ? parseFloat(finishingSelect.selectedOptions[0].dataset.price) || 0
+              : 0;
+          const subtotalFinishing = finishingPrice * qty;
+
+          // 5) Jumlah sebelum express
+          let total = subtotalHpl + subtotalFinishing;
+
+          // 6) Tambah 50% kalau express = 1
+          if (needExpress.value === '1') {
+              total += total * 0.5;
+          }
+
+          totalEl.innerText = Math.round(total).toLocaleString();
+      }
+
+      // Event listeners
+      if (finishingSelect) finishingSelect.addEventListener('change', computeTotal);
+      needExpress.addEventListener('change', computeTotal);
+      if (panjangInput) panjangInput.addEventListener('input', computeTotal);
+      if (lebarInput) lebarInput.addEventListener('input', computeTotal);
+      qtyInput.addEventListener('input', computeTotal);
+
+      computeTotal();
+      
+      // Initialize asterisk visibility
+      const needExpressVal = document.getElementById('needExpress').value;
+      const needProofingVal = document.getElementById('needProofing').value;
+      
+      if(needExpressVal === '1') {
+          document.getElementById('deadline_asterisk').style.display = 'inline';
+      }
+      
+      if(needProofingVal === '1') {
+          document.getElementById('proof_asterisk').style.display = 'inline';
+      }
   });
 </script>
 

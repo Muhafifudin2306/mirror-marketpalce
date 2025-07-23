@@ -157,7 +157,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <strong>Rp {{ number_format($order->subtotal + ($order->ongkir ?? 0), 0, ',', '.') }}</strong>
+                                        <strong>Rp {{ number_format($order->subtotal, 0, ',', '.') }}</strong>
                                         @if($order->express == 1)
                                             <span class="badge bg-warning text-dark ms-1">Express</span>
                                         @endif
@@ -418,7 +418,7 @@
                                     @endif
                                     <tr class="fw-bold border-top">
                                         <td>Total</td>
-                                        <td class="text-end">Rp {{ number_format($order->subtotal + ($order->ongkir ?? 0) - ($order->potongan_rp ?? 0), 0, ',', '.') }}</td>
+                                        <td class="text-end">Rp {{ number_format($order->subtotal - ($order->potongan_rp ?? 0), 0, ',', '.') }}</td>
                                     </tr>
                                 </table>
                             </div>
