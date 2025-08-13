@@ -53,6 +53,13 @@ class MidtransService
                 'quantity' => 1,
                 'name'     => 'Biaya Pengiriman - ' . ($deliveryMethod ?? 'Kurir')
             ];
+        } else if ($deliveryMethod === 'Ambil Sendiri') {
+            $itemDetails[] = [
+                'id'       => 'pickup_free',
+                'price'    => 0,
+                'quantity' => 1,
+                'name'     => 'Ambil Sendiri - Gratis'
+            ];
         }
         
         if ($promoDiscount > 0) {

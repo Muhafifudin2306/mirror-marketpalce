@@ -5,13 +5,16 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Finishing;
 use App\Models\PromoCode;
 use App\Models\Notification;
 use App\Models\OrderProduct;
 use Illuminate\Http\Request;
 use App\Services\MidtransService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 class CartController extends Controller
@@ -335,6 +338,11 @@ class CartController extends Controller
             abort(403, 'Akses ditolak.');
         }
 
+        if ($order->order_status != 0) {
+            return redirect()->route('cart.index')
+                            ->with('error', 'Order ini sudah diproses dan tidak bisa di-checkout lagi.');
+        }
+
         $item->load('product.images', 'order');
 
         $user = auth()->user();
@@ -404,24 +412,45 @@ class CartController extends Controller
             abort(403);
         }
 
+        $rules = [
+            'kurir' => 'required|string',
+            'ongkir' => 'required|numeric',
+            'notes' => 'nullable|string',
+            'promo_code' => 'nullable|string',
+            'address_option' => 'required|in:profile,custom,pickup'
+        ];
+
+        if ($request->address_option === 'custom') {
+            $rules = array_merge($rules, [
+                'custom_province' => 'required|string',
+                'custom_district' => 'required|string', 
+                'custom_city' => 'required|string',
+                'custom_postal_code' => 'required|string',
+                'custom_address' => 'required|string'
+            ]);
+        }
+
+        $validated = $request->validate($rules);
+
         try {
             DB::beginTransaction();
 
-            $deliveryMethod = $request->input('kurir');
-            $deliveryCost = 0;
+            $deliveryMethod = $validated['kurir'];
+            $deliveryCost = $validated['ongkir'];
             $deliveryService = '';
 
             if ($deliveryMethod && $deliveryMethod != '0') {
-                list($courierCode, $serviceCode) = explode(':', $deliveryMethod);
-                
-                $deliveryCost = $request->input('ongkir', 0);
-                $deliveryService = $courierCode . ' - ' . $serviceCode;
+                if ($deliveryMethod === 'pickup:ambil_sendiri') {
+                    $deliveryCost = 0;
+                    $deliveryService = 'Ambil Sendiri';
+                } else {
+                    list($courierCode, $serviceCode) = explode(':', $deliveryMethod);
+                    $deliveryService = $courierCode . ' - ' . $serviceCode;
+                }
             }
 
-            $promoCode = $request->input('promo_code', '');
+            $promoCode = $validated['promo_code'] ?? '';
             $promoDiscount = 0;
-
-            // dd($promoCode);
 
             if ($promoCode) {
                 $subtotal = $order->orderProducts->sum('subtotal');
@@ -447,6 +476,34 @@ class CartController extends Controller
                 }
             }
 
+            $addressData = [];
+            if ($validated['address_option'] === 'custom') {
+                $addressData = [
+                    'provinsi' => $validated['custom_province'],
+                    'kota' => $validated['custom_district'],
+                    'kecamatan' => $validated['custom_city'],
+                    'kode_pos' => $validated['custom_postal_code'],
+                    'alamat' => $validated['custom_address']
+                ];
+            } elseif ($validated['address_option'] === 'pickup') {
+                $addressData = [
+                    'provinsi' => 'Jawa Tengah',
+                    'kota' => 'Semarang',
+                    'kecamatan' => 'Ambil Sendiri di Toko',
+                    'kode_pos' => '50000',
+                    'alamat' => 'Ambil di toko'
+                ];
+            } else {
+                $user = auth()->user();
+                $addressData = [
+                    'provinsi' => $user->province,
+                    'kota' => $user->district,
+                    'kecamatan' => $user->city,
+                    'kode_pos' => $user->postal_code,
+                    'alamat' => $user->address
+                ];
+            }
+
             $snapToken = $this->midtransService->createSnapToken(
                 $order, 
                 auth()->user(), 
@@ -456,9 +513,9 @@ class CartController extends Controller
                 $promoDiscount
             );
 
-            $order->update([
+            $order->update(array_merge([
                 'snap_token' => $snapToken
-            ]);
+            ], $addressData));
 
             DB::commit();
 
@@ -467,11 +524,17 @@ class CartController extends Controller
                 'snap_token' => $snapToken,
                 'order_id' => $order->id,
                 'temp_data' => [
-                    'notes' => $request->input('notes'),
+                    'notes' => $validated['notes'] ?? null,
                     'kurir' => $deliveryService,
                     'ongkir' => $deliveryCost,
                     'promo_code' => $promoCode,
                     'promo_discount' => $promoDiscount,
+                    'address_option' => $validated['address_option'],
+                    'custom_province' => $validated['custom_province'] ?? null,
+                    'custom_district' => $validated['custom_district'] ?? null,
+                    'custom_city' => $validated['custom_city'] ?? null,
+                    'custom_postal_code' => $validated['custom_postal_code'] ?? null,
+                    'custom_address' => $validated['custom_address'] ?? null,
                 ]
             ]);
 
@@ -521,11 +584,15 @@ class CartController extends Controller
         DB::beginTransaction();
         try {
             $currentSubTotal = $order->subtotal;
-
             $ongkir = $request->input('ongkir', 0);
-
             $newSubTotal = $currentSubTotal + $ongkir;
-            $order->update([
+
+            $kurir = $request->input('kurir');
+            if ($kurir === 'pickup:ambil_sendiri') {
+                $kurir = 'Ambil Sendiri';
+            }
+
+            $updateData = [
                 'order_status'       => 1,
                 'payment_status'     => 1,
                 'paid_at'            => now(),
@@ -536,16 +603,41 @@ class CartController extends Controller
                 'metode_transaksi'   => 3,
                 'metode_transaksi_paid'   => 3,
                 'notes'              => $request->input('notes'),
-                'kurir'              => $request->input('kurir'),
+                'kurir'              => $kurir,
                 'ongkir'             => $ongkir,
                 'promocode_deduct'   => $request->input('promo_discount', 0),
                 'payment_at'         => Carbon::now(),
                 'paid_at'            => Carbon::now(),
                 'subtotal'           => $newSubTotal,
-            ]);
+            ];
+
+            $addressOption = $request->input('address_option');
+            if ($addressOption === 'custom') {
+                $updateData = array_merge($updateData, [
+                    'provinsi' => $request->input('custom_province'),
+                    'kota' => $request->input('custom_district'),
+                    'kecamatan' => $request->input('custom_city'),
+                    'kode_pos' => $request->input('custom_postal_code'),
+                    'alamat' => $request->input('custom_address')
+                ]);
+            } elseif ($addressOption === 'pickup') {
+                $updateData = array_merge($updateData, [
+                    'provinsi' => 'Jawa Tengah',
+                    'kota' => 'Semarang',
+                    'kecamatan' => 'Ambil Sendiri di Toko',
+                    'kode_pos' => '50000',
+                    'alamat' => 'Ambil di toko',
+                    'pickup_status' => 0,
+                    'tipe_pengambilan' => 2 
+                ]);
+            }
+
+            $order->update($updateData);
 
             $invoiceNumber = $order->spk ?? 'SPK-' . str_pad($order->id, 4, '0', STR_PAD_LEFT);
             $this->createPaymentNotification($order, 1, $invoiceNumber);
+
+            $this->sendInvoiceViaFonnte($order, $invoiceNumber);
 
             DB::commit();
 
@@ -608,6 +700,8 @@ class CartController extends Controller
 
                         $invoiceNumber = $order->spk ?? 'SPK-' . str_pad($order->id, 4, '0', STR_PAD_LEFT);
                         $this->createPaymentNotification($order, 1, $invoiceNumber);
+
+                        $this->sendInvoiceViaFonnte($order, $invoiceNumber);
                         
                         break;
                         
@@ -704,5 +798,147 @@ class CartController extends Controller
             'diskon'  => round($diskon),
             'message' => 'Promo valid: potongan Rp '.number_format($diskon,0,',','.')
         ]);
+    }
+
+    private function sendInvoiceViaFonnte($order, $invoiceNumber)
+    {
+        try {
+            $invoiceUrl = route('invoice', ['id' => $order->id, 'invoice' => $order->spk]);
+            
+            $phoneNumber = $order->user->phone ?? null;
+            
+            if (!$phoneNumber) {
+                Log::warning("No phone number found for order {$order->id}");
+                return false;
+            }
+            
+            $rawNumber = $phoneNumber;
+            if (preg_match('/^0/', $rawNumber)) {
+                $customerNumber = preg_replace('/^0/', '62', $rawNumber);
+            } else {
+                $customerNumber = $rawNumber;
+            }
+            
+            $namaPelanggan = $order->user->name ?? 'Customer';
+            
+            $items = $order->orderProducts()->with('product')->get();
+            $detailPesanan = [];
+            $subtotalBarang = 0;
+            
+            foreach ($items as $item) {
+                $product = $item->product;
+                $qty = $item->qty;
+                
+                $productName = $product->name;
+                if ($item->variant_details) {
+                    $productName .= ' (' . $item->variant_details . ')';
+                }
+                
+                $sizeText = '';
+                if ($item->length && $item->width) {
+                    $sizeText = " - {$item->length} x {$item->width} cm";
+                }
+                
+                $itemTotal = $item->subtotal;
+                $subtotalBarang += $itemTotal;
+
+                $detailPesanan[] = "• {$productName}{$sizeText} × {$qty} = *Rp " . number_format($itemTotal, 0, ',', '.') . "*";
+
+                if ($item->finishing_type && $item->jenis_finishing) {
+                    $finishingRecord = Finishing::find($item->jenis_finishing);
+                    if ($finishingRecord) {
+                        $finishingPrice = $finishingRecord->finishing_price * $qty;
+                        $subtotalBarang += $finishingPrice;
+                        $detailPesanan[] = "• {$item->finishing_type} × {$qty} = *Rp " . number_format($finishingPrice, 0, ',', '.') . "*";
+                    }
+                }
+            }
+            
+            $expressFee = 0;
+            if ($order->express == 1) {
+                $expressFee = $subtotalBarang * 0.5;
+                $detailPesanan[] = "• Kebutuhan Express (+50%) = *Rp " . number_format($expressFee, 0, ',', '.') . "*";
+            }
+            
+            $ongkir = $order->ongkir ?? 0;
+            if ($ongkir > 0) {
+                $kurirName = $order->kurir ?? 'Kurir';
+                $detailPesanan[] = "• Pengiriman {$kurirName} = *Rp " . number_format($ongkir, 0, ',', '.') . "*";
+            }
+            
+            $totalSebelumDiskon = $subtotalBarang + $expressFee + $ongkir;
+
+            if ($order->promocode_deduct > 0) {
+                $detailPesanan[] = "• Diskon Promo = *- Rp " . number_format($order->promocode_deduct, 0, ',', '.') . "*";
+                $totalSebelumDiskon -= $order->promocode_deduct;
+            }
+            
+            $detailPesananText = implode("\n", $detailPesanan);
+            $grandTotal = max(0, $totalSebelumDiskon);
+            
+            $infoTambahan = '';
+            if ($order->express == 1 && $order->waktu_deadline) {
+                $infoTambahan .= "\n⚡ *Express Order* - Deadline: {$order->waktu_deadline}";
+            }
+            
+            if ($order->notes) {
+                $infoTambahan .= "\n📝 *Catatan:* {$order->notes}";
+            }
+            
+            $alamatPengiriman = '';
+            if ($order->alamat) {
+                $alamatPengiriman = "\n🏠 *Alamat Pengiriman:*\n{$order->alamat}";
+                if ($order->kecamatan || $order->kota || $order->provinsi) {
+                    $alamatPengiriman .= "\n{$order->kecamatan}, {$order->kota}, {$order->provinsi}";
+                }
+                if ($order->kode_pos) {
+                    $alamatPengiriman .= " {$order->kode_pos}";
+                }
+            }
+            
+            $messageText = "🎉 *Pembayaran Berhasil!*\n\n";
+            $messageText .= "Halo *{$namaPelanggan}*,\n\n";
+            $messageText .= "Terima kasih! Pembayaran untuk Invoice *{$invoiceNumber}* telah berhasil dikonfirmasi melalui Midtrans.\n\n";
+            $messageText .= "📋 *DETAIL PESANAN:*\n";
+            $messageText .= "{$detailPesananText}\n\n";
+            $messageText .= "💰 *TOTAL DIBAYAR: Rp " . number_format($grandTotal, 0, ',', '.') . "*\n";
+            $messageText .= $infoTambahan;
+            $messageText .= $alamatPengiriman;
+            $messageText .= "\n\n📄 *Download Invoice:*\n{$invoiceUrl}\n\n";
+            $messageText .= "✅ *Status:* Pembayaran Berhasil - Pesanan akan segera diproses\n\n";
+            $messageText .= "Jika ada pertanyaan atau kendala, silakan balas pesan ini.\n\n";
+            $messageText .= "Salam hangat,\n";
+            $messageText .= "*Sinau Print*";
+            
+            $response = Http::withHeaders([
+                'Authorization' => config('whatsapp.fonnte_token'),
+                'Accept'        => 'application/json',
+            ])->asForm()->post(config('whatsapp.fonnte_url'), [
+                'target'  => $customerNumber,
+                'message' => $messageText,
+            ]);
+            
+            if ($response->successful()) {
+                Log::info("✅ SUCCESS: Invoice sent via Fonnte", [
+                    'order_id' => $order->id,
+                    'phone' => $customerNumber,
+                    'invoice_url' => $invoiceUrl,
+                    'response' => $response->json()
+                ]);
+                return true;
+            } else {
+                Log::error("❌ FAILED: Invoice sending via Fonnte", [
+                    'order_id' => $order->id,
+                    'phone' => $customerNumber,
+                    'response_status' => $response->status(),
+                    'response_body' => $response->body()
+                ]);
+                return false;
+            }
+            
+        } catch (\Exception $e) {
+            Log::error("Error sending invoice via Fonnte: " . $e->getMessage());
+            return false;
+        }
     }
 }

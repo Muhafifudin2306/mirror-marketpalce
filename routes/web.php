@@ -26,6 +26,7 @@ use App\Http\Controllers\{
     BannerController,
     BlogController,
     SettingController,
+    InvoiceController,
     Auth\PasswordResetController,
 };
 
@@ -34,6 +35,7 @@ use App\Http\Controllers\{
 // ----------------------------------
 Route::get('/', [ProductController::class, 'home'])->name('landingpage.home');
 Route::get('/about', [TestimonialController::class, 'about'])->name('landingpage.about');
+Route::get('/contact', [TestimonialController::class, 'contact'])->name('landingpage.contact');
 Route::get('/faq', [FaqController::class, 'landingpage'])->name('landingpage.faq');
 Route::get('/order-guide', function () {
     return view('landingpage.order_guide');
@@ -47,6 +49,9 @@ Route::get('/article/{slug}', [BlogController::class, 'show'])->name('landingpag
 
 // Shipping calculation
 Route::post('/hitung-ongkir', [OngkirController::class, 'cekOngkir'])->name('ongkir.cek');
+Route::get('orders/{id}/{invoice}/invoice', [InvoiceController::class, 'invoice'])
+    ->name('invoice')
+    ->where('invoice', '[0-9]+-[0-9]+');
 
 // ----------------------------------
 // Product Listings & Ordering
@@ -70,7 +75,8 @@ Route::middleware('auth')->group(function () {
     });
     
     // Checkout
-    Route::post('/checkout/item/{item}', [CartController::class, 'checkoutItem'])->name('checkout.item');
+    Route::get('/checkout/item/{item}', [CartController::class, 'checkoutItem'])->name('checkout.item');
+    Route::post('/checkout/item/{item}', [CartController::class, 'checkoutItem'])->name('checkout.item.post');
     Route::get('/promo/check', [CartController::class, 'check'])->name('promo.check');
     Route::get('/checkout/order/{order}', [CartController::class, 'checkoutOrder'])->name('checkout.order');
     Route::post('/checkout/pay/{order}', [CartController::class, 'processPayment'])->name('checkout.pay');
@@ -112,6 +118,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::post('/',         [ProductController::class, 'adminStore'])->name('store');
         Route::put('{label}',    [ProductController::class, 'adminUpdate'])->name('update');
         Route::delete('{label}', [ProductController::class, 'adminDestroy'])->name('destroy');
+        Route::get('{label}/edit', [ProductController::class, 'adminEdit'])->name('edit');
 
         Route::patch('{label}/toggle-live', [ProductController::class, 'toggleLabelLive'])->name('toggle-live');
         Route::patch('product/{product}/toggle-live', [ProductController::class, 'toggleProductLive'])->name('toggle-product-live');

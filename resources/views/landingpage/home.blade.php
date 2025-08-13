@@ -239,7 +239,7 @@
             
             .slide {
                 height: 400px !important;
-                padding: 1rem !important;
+                /*padding: 1rem !important;*/
             }
             .carousel-item .row {
                 justify-content: center;
@@ -372,15 +372,47 @@
                 font-size: 0.9rem !important;
                 padding: 0.75rem 1.5rem !important;
             }
+            #heroCarousel .carousel-control-prev,
+            #heroCarousel .carousel-control-next {
+                top: 50% !important;
+                transform: translateY(-50%) !important;
+                opacity: 0.7 !important;
+                width: 50px !important;
+                height: 50px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+            
+            #heroCarousel .carousel-control-prev {
+                left: 0px !important;
+            }
+            
+            #heroCarousel .carousel-control-next {
+                right: 0px !important;
+            }
+            
+            #heroCarousel .carousel-control-prev i,
+            #heroCarousel .carousel-control-next i {
+                background-color: rgba(0, 0, 0, 0.5) !important;
+                border-radius: 50% !important;
+                padding: 10px !important;
+                font-size: 1.5rem !important;
+                width: 40px !important;
+                height: 40px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
         }
 
         @media (max-width: 576px) {
             .string-cover h3 {
-                font-size: 1.5rem !important;
+                font-size: 2.1rem !important;
             }
             
             .slide {
-                height: 350px !important;
+                height: 450px !important;
             }
             
             .cta-content h3 {
@@ -388,7 +420,7 @@
             }
             
             .step-content h4 {
-                font-size: 1.8rem !important;
+                font-size: 1.5rem !important;
             }
             
             .feedback-container h3 {
@@ -396,8 +428,9 @@
             }
         }
     </style>
+    <link rel="preload" as="image" href="{{ asset('landingpage/img/sinau_holder.webp') }}">
 
-    <div class="py-4 my-4"></div>
+    <div class="py-4 mt-4 mb-2"></div>
 
     <div id="animatedCarousels">
       <!-- Hero Carousel -->
@@ -418,6 +451,7 @@
 
                   <div class="carousel-inner">
                       @foreach($banners as $index => $banner)
+                          <link rel="preload" as="image" href="{{ asset('storage/'.$banner->photo) }}">
                           @php
                               $headingParts = explode(';', $banner->heading);
                               $processedHeading = [];
@@ -433,7 +467,7 @@
                           @endphp
 
                           <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                              <div class="slide w-100 p-xl-5 p-2 rounded"
+                              <div class="slide w-100 p-xl-5 p-2 rounded" 
                                   style="background-image: url({{ $backgroundImage }}); height: 550px; background-size: cover;">
                                   <div class="string-cover m-3 m-md-5">
                                       @foreach($processedHeading as $i => $line)
@@ -459,7 +493,7 @@
 
                                       <br>
                                       <a href="{{ url('/products') }}" class="btn-schedule mt-3 fw-bold">
-                                          <span class="btn-text">SEMUA PRODUK</span>
+                                          <span class="btn-text">BELANJA SEKARANG</span>
                                           <span class="btn-arrow">
                                               <i class="bi bi-arrow-right-short arrow-out fs-2"></i>
                                               <i class="bi bi-arrow-right-short arrow-in fs-2"></i>
@@ -483,6 +517,7 @@
                   </div>
                   <div class="carousel-inner">
                       <div class="carousel-item active">
+                          <link rel="preload" as="image" href="{{ asset('landingpage/img/banner_comp1.png') }}">
                           <div class="slide w-100 p-xl-5 p-3 rounded"
                               style="background-image: url({{ asset('landingpage/img/banner_comp1.png') }}); height: 550px; background-size: cover;">
                               <div class="string-cover m-5">
@@ -501,7 +536,7 @@
                                   </p>
                                   <br>
                                   <a href="{{ url('/products') }}" class="btn-schedule mt-3 fw-bold">
-                                      <span class="btn-text">SEMUA PRODUK</span>
+                                      <span class="btn-text">BELANJA SEKARANG</span>
                                       <span class="btn-arrow">
                                           <i class="bi bi-arrow-right-short arrow-out fs-2"></i>
                                           <i class="bi bi-arrow-right-short arrow-in fs-2"></i>
@@ -536,7 +571,19 @@
     <!-- Labels Carousel -->
     <div id="labelsCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
-            @foreach ($labels->chunk(4) as $index => $chunk)
+            @php
+                $totalLabels = $labels->count();
+                $labelsPerSlide = 4;
+                
+                if ($totalLabels < $labelsPerSlide) {
+                    $allLabels = $labels;
+                } else {
+                    $displayCount = intval($totalLabels / $labelsPerSlide) * $labelsPerSlide;
+                    $allLabels = $labels->take($displayCount);
+                }
+            @endphp
+            
+            @foreach ($allLabels->chunk(4) as $index => $chunk)
                 <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
                     <div class="row g-4">
                         @foreach ($chunk as $label)
@@ -576,10 +623,8 @@
             @endforeach
         </div>
 
-        <!-- Controls for Labels Carousel -->
         <div class="carousel-controls-container">
             <div class="carousel-controls">
-                <!-- Prev tombol -->
                 <button class="carousel-control-prev" type="button" data-bs-target="#labelsCarousel"
                     data-bs-slide="prev">
                     <span class="btn-arrow-carousel">
@@ -589,7 +634,6 @@
                     <span class="visually-hidden">Previous</span>
                 </button>
 
-                <!-- Next tombol -->
                 <button class="carousel-control-next" type="button" data-bs-target="#labelsCarousel"
                     data-bs-slide="next">
                     <span class="btn-arrow-carousel">
@@ -601,7 +645,7 @@
             </div>
 
             <div class="carousel-indicators-custom" id="labelsIndicators">
-                @foreach ($labels->chunk(4) as $index => $chunk)
+                @foreach ($allLabels->chunk(4) as $index => $chunk)
                     <div class="indicator-line {{ $index == 0 ? 'active' : '' }}" data-bs-target="#labelsCarousel"
                         data-bs-slide-to="{{ $index }}">
                     </div>
@@ -630,7 +674,19 @@
     <div id="rollBannerCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
             @if($hasRollBannerProducts)
-                @foreach ($rollBannerProducts->chunk(4) as $index => $chunk)
+                @php
+                    $totalProducts = $rollBannerProducts->count();
+                    $productsPerSlide = 4;
+                    
+                    if ($totalProducts < $productsPerSlide) {
+                        $allRollBannerProducts = $rollBannerProducts;
+                    } else {
+                        $displayCount = intval($totalProducts / $productsPerSlide) * $productsPerSlide;
+                        $allRollBannerProducts = $rollBannerProducts->take($displayCount);
+                    }
+                @endphp
+                
+                @foreach ($allRollBannerProducts->chunk(4) as $index => $chunk)
                     <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
                         <div class="row g-4">
                             @foreach ($chunk as $prod)
@@ -644,6 +700,7 @@
                                                     $image = $prod->images->first();
                                                 @endphp
                                                 @if($image && $image->image_product && file_exists(storage_path('app/public/' . $image->image_product)))
+                                                    <link rel="preload" as="image" href="{{ asset('storage/' . $image->image_product) }}">
                                                     <img src="{{ asset('storage/' . $image->image_product) }}"
                                                         class="img-fluid w-100 h-100" style="object-fit:cover;" 
                                                         alt="{{ $prod->name }}">
@@ -730,7 +787,6 @@
         @if($hasRollBannerProducts)
             <div class="carousel-controls-container">
                 <div class="carousel-controls">
-                    <!-- Prev tombol -->
                     <button class="carousel-control-prev" type="button"
                             data-bs-target="#rollBannerCarousel" data-bs-slide="prev">
                         <span class="btn-arrow-carousel">
@@ -740,7 +796,6 @@
                         <span class="visually-hidden">Previous</span>
                     </button>
 
-                    <!-- Next tombol -->
                     <button class="carousel-control-next" type="button"
                             data-bs-target="#rollBannerCarousel" data-bs-slide="next">
                         <span class="btn-arrow-carousel">
@@ -752,7 +807,7 @@
                 </div>
 
                 <div class="carousel-indicators-custom" id="rollBannerIndicators">
-                    @foreach($rollBannerProducts->chunk(4) as $index => $chunk)
+                    @foreach($allRollBannerProducts->chunk(4) as $index => $chunk)
                         <div class="indicator-line {{ $index == 0 ? 'active' : '' }}"
                             data-bs-target="#rollBannerCarousel"
                             data-bs-slide-to="{{ $index }}">
@@ -765,7 +820,6 @@
 
     <br>
 
-    <!-- Promo Section -->
     <div class="row align-items-center">
         <div class="col-md-12 position-relative">
             <div class="diamond-accent"></div>
@@ -782,7 +836,25 @@
     <div id="promoCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
             @if($hasPromoProducts)
-                @foreach($promoProducts->chunk(4) as $index => $chunk)
+                @php
+                    $totalPromoProducts = $promoProducts->count();
+                    $productsPerSlide = 4;
+                    
+                    if ($totalPromoProducts < $productsPerSlide) {
+                        $allPromoProducts = $promoProducts;
+                    } else {
+                        $remainder = $totalPromoProducts % $productsPerSlide;
+                        if ($remainder > 0) {
+                            $needMore = $productsPerSlide - $remainder;
+                            $extraPromoProducts = $promoProducts->take($needMore);
+                            $allPromoProducts = $promoProducts->concat($extraPromoProducts);
+                        } else {
+                            $allPromoProducts = $promoProducts;
+                        }
+                    }
+                @endphp
+                
+                @foreach($allPromoProducts->chunk(4) as $index => $chunk)
                     <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
                         <div class="row g-4">
                             @foreach($chunk as $prod)
@@ -857,11 +929,11 @@
                     <div class="row g-4">
                         <div class="col-12">
                             <div class="text-center py-5">
-                                <img src="{{ asset('landingpage/img/no-promo.png') }}" 
-                                    alt="Tidak ada promo" 
-                                    class="img-fluid mb-3" 
-                                    style="max-width: 200px; opacity: 0.6;"
-                                    onerror="this.style.display='none'">
+                                <!--<img src="{{ asset('landingpage/img/no-promo.png') }}" -->
+                                <!--    alt="Tidak ada promo" -->
+                                <!--    class="img-fluid mb-3" -->
+                                <!--    style="max-width: 200px; opacity: 0.6;"-->
+                                <!--    onerror="this.style.display='none'">-->
                                 <h5 class="text-muted mb-2" style="font-family: 'Poppins'; font-weight: 500;">
                                     Belum Ada Promo Aktif
                                 </h5>
@@ -882,7 +954,6 @@
         @if($hasPromoProducts)
             <div class="carousel-controls-container">
                 <div class="carousel-controls">
-                    <!-- Prev -->
                     <button class="carousel-control-prev" type="button"
                             data-bs-target="#promoCarousel" data-bs-slide="prev">
                         <span class="btn-arrow-carousel">
@@ -892,7 +963,6 @@
                         <span class="visually-hidden">Previous</span>
                     </button>
 
-                    <!-- Next -->
                     <button class="carousel-control-next" type="button"
                             data-bs-target="#promoCarousel" data-bs-slide="next">
                         <span class="btn-arrow-carousel">
@@ -904,7 +974,7 @@
                 </div>
 
                 <div class="carousel-indicators-custom" id="promoIndicators">
-                    @foreach($promoProducts->chunk(4) as $index => $chunk)
+                    @foreach($allPromoProducts->chunk(4) as $index => $chunk)
                         <div class="indicator-line {{ $index == 0 ? 'active' : '' }}"
                             data-bs-target="#promoCarousel"
                             data-bs-slide-to="{{ $index }}">
@@ -922,13 +992,13 @@
       <div class="carousel-inner">
         <!-- Slide 1 -->
         <div class="carousel-item active">
-            <div class="section-branding p-3 rouded" style="background-image: url({{ asset('landingpage/img/home_choice.png') }}); height: 450px; object-fit: cover;">
+            <div class="section-branding p-3 rouded" style="background-image: url({{ asset('landingpage/img/home_choice.webp') }}); height: 475px; object-fit: cover;">
                 <div class="m-2 m-md-5">
                     <h4 class="pt-md-4" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:600; color:#fff;">PRODUK PILIHAN</h4>
-                    <h3 class="mb-0" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:550; color:#fff;">Mau Cetak Banner</h3>
+                    <h3 class="mb-0" style="font-family: 'Poppins'; font-size:2.6rem; font-weight:550; color:#fff;">Mau Cetak Banner</h3>
                     <h3 class="mb-2" style="margin-top:-5px !important;">
-                    <span class="mt-0" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:550; color:#fff;">Biar</span>
-                    <span class="mt-0" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:550; color:#ffc74c;"> Keliatan di Jalan?</span>
+                    <span class="mt-0" style="font-family: 'Poppins'; font-size:2.6rem; font-weight:550; color:#fff;">Biar</span>
+                    <span class="mt-0" style="font-family: 'Poppins'; font-size:2.6rem; font-weight:550; color:#ffc74c;"> Keliatan di Jalan?</span>
                     </h3>
                     <p class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
                     Cetak banner ukuran besar biar mencolok dari kejauhan.
@@ -948,13 +1018,13 @@
         </div>
         <!-- Slide 2 -->
         <div class="carousel-item">
-           <div class="section-branding p-3 rouded" style="background-image: url({{ asset('landingpage/img/home_choice.png') }}); height: 450px; object-fit: cover;">
+           <div class="section-branding p-3 rouded" style="background-image: url({{ asset('landingpage/img/home_choice.webp') }}); height: 475px; object-fit: cover;">
                 <div class="m-2 m-md-5">
-                    <h4 class="pt-md-4" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:600; color:#fff;">PRODUK PILIHAN</h4>
-                    <h3 class="mb-0" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:550; color:#fff;">Cetak Stiker</h3>
+                    <h4 class="pt-md-4" style="font-family: 'Poppins'; font-size:0.6rem; font-weight:600; color:#fff;">PRODUK PILIHAN</h4>
+                    <h3 class="mb-0" style="font-family: 'Poppins'; font-size:2.6rem; font-weight:550; color:#fff;">Cetak Stiker</h3>
                     <h3 class="mb-2" style="margin-top:-5px !important;">
-                    <span class="mt-0" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:550; color:#fff;">Buat</span>
-                    <span class="mt-0" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:550; color:#ffc74c;"> Branding Keren!</span>
+                    <span class="mt-0" style="font-family: 'Poppins'; font-size:2.6rem; font-weight:550; color:#fff;">Buat</span>
+                    <span class="mt-0" style="font-family: 'Poppins'; font-size:2.6rem; font-weight:550; color:#ffc74c;"> Branding Keren!</span>
                     </h3>
                     <p class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
                     Stiker custom untuk promosi atau dekorasi.
@@ -974,13 +1044,13 @@
         </div>
         <!-- Slide 3 -->
         <div class="carousel-item">
-            <div class="section-branding p-3 rouded" style="background-image: url({{ asset('landingpage/img/home_choice.png') }}); height: 450px; object-fit: cover;">
+            <div class="section-branding p-3 rouded" style="background-image: url({{ asset('landingpage/img/home_choice.webp') }}); height: 475px; object-fit: cover;">
                 <div class="m-2 m-md-5">
                     <h4 class="pt-md-4" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:600; color:#fff;">PRODUK PILIHAN</h4>
-                    <h3 class="mb-0" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:550; color:#fff;">Poster Besar</h3>
+                    <h3 class="mb-0" style="font-family: 'Poppins'; font-size:2.6rem; font-weight:550; color:#fff;">Poster Besar</h3>
                     <h3 class="mb-2" style="margin-top:-5px !important;">
-                    <span class="mt-0" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:550; color:#fff;">Untuk</span>
-                    <span class="mt-0" style="font-family: 'Poppins'; font-size:2.8rem; font-weight:550; color:#ffc74c;"> Event Spesial!</span>
+                    <span class="mt-0" style="font-family: 'Poppins'; font-size:2.6rem; font-weight:550; color:#fff;">Untuk</span>
+                    <span class="mt-0" style="font-family: 'Poppins'; font-size:2.6rem; font-weight:550; color:#ffc74c;"> Event Spesial!</span>
                     </h3>
                     <p class="mb-0" style="font-family: 'Poppins'; font-size:0.8rem; font-weight:400; color:#fff;">
                     Poster berkualitas tinggi untuk acara pentingmu.
@@ -1028,7 +1098,7 @@
   <div class="container-lg py-5">
     <div class="row align-items-center flex-md-row-reverse">
       <div class="col-md-6 mb-4 mb-md-0">
-        <img src="{{ asset('landingpage/img/sinau_holder.png') }}"
+        <img src="{{ asset('landingpage/img/sinau_holder.webp') }}"
             alt="Step 2"
             class="img-fluid rounded-3">
       </div>
@@ -1194,6 +1264,7 @@
     <div class="row g-4">
         @if($latestBlogs->count() > 0)
             @foreach($latestBlogs as $blog)
+            <link rel="preload" as="image" href="{{ asset('storage/' . $blog->banner) }}">
                 <div class="col-lg-3 col-md-6 col-sm-12">
                     <a href="{{ route('landingpage.article_show', $blog->slug) }}" class="text-decoration-none">
                         <div class="article-card-home h-100" style="border-radius:10px;">
@@ -1291,15 +1362,16 @@
             </button>
             
             <div class="modal-body">
-                <div class="row g-0 h-100">
+                <div class="row g-0 h-100 p-4">
                     <!-- Image Section - 5/12 -->
-                    <div class="col-md-5 modal-image-section d-flex align-items-center justify-content-center">
-                        <img src="{{ asset('landingpage/img/disc-modals.png') }}" alt="Discount Offer" />
+                    <div class="col-md-5 py-md-5 px-md-4">
+                        <img src="{{ asset('landingpage/img/disc-modals.png') }}" class="w-100 h-100 object-fit-cover" alt="Discount Offer" />
                     </div>
                     
                     <!-- Content Section - 7/12 -->
-                    <div class="col-md-7 modal-content-section">
-                        <h2 class="modal-title">Langganan website bisa dapat diskon!</h2>
+                    <div class="col-md-7 pt-md-5 pe-md-5 ps-md-1">
+                        <h1 class="mt-3" style="font-family: 'Poppins'; font-weight:600">Langganan Dulu,</h1>
+                        <h1 style="font-family: 'Poppins'; font-weight:600;color:#0258d3">untuk Info Terbaru!</h1>
                         <p class="modal-subtitle">
                             Subscribe sekarang dan dapatkan kabar terbaru berbagai promo
                             menarik dari Sinau Print!
@@ -1655,13 +1727,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     restructureCarouselForMobile();
     
-    let resizeTimer;
-    window.addEventListener('resize', function() {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(function() {
-            location.reload();
-        }, 250);
-    });
+    //let resizeTimer;
+    //window.addEventListener('resize', function() {
+    //    clearTimeout(resizeTimer);
+   //     resizeTimer = setTimeout(function() {
+   //         location.reload();
+   //     }, 250);
+   // });
 });
 </script>
 @endsection

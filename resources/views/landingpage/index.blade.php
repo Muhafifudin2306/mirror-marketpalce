@@ -17,15 +17,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&family=Lora:wght@600;700&display=swap" rel="stylesheet"> 
     <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
-   
-    {{-- <script type="text/javascript" 
-  src="https://app.midtrans.com/snap/snap.js"
-  data-client-key="{{ config('midtrans.client_key') }}">
-</script> --}}
-
-<script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
-        data-client-key="{{ config('midtrans.client_key') }}"></script>
-
         
     <!-- Icon Font Stylesheet -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" rel="stylesheet">
@@ -40,8 +31,6 @@
 
     <!-- Template Stylesheet -->
     <link href="{{ asset('landingpage/css/style.css') }}" rel="stylesheet">
-    <!-- PDF.js CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.6.82/pdf_viewer.min.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4/turn.min.js"></script>
 
@@ -50,12 +39,8 @@
     <link rel="stylesheet" href="{{  asset('bootstrap/bootstrap.min.css') }}" />
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
-{{-- <script src="https://app.midtrans.com/snap/snap.js"
-        data-client-key="{{ config('midtrans.client_key') }}">
-</script> --}}
-<!-- Midtrans Snap JS -->
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
-
+    
+    @yield('add-link')
 
     <style>
         /* WhatsApp Floating Button */
@@ -144,7 +129,7 @@
     <!-- End Footer -->
 
     <!-- WhatsApp Floating Button -->
-    <a href="https://wa.me/6281952764747?text=Halo%20Sinau%20Print%2C%20saya%20ingin%20bertanya" 
+    <a href="https://wa.me/6281952764747?text=Halo%20Sinau%20Print%2C%20saya%20ingin%20bertanya%20tantang%20produk%20marketplace" 
        class="whatsapp-float"
        target="_blank" 
        aria-label="Chat WhatsApp">
@@ -165,11 +150,11 @@
     <!-- Template Javascript -->
     <script src="{{ asset('landingpage/js/main.js') }}"></script>
 
-    <!-- PDF.js CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.6.82/pdf.min.mjs"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     
     {{-- Notiflix --}}
     <script src="https://cdn.jsdelivr.net/npm/notiflix@3.2.5/dist/notiflix-aio-3.2.5.min.js"></script>
+
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </body>
 </html>

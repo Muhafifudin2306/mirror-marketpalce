@@ -1,4 +1,14 @@
 @extends('landingpage.index')
+@section('add-link')
+<script type="text/javascript" 
+  src="https://app.midtrans.com/snap/snap.js"
+  data-client-key="{{ config('midtrans.client_key') }}">
+</script> 
+
+     {{--<script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
+        data-client-key="{{ config('midtrans.client_key') }}"></script>--}}
+        
+@endsection
 @section('content')
     <style>
         .form-control {
@@ -489,10 +499,31 @@
             font-family: 'Poppins', sans-serif;
         }
 
+        select option:disabled {
+            color: #999 !important;
+            background-color: #f8f9fa !important;
+            font-style: italic;
+        }
+
+        .address-link {
+            color: #0258d3;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .address-link:hover {
+            color: #0041a8;
+            text-decoration: underline;
+        }
+
         @media (max-width: 768px) {
             .container-fluid {
                 padding-left: 15px !important;
                 padding-right: 15px !important;
+            }
+
+            .whatsapp-float {
+                display: none !important;
             }
 
             .container.product-card {
@@ -775,6 +806,9 @@
         }
 
         @media (max-width: 480px) {
+            .whatsapp-float {
+                display: none !important;
+            }
             .container.product-card {
                 margin-top: -40px !important;
                 padding: 0 10px !important;
@@ -848,6 +882,257 @@
             .container-fluid.copyright {
                 display: block !important;
             }
+        }
+        .form-check-input:checked {
+            background-color: #0258d3;
+            border-color: #0258d3;
+        }
+
+        .form-check-label {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #444;
+            cursor: pointer;
+        }
+
+        #custom-address-section .form-control,
+        #custom-address-section .form-select {
+            border: 1px solid #ddd;
+            transition: border-color 0.2s ease;
+        }
+
+        #custom-address-section .form-control:focus,
+        #custom-address-section .form-select:focus {
+            border-color: #0258d3;
+            box-shadow: 0 0 0 0.2rem rgba(2, 88, 211, 0.25);
+        }
+        textarea.form-control {
+            border-radius: 20px !important;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .address-option-container {
+            margin-bottom: 24px;
+        }
+
+        .address-radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .modern-radio {
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .modern-radio:hover {
+            background: #e3f2fd;
+            border-color: #0258d3;
+            box-shadow: 0 4px 12px rgba(2, 88, 211, 0.15);
+        }
+
+        .modern-radio.active {
+            background: linear-gradient(135deg, #0258d3 0%, #0439a0 100%);
+            border-color: #0258d3;
+            color: white;
+            box-shadow: 0 6px 20px rgba(2, 88, 211, 0.25);
+        }
+
+        .modern-radio input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .radio-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #dee2e6;
+            margin-right: 12px;
+            position: relative;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .modern-radio:hover .radio-indicator {
+            border-color: #0258d3;
+        }
+
+        .modern-radio.active .radio-indicator {
+            border-color: white;
+            background: white;
+        }
+
+        .radio-indicator::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 8px;
+            height: 8px;
+            background: #0258d3;
+            border-radius: 50%;
+            transition: transform 0.2s ease;
+        }
+
+        .modern-radio.active .radio-indicator::after {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .radio-content {
+            flex: 1;
+        }
+
+        .radio-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+            color: #444;
+            transition: color 0.3s ease;
+        }
+
+        .modern-radio.active .radio-title {
+            color: white;
+        }
+
+        .radio-description {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem;
+            color: #666;
+            line-height: 1.4;
+            transition: color 0.3s ease;
+        }
+
+        .modern-radio.active .radio-description {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .radio-icon {
+            width: 24px;
+            height: 24px;
+            margin-left: 12px;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .modern-radio.active .radio-icon {
+            opacity: 1;
+            filter: brightness(0) invert(1);
+        }
+
+        /* Address Fields Animation */
+        .address-fields-container {
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: top;
+        }
+
+        .address-fields-container.hidden {
+            max-height: 0;
+            opacity: 0;
+            transform: translateY(-20px);
+            margin-bottom: 0;
+        }
+
+        .address-fields-container.visible {
+            max-height: 1000px;
+            opacity: 1;
+            transform: translateY(0);
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .address-radio-group {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .modern-radio {
+                min-width: unset;
+                padding: 14px 16px;
+            }
+            
+            .radio-title {
+                font-size: 0.85rem;
+            }
+            
+            .radio-description {
+                font-size: 0.7rem;
+            }
+            
+            .radio-icon {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        /* Profile incomplete notice styling */
+        .profile-incomplete-notice {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 16px;
+            margin: 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .profile-incomplete-notice .icon {
+            color: #856404;
+            font-size: 1.2rem;
+        }
+
+        .profile-incomplete-notice .content {
+            flex: 1;
+        }
+
+        .profile-incomplete-notice .title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #856404;
+            margin-bottom: 4px;
+        }
+
+        .profile-incomplete-notice .description {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            color: #856404;
+            margin-bottom: 8px;
+        }
+
+        .profile-incomplete-notice .link {
+            color: #0258d3;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: color 0.2s ease;
+        }
+
+        .profile-incomplete-notice .link:hover {
+            color: #0439a0;
+            text-decoration: underline;
         }
     </style>
 
@@ -940,89 +1225,219 @@
                                         </div>
                                     </div>
 
-                                    {{-- Alamat Tersimpan --}}
+                                    {{-- Alamat Pengiriman --}}
                                     <h4 class="section-pill">Pengiriman</h4>
                                     <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">PROVINSI</label>
-                                            <select name="province"
-                                                class="form-control" disabled>
-                                                <option value="{{ old('province', $provinceName ?? '-') }}">{{ old('province', $provinceName ?? '-') }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">KOTA/KABUPATEN</label>
-                                            <select name="province"
-                                                class="form-control" disabled>
-                                                <option value="{{ old('province', $districtName ?? '-') }}">{{ old('province', $districtName ?? '-') }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">KECAMATAN</label>
-                                            <select name="city"
-                                                class="form-control" disabled>
-                                                <option value="{{ old('city', $cityName ?? '-') }}">{{ old('city', $cityName ?? '-') }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">KODE POS</label>
-                                            <input name="postal_code" type="text"
-                                                class="form-control"
-                                                value="{{ old('postal_code', Auth::user()->postal_code) }}" disabled>
-                                        </div>
-                                        <div class="col-12 mb-3">
-                                            <label class="form-label">DETAIL ALAMAT PENGIRIMAN</label>
-                                            <textarea name="address" id="" style="height: 100px" class="form-control p-4" disabled>{{ old('address', Auth::user()->address) }}</textarea>
-                                            
-                                        </div>
-                                       
-                                        {{-- METODE PENGIRIMAN --}}
-                                        <div class="mb-3">
-                                            <label class="form-label"><b>METODE PENGIRIMAN</b></label>
+                                        <div class="address-option-container">
+                                            <div class="address-radio-group">
+                                                <label class="modern-radio {{ $isset ? 'active' : '' }}" for="use_profile_address">
+                                                    <input type="radio" 
+                                                        name="address_option" 
+                                                        id="use_profile_address" 
+                                                        value="profile" 
+                                                        {{ $isset ? 'checked' : '' }}>
+                                                    <div class="radio-indicator"></div>
+                                                    <div class="radio-content">
+                                                        <div class="radio-title">Alamat Profile</div>
+                                                        <div class="radio-description">Gunakan alamat yang tersimpan di profile Anda</div>
+                                                    </div>
+                                                    <svg class="radio-icon" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                                                    </svg>
+                                                </label>
+
+                                                <!-- Custom Address Option -->
+                                                <label class="modern-radio {{ !$isset && !request('pickup', false) ? 'active' : '' }}" for="use_custom_address">
+                                                    <input type="radio" 
+                                                        name="address_option" 
+                                                        id="use_custom_address" 
+                                                        value="custom" 
+                                                        {{ !$isset && !request('pickup', false) ? 'checked' : '' }}>
+                                                    <div class="radio-indicator"></div>
+                                                    <div class="radio-content">
+                                                        <div class="radio-title">Alamat Baru</div>
+                                                        <div class="radio-description">Masukkan alamat khusus untuk pesanan ini</div>
+                                                    </div>
+                                                    <svg class="radio-icon" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                                                    </svg>
+                                                </label>
+
+                                                <!-- Pickup Option -->
+                                                <label class="modern-radio {{ request('pickup', false) ? 'active' : '' }}" for="use_pickup">
+                                                    <input type="radio" 
+                                                        name="address_option" 
+                                                        id="use_pickup" 
+                                                        value="pickup" 
+                                                        {{ request('pickup', false) ? 'checked' : '' }}>
+                                                    <div class="radio-indicator"></div>
+                                                    <div class="radio-content">
+                                                        <div class="radio-title">Ambil Sendiri</div>
+                                                        <div class="radio-description">Ambil pesanan langsung di toko kami</div>
+                                                    </div>
+                                                    <svg class="radio-icon" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.84L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+                                                    </svg>
+                                                </label>
+                                            </div>
+
                                             @if (!$isset)
-                                                <div class="mb-3">
+                                            <div class="profile-incomplete-notice" id="profile-incomplete-notice" style="display: none;">
+                                                <div class="icon">
+                                                    <i class="bi bi-exclamation-triangle"></i>
+                                                </div>
+                                                <div class="content">
+                                                    <div class="title">Alamat Profile Belum Lengkap</div>
+                                                    <div class="description">Silakan lengkapi alamat di profile Anda terlebih dahulu untuk menggunakan opsi ini</div>
+                                                    <a href="/profile#pane-profile" class="link">Lengkapi Profile →</a>
+                                                </div>
+                                            </div>
+                                            @endif
+                                        </div>
+
+                                        <div class="address-fields-container" id="address-fields-container">
+                                            <div id="profile-address-section" class="{{ !$isset ? 'd-none' : '' }}">
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label class="form-label">PROVINSI</label>
+                                                        <select name="profile_province" class="form-control" disabled>
+                                                            <option value="{{ old('profile_province', $provinceName ?? '-') }}">{{ old('profile_province', $provinceName ?? '-') }}</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label class="form-label">KOTA/KABUPATEN</label>
+                                                        <select name="profile_district" class="form-control" disabled>
+                                                            <option value="{{ old('profile_district', $districtName ?? '-') }}">{{ old('profile_district', $districtName ?? '-') }}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label class="form-label">KECAMATAN</label>
+                                                        <select name="profile_city" class="form-control" disabled>
+                                                            <option value="{{ old('profile_city', $cityName ?? '-') }}">{{ old('profile_city', $cityName ?? '-') }}</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label class="form-label">KODE POS</label>
+                                                        <input name="profile_postal_code" type="text" class="form-control" value="{{ old('profile_postal_code', Auth::user()->postal_code) }}" disabled>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-12 mb-3">
+                                                        <label class="form-label">DETAIL ALAMAT PENGIRIMAN</label>
+                                                        <textarea name="profile_address" style="height: 100px" class="form-control p-4" disabled>{{ old('profile_address', Auth::user()->address) }}</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div id="custom-address-section" class="{{ $isset ? 'd-none' : '' }}">
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label class="form-label">PROVINSI</label>
+                                                        <select id="custom_provinsi" name="custom_province" class="form-control @error('custom_province') is-invalid @enderror">
+                                                            <option value="">PILIH PROVINSI</option>
+                                                        </select>
+                                                        @error('custom_province')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label class="form-label">KOTA/KABUPATEN</label>
+                                                        <select id="custom_kota" name="custom_district" class="form-control @error('custom_district') is-invalid @enderror">
+                                                            <option value="">PILIH KOTA/KABUPATEN</option>
+                                                        </select>
+                                                        @error('custom_district')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label class="form-label">KECAMATAN</label>
+                                                        <select id="custom_kecamatan" name="custom_city" class="form-control @error('custom_city') is-invalid @enderror">
+                                                            <option value="">PILIH KECAMATAN</option>
+                                                        </select>
+                                                        @error('custom_city')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label class="form-label">KODE POS</label>
+                                                        <select id="custom_kodepos" name="custom_postal_code" class="form-control @error('custom_postal_code') is-invalid @enderror">
+                                                            <option value="">PILIH KODE POS</option>
+                                                        </select>
+                                                        @error('custom_postal_code')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-12 mb-3">
+                                                        <label class="form-label">DETAIL ALAMAT PENGIRIMAN</label>
+                                                        <textarea name="custom_address" style="height: 100px" class="form-control p-4 @error('custom_address') is-invalid @enderror" placeholder="Masukkan detail alamat lengkap">{{ old('custom_address') }}</textarea>
+                                                        @error('custom_address')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="shipping-method-section">
+                                            <div class="mb-3">
+                                                <label class="form-label"><b>METODE PENGIRIMAN</b></label>
+                                                @if (!$isset)
+                                                    <div class="mb-3">
+                                                        <select 
+                                                            id="deliveryMethod" 
+                                                            name="kurir" 
+                                                            class="form-select @error('kurir') is-invalid @enderror"
+                                                            style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;">
+                                                            <option value="0" selected>Pilih metode pengiriman</option>
+                                                            <option value="" disabled style="color: #999; font-style: italic; background-color: #f8f9fa;">
+                                                                Kirim ke alamat - Lengkapi alamat terlebih dahulu
+                                                            </option>
+                                                        </select>
+                                                        <div class="mt-2">
+                                                            <small class="text-muted">
+                                                                <i class="bi bi-info-circle"></i> 
+                                                                Lengkapi alamat di atas untuk opsi pengiriman lainnya
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                @else
                                                     <select 
                                                         id="deliveryMethod" 
                                                         name="kurir" 
                                                         class="form-select @error('kurir') is-invalid @enderror"
-                                                        style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;" 
-                                                        disabled>
-                                                        <option value="0" selected>
-                                                            Lengkapi data alamat Anda di menu Profil
-                                                        </option> 
+                                                        style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;" >
+                                                        <option value="0" {{ old('kurir','0')=='0'?'selected':'' }}>
+                                                            Memuat data ongkir...
+                                                        </option>
                                                     </select>
-                                                    <div class="mt-1">
-                                                        <a href="{{ url('/profile?#pane-profile') }}" class="btn-cancel">
-                                                            <i class="bi bi-geo-alt-fill"></i> Lengkapi Alamat Anda
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            @else
+                                                @endif
 
-                                                <select 
-                                                    id="deliveryMethod" 
-                                                    name="kurir" 
-                                                    class="form-select @error('kurir') is-invalid @enderror"
-                                                    style="width:100%; height:50px; border-radius:70px; font-size:0.875rem; padding: 0 30px;" >
-                                                    <option value="0" {{ old('kurir','0')=='0'?'selected':'' }}>
-                                                        Memuat data ongkir...
-                                                    </option> 
-                                                </select>
-                                            @endif
-
-                                            @error('kurir')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
+                                                @error('kurir')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div>
                                         </div>
                                     </div>
                                     {{-- Pembayaran --}}
-                                    <h4 class="section-pill">Pembayaran</h4>
+                                    {{-- <h4 class="section-pill">Pembayaran</h4>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">PILIHAN PEMBAYARAN</label>
@@ -1036,7 +1451,7 @@
                                                 </span>
                                             @enderror
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     {{-- Catatan Tambahan --}}
                                     <h4 class="section-pill">Catatan Tambahan</h4>
                                     <div class="row">
@@ -1281,7 +1696,7 @@
             hiddenPromoDiscount.id = 'hiddenPromoDiscount';
             document.body.appendChild(hiddenPromoDiscount);
 
-            discountLine = null; // Akan dibuat secara dinamis di computeTotal()
+            discountLine = null;
             discountAmtEl = null;
 
             setupEventListeners();
@@ -1359,8 +1774,12 @@
             if (deliverySelect) {
                 deliverySelect.addEventListener('change', function() {
                     const selectedOption = this.selectedOptions[0];
-                    if (selectedOption && selectedOption.hasAttribute('data-cost')) {
-                        ongkirCost = parseInt(selectedOption.getAttribute('data-cost')) || 0;
+                    if (selectedOption) {
+                        if (selectedOption.value === 'pickup:ambil_sendiri') {
+                            ongkirCost = 0;
+                        } else if (selectedOption.hasAttribute('data-cost')) {
+                            ongkirCost = parseInt(selectedOption.getAttribute('data-cost')) || 0;
+                        }
                         computeTotal();
                     }
                 });
@@ -1461,8 +1880,77 @@
         }
 
         function handleOrderClick() {
-            if (!deliverySelect || deliverySelect.value === '0') {
-                alert('Silakan pilih metode pengiriman terlebih dahulu!');
+            const addressOption = document.querySelector('input[name="address_option"]:checked')?.value;
+            
+            if (addressOption === 'pickup') {
+                if (deliverySelect.value !== 'pickup:ambil_sendiri') {
+                    deliverySelect.innerHTML = '<option value="pickup:ambil_sendiri" selected>Ambil Sendiri - Gratis (Rp 0)</option>';
+                    deliverySelect.value = 'pickup:ambil_sendiri';
+                }
+            } else {
+                if (!deliverySelect || deliverySelect.value === '0' || deliverySelect.value === '') {
+                    swal({
+                        icon: 'warning',
+                        title: 'Peringatan!',
+                        text: 'Silahkan pilih metode pengiriman terlebih dahulu!',
+                        confirmButtonColor: '#0258d3'
+                    });
+                    return;
+                }
+            }
+
+            let addressData = {};
+
+            if (addressOption === 'pickup') {
+                addressData = {
+                    address_option: 'pickup'
+                };
+            } else if (addressOption === 'custom') {
+                const customProvince = document.getElementById('custom_provinsi')?.value;
+                const customDistrict = document.getElementById('custom_kota')?.value;
+                const customCity = document.getElementById('custom_kecamatan')?.value;
+                const customPostalCode = document.getElementById('custom_kodepos')?.value;
+                const customAddress = document.querySelector('textarea[name="custom_address"]')?.value;
+
+                if (!customProvince || !customDistrict || !customCity || !customPostalCode || !customAddress?.trim()) {
+                    swal({
+                        icon: 'warning',
+                        title: 'Peringatan!',
+                        text: 'Silahkan lengkapi semua field alamat terlebih dahulu!',
+                        confirmButtonColor: '#0258d3'
+                    });
+                    return;
+                }
+
+                addressData = {
+                    address_option: 'custom',
+                    custom_province: customProvince,
+                    custom_district: customDistrict,
+                    custom_city: customCity,
+                    custom_postal_code: customPostalCode,
+                    custom_address: customAddress
+                };
+            } else if (addressOption === 'profile') {
+                @if (!$isset)
+                swal({
+                    icon: 'warning',
+                    title: 'Peringatan!',
+                    text: 'Alamat profile Anda belum lengkap. Silahkan lengkapi di halaman profile terlebih dahulu atau pilih alamat baru.',
+                    confirmButtonColor: '#0258d3'
+                });
+                return;
+                @endif
+                
+                addressData = {
+                    address_option: 'profile'
+                };
+            } else {
+                swal({
+                    icon: 'warning',
+                    title: 'Peringatan!',
+                    text: 'Silahkan pilih metode pengambilan terlebih dahulu!',
+                    confirmButtonColor: '#0258d3'
+                });
                 return;
             }
 
@@ -1471,7 +1959,8 @@
                 ongkir: ongkirCost,
                 notes: document.getElementById('notesInput') ? document.getElementById('notesInput').value : '',
                 promo_code: hiddenPromo.value,
-                promo_discount: promoDiscount
+                promo_discount: promoDiscount,
+                ...addressData
             };
 
             if (loadingOverlay) loadingOverlay.style.display = 'flex';
@@ -1493,11 +1982,15 @@
                 if (btnOrderDesktop) btnOrderDesktop.disabled = false;
 
                 if (!data.success) {
-                    alert('Error: ' + data.message);
+                    swal({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: data.message,
+                        confirmButtonColor: '#0258d3'
+                    });
                     return;
                 }
 
-                // Snap Midtrans
                 if (typeof snap !== 'undefined') {
                     snap.pay(data.snap_token, {
                         onSuccess: res => {
@@ -1512,20 +2005,45 @@
                                     notes: payload.notes,
                                     kurir: payload.kurir,
                                     ongkir: payload.ongkir,
-                                    promo_discount: payload.promo_discount
+                                    promo_discount: payload.promo_discount,
+                                    ...addressData
                                 })
                             })
                             .then(r => {
                                 if (r.ok) {
-                                    window.location.href = '/keranjang';
+                                    window.location.href = '/profile';
                                 } else {
-                                    alert('Gagal update order');
+                                    swal({
+                                        icon: 'error',
+                                        title: 'Gagal!',
+                                        text: 'Gagal update order',
+                                        confirmButtonColor: '#0258d3'
+                                    });
                                 }
                             });
                         },
-                        onPending: () => window.location.href = '/keranjang',
-                        onError: err => alert('Pembayaran gagal: ' + err.status_message),
-                        onClose: () => alert('Anda menutup popup tanpa membayar')
+                        onPending: res => {
+                            swal({
+                                icon: 'info',
+                                title: 'Pembayaran Pending',
+                                text: 'Pembayaran Anda sedang diproses. Silakan cek status di profil Anda.',
+                                confirmButtonColor: '#0258d3'
+                            }).then(() => {
+                                window.location.href = '/profile';
+                            });
+                        },
+                        onError: err => swal({
+                            icon: 'error',
+                            title: 'Pembayaran Gagal!',
+                            text: err.status_message,
+                            confirmButtonColor: '#0258d3'
+                        }),
+                        onClose: () => swal({
+                            icon: 'info',
+                            title: 'Pembayaran Dibatalkan',
+                            text: 'Anda menutup popup tanpa menyelesaikan pembayaran',
+                            confirmButtonColor: '#0258d3'
+                        })
                     });
                 }
             })
@@ -1533,16 +2051,150 @@
                 if (loadingOverlay) loadingOverlay.style.display = 'none';
                 if (btnOrder) btnOrder.disabled = false;
                 if (btnOrderDesktop) btnOrderDesktop.disabled = false;
-                // console.error(err);
-                alert('Kesalahan jaringan, coba ulang.');
+                swal({
+                    icon: 'error',
+                    title: 'Kesalahan Jaringan!',
+                    text: 'Terjadi kesalahan jaringan, silahkan coba lagi.',
+                    confirmButtonColor: '#0258d3'
+                });
             });
         }
     </script>
 
-    @if ($isset)
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const deliveryMethod = document.getElementById('deliveryMethod');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const profileRadio = document.getElementById('use_profile_address');
+            const customRadio = document.getElementById('use_custom_address');
+            const pickupRadio = document.getElementById('use_pickup');
+            const profileSection = document.getElementById('profile-address-section');
+            const customSection = document.getElementById('custom-address-section');
+            const addressFieldsContainer = document.getElementById('address-fields-container');
+            const shippingMethodSection = document.getElementById('shipping-method-section');
+            const deliveryMethod = document.getElementById('deliveryMethod');
+            const profileIncompleteNotice = document.getElementById('profile-incomplete-notice');
+
+            function updateRadioStyles() {
+                document.querySelectorAll('.modern-radio').forEach(radio => {
+                    radio.classList.remove('active');
+                });
+                
+                if (profileRadio?.checked) {
+                    profileRadio.closest('.modern-radio').classList.add('active');
+                } else if (customRadio?.checked) {
+                    customRadio.closest('.modern-radio').classList.add('active');
+                } else if (pickupRadio?.checked) {
+                    pickupRadio.closest('.modern-radio').classList.add('active');
+                }
+            }
+
+            function toggleAddressSection() {
+                updateRadioStyles();
+                
+                if (pickupRadio?.checked) {
+                    addressFieldsContainer.classList.remove('visible');
+                    addressFieldsContainer.classList.add('hidden');
+                    shippingMethodSection.style.display = 'none';
+                    
+                    if (deliveryMethod) {
+                        deliveryMethod.innerHTML = '<option value="pickup:ambil_sendiri" selected>Ambil Sendiri - Gratis (Rp 0)</option>';
+                        deliveryMethod.value = 'pickup:ambil_sendiri';
+                        deliveryMethod.dispatchEvent(new Event('change'));
+                    }
+                    
+                    if (profileIncompleteNotice) {
+                        profileIncompleteNotice.style.display = 'none';
+                    }
+                    
+                } else {
+                    addressFieldsContainer.classList.remove('hidden');
+                    addressFieldsContainer.classList.add('visible');
+                    shippingMethodSection.style.display = 'block';
+                    
+                    if (profileRadio?.checked) {
+                        profileSection.classList.remove('d-none');
+                        customSection.classList.add('d-none');
+                        resetCustomForm();
+                        
+                        @if (!$isset)
+                            if (profileIncompleteNotice) {
+                                profileIncompleteNotice.style.display = 'flex';
+                            }
+                            if (deliveryMethod) {
+                                deliveryMethod.innerHTML = `
+                                    <option value="0">Alamat profile belum lengkap</option>
+                                    <option value="" disabled style="color: #999; font-style: italic; background-color: #f8f9fa;">Lengkapi alamat profile terlebih dahulu</option>
+                                `;
+                            }
+                        @else
+                            if (profileIncompleteNotice) {
+                                profileIncompleteNotice.style.display = 'none';
+                            }
+                            loadOngkir();
+                        @endif
+                        
+                    } else if (customRadio?.checked) {
+                        profileSection.classList.add('d-none');
+                        customSection.classList.remove('d-none');
+                        loadCustomProvinsi();
+                        
+                        if (profileIncompleteNotice) {
+                            profileIncompleteNotice.style.display = 'none';
+                        }
+                        
+                        if (deliveryMethod) {
+                            deliveryMethod.innerHTML = `
+                                <option value="0">Pilih metode pengiriman</option>
+                                <option value="" disabled style="color: #999; font-style: italic; background-color: #f8f9fa;">Lengkapi alamat terlebih dahulu</option>
+                            `;
+                        }
+                    }
+                }
+            }
+
+            function resetCustomForm() {
+                if (document.getElementById('custom_provinsi')) {
+                    document.getElementById('custom_provinsi').value = '';
+                    document.getElementById('custom_kota').innerHTML = '<option value="">PILIH KOTA/KABUPATEN</option>';
+                    document.getElementById('custom_kecamatan').innerHTML = '<option value="">PILIH KECAMATAN</option>';
+                    document.getElementById('custom_kodepos').innerHTML = '<option value="">PILIH KODE POS</option>';
+                    document.querySelector('textarea[name="custom_address"]').value = '';
+                }
+            }
+
+            function loadCustomProvinsi() {
+                fetch('/api/provinsi')
+                    .then(res => res.json())
+                    .then(data => {
+                        let options = '<option value="">PILIH PROVINSI</option>';
+                        data.result.forEach(p => {
+                            options += `<option value="${p.id}">${p.text}</option>`;
+                        });
+                        document.getElementById('custom_provinsi').innerHTML = options;
+                    })
+                    .catch(error => console.error('Error loading provinsi:', error));
+            }
+
+            function loadOngkir() {
+                if (!deliveryMethod) return;
+
+                const addressOption = document.querySelector('input[name="address_option"]:checked')?.value || 'profile';
+                
+                if (addressOption === 'pickup') {
+                    return;
+                }
+                
+                let requestData = { address_option: addressOption };
+
+                if (addressOption === 'custom') {
+                    const customPostalCode = document.getElementById('custom_kodepos')?.value;
+                    if (!customPostalCode) {
+                        deliveryMethod.innerHTML = '<option value="0">Lengkapi alamat terlebih dahulu</option>';
+                        return;
+                    }
+                    requestData.custom_postal_code = customPostalCode;
+                }
+
+                deliveryMethod.innerHTML = '<option value="0">Memuat data ongkir...</option>';
 
                 fetch('/hitung-ongkir', {
                     method: 'POST',
@@ -1551,7 +2203,7 @@
                         'Accept': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    body: JSON.stringify({})
+                    body: JSON.stringify(requestData)
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -1581,7 +2233,6 @@
                             option.setAttribute('data-cost', costValue);
                             deliveryMethod.appendChild(option);
                         });
-
                     } else {
                         const option = document.createElement('option');
                         option.value = '0';
@@ -1590,10 +2241,111 @@
                     }
                 })
                 .catch(error => {
-                    // console.error('Error:', error);
+                    console.error('Error:', error);
                     deliveryMethod.innerHTML = '<option value="0">Gagal memuat ongkir</option>';
                 });
-            });
-        </script>
-    @endif
+            }
+
+            if (profileRadio) profileRadio.addEventListener('change', toggleAddressSection);
+            if (customRadio) customRadio.addEventListener('change', toggleAddressSection);
+            if (pickupRadio) pickupRadio.addEventListener('change', toggleAddressSection);
+
+            if (document.getElementById('custom_provinsi')) {
+                document.getElementById('custom_provinsi').addEventListener('change', function() {
+                    const idProv = this.value;
+                    const kotaSelect = document.getElementById('custom_kota');
+                    
+                    if (!idProv) {
+                        kotaSelect.innerHTML = '<option value="">PILIH KOTA/KABUPATEN</option>';
+                        document.getElementById('custom_kecamatan').innerHTML = '<option value="">PILIH KECAMATAN</option>';
+                        document.getElementById('custom_kodepos').innerHTML = '<option value="">PILIH KODE POS</option>';
+                        return;
+                    }
+
+                    fetch(`/api/kabkota?d_provinsi_id=${idProv}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            let options = '<option value="">PILIH KOTA/KABUPATEN</option>';
+                            data.result.forEach(k => {
+                                options += `<option value="${k.id}">${k.text}</option>`;
+                            });
+                            kotaSelect.innerHTML = options;
+                            
+                            document.getElementById('custom_kecamatan').innerHTML = '<option value="">PILIH KECAMATAN</option>';
+                            document.getElementById('custom_kodepos').innerHTML = '<option value="">PILIH KODE POS</option>';
+                        })
+                        .catch(error => console.error('Error loading kota:', error));
+                });
+            }
+
+            let selectedCustomKabkotaId;
+            if (document.getElementById('custom_kota')) {
+                document.getElementById('custom_kota').addEventListener('change', function() {
+                    selectedCustomKabkotaId = this.value;
+                    const kecamatanSelect = document.getElementById('custom_kecamatan');
+                    
+                    if (!selectedCustomKabkotaId) {
+                        kecamatanSelect.innerHTML = '<option value="">PILIH KECAMATAN</option>';
+                        document.getElementById('custom_kodepos').innerHTML = '<option value="">PILIH KODE POS</option>';
+                        return;
+                    }
+
+                    fetch(`/api/kecamatan?d_kabkota_id=${selectedCustomKabkotaId}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            let opt = '<option value="">PILIH KECAMATAN</option>';
+                            data.result.forEach(kec => {
+                                opt += `<option value="${kec.id}">${kec.text}</option>`;
+                            });
+                            kecamatanSelect.innerHTML = opt;
+                            
+                            document.getElementById('custom_kodepos').innerHTML = '<option value="">PILIH KODE POS</option>';
+                        })
+                        .catch(error => console.error('Error loading kecamatan:', error));
+                });
+            }
+
+            let selectedCustomKecId;
+            if (document.getElementById('custom_kecamatan')) {
+                document.getElementById('custom_kecamatan').addEventListener('change', function() {
+                    selectedCustomKecId = this.value;
+                    const kodeposSelect = document.getElementById('custom_kodepos');
+                    
+                    if (!selectedCustomKecId) {
+                        kodeposSelect.innerHTML = '<option value="">PILIH KODE POS</option>';
+                        return;
+                    }
+
+                    fetch(`/api/kodepos?d_kabkota_id=${selectedCustomKabkotaId}&d_kecamatan_id=${selectedCustomKecId}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            let opt = '<option value="">PILIH KODE POS</option>';
+                            data.result.forEach(pos => {
+                                opt += `<option value="${pos.text}">${pos.text}</option>`;
+                            });
+                            kodeposSelect.innerHTML = opt;
+                        })
+                        .catch(error => console.error('Error loading kodepos:', error));
+                });
+            }
+
+            if (document.getElementById('custom_kodepos')) {
+                document.getElementById('custom_kodepos').addEventListener('change', function() {
+                    if (this.value) {
+                        loadOngkir();
+                    }
+                });
+            }
+
+            toggleAddressSection();
+            
+            @if ($isset)
+                loadOngkir();
+            @else
+                if (customRadio?.checked) {
+                    loadCustomProvinsi();
+                }
+            @endif
+        });
+    </script>
 @endsection

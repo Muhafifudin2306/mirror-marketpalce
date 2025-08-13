@@ -68,7 +68,7 @@
             type="file"
             id="photo"
             name="photo"
-            accept="image/*"
+            accept="image/jpeg,image/jpg,image/png,image/webp"
           />
           <div class="form-text text-muted">
             * Biarkan kosong jika tidak ingin mengganti banner.

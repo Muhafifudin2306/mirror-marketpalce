@@ -38,7 +38,7 @@ class BannerController extends Controller
         $validated = $request->validate([
             'heading'   => 'required|string|max:255',
             'content'   => 'nullable|string|max:255',
-            'photo'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'photo'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         if ($request->hasFile('photo')) {
@@ -71,7 +71,7 @@ class BannerController extends Controller
         $validated = $request->validate([
             'heading' => 'required|string|max:255',
             'content' => 'nullable|string|max:255',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         if ($request->hasFile('photo')) {

@@ -229,11 +229,50 @@
       font-size: 2rem;
     }
     .cart-item-actions {
-      justify-content: center;
+      display: flex;
+      gap: 8px;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      margin-top: 12px;
     }
     .summary-card {
       position: static;
       margin-top: 1rem;
+    }
+    .mobile-btn {
+        flex: 1;
+        min-width: 0;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        font-weight: 500;
+        font-family: 'Poppins', sans-serif;
+        text-align: center;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .mobile-btn-primary {
+        background-color: #0258d3;
+        color: #fff;
+    }
+
+    .mobile-btn-secondary {
+        background-color: #f8f9fa;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+
+    .mobile-btn-danger {
+        background-color: #fc2865;
+        color: #fff;
+    }
+
+    .mobile-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
   }
 
@@ -398,15 +437,24 @@
       }
       
       .cart-item-actions .btn {
-          font-size: 0.65rem !important;
-          padding: 4px 8px !important;
+          font-size: 0.7rem !important; 
+          padding: 6px 10px !important;
           border-radius: 4px;
           flex: none;
+          font-weight: 500 !important;
       }
       
       .cart-item-actions .btn-primary {
-          background-color: #0258d3;
+          background-color: #0258d3 !important;
+          color: #fff !important;
+          border: none !important;
+          font-weight: 600 !important;
           order: 1;
+      }
+
+      .cart-item-actions .btn-primary:hover {
+          background-color: #0041a8 !important;
+          color: #fff !important;
       }
       
       .cart-item-actions .btn-outline-primary {
@@ -572,13 +620,19 @@
       .cta-content {
           padding-left: 20px !important;
           padding-right: 20px;
+          padding-top: 20px !important;
           text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+          position: absolute;
+          top: 60% !important;
+          left: 0;
+          right: 0;
       }
-      
+
       .cta-title, .cta-subtitle {
-          font-size: 1.8rem !important;
-          line-height: 1.2;
+          font-size: 1.1rem !important;
+          line-height: 1.1;
           text-align: center;
+          margin-bottom: 0.3rem !important;
       }
       
       .btn-schedule {
@@ -596,7 +650,7 @@
           transition: all 0.3s ease;
           overflow: hidden;
           position: relative;
-          margin-top: 15px;
+          margin-top: 8px !important;
           border: 2px solid rgba(255, 255, 255, 0.3);
       }
       
@@ -611,16 +665,19 @@
   @media (max-width: 576px) {
       .cta-content {
           padding-left: 15px !important;
+          padding-top: 15px !important;
+          top: 55% !important;
       }
-      
+
       .cta-title, .cta-subtitle {
-          font-size: 1.4rem !important;
+          font-size: 0.9rem !important;
+          margin-bottom: 0.2rem !important;
       }
       
       .btn-schedule {
           padding: 8px 16px;
-          font-size: 0.75rem;
-          margin-top: 12px;
+          font-size: 0.7rem;
+          margin-top: 6px !important;
       }
       
       .btn-schedule .btn-text {
@@ -673,12 +730,16 @@
 
   @media (max-width: 768px) {
       .cart-item-actions .btn {
-          min-height: 32px;
-          min-width: 60px;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 4px;
+          font-size: 0.7rem !important; 
+          padding: 6px 10px !important;
+          border-radius: 4px;
+          flex: none;
+          font-weight: 500 !important;
+      }
+
+      .cart-item-actions .btn i {
+          font-size: 0.6rem !important;
+          margin-right: 4px;
       }
       
       .cart-item {
@@ -730,9 +791,9 @@
                     $image = $item->product->images->first();
                 @endphp
                 @if($image && $image->image_product && file_exists(storage_path('app/public/' . $image->image_product)))
-                    <img src="{{ asset('storage/' . $image->image_product) }}" alt="Produk">
+                    <img class="d-none d-md-inline" src="{{ asset('storage/' . $image->image_product) }}" alt="Produk">
                 @else
-                    <img src="{{ asset('landingpage/img/nophoto.png') }}" alt="Produk">
+                    <img class="d-none d-md-inline" src="{{ asset('landingpage/img/nophoto.png') }}" alt="Produk">
                 @endif
             </div>
             <div class="cart-item-body">
@@ -781,18 +842,18 @@
               <div class="d-flex justify-content-between align-items-center d-none d-md-flex">
                 <div class="cart-item-actions">
                   <a href="{{ route('order-product.edit', $item) }}" class="btn btn-outline-primary btn-sm">
-                    <i class="bi bi-pencil"></i> Edit
+                    <i class="bi bi-pencil text-primary"></i> Edit
                   </a>
                   <form action="{{ route('cart.remove', $item) }}" method="POST" style="display:inline">
                     @csrf @method('DELETE')
                     <button type="submit" class="btn btn-outline-danger btn-sm">
-                      <i class="bi bi-trash"></i> Hapus
+                      <i class="bi bi-trash text-danger"></i> Hapus
                     </button>
                   </form>
                   <form action="{{ route('checkout.item', $item->id) }}" method="POST" style="display:inline">
                     @csrf
                     <button type="submit" class="btn btn-primary btn-sm">
-                      <i class="bi bi-bag-check"></i> Checkout
+                      <i class="bi bi-bag-check text-white"></i> Checkout
                     </button>
                   </form>
                 </div>
@@ -805,23 +866,23 @@
                 </div>
               </div>
               
-              <div class="cart-item-actions d-md-none">
-                <form action="{{ route('checkout.item', $item->id) }}" method="POST" style="display:inline">
-                  @csrf
-                  <button type="submit" class="btn btn-primary btn-sm">
-                    <i class="bi bi-bag-check"></i> Checkout
-                  </button>
+              <div class="cart-item-actions d-md-none" style="display: flex; gap: 8px; margin-top: 12px;">
+                <form action="{{ route('checkout.item', $item->id) }}" method="POST" style="flex: 1;">
+                    @csrf
+                    <button type="submit" class="mobile-btn mobile-btn-primary" style="width: 100%;">
+                        CHECKOUT
+                    </button>
                 </form>
-                <a href="{{ route('order-product.edit', $item) }}" class="btn btn-outline-primary btn-sm">
-                  <i class="bi bi-pencil"></i> Edit
+                <a href="{{ route('order-product.edit', $item) }}" class="mobile-btn mobile-btn-secondary">
+                    EDIT
                 </a>
-                <form action="{{ route('cart.remove', $item) }}" method="POST" style="display:inline">
-                  @csrf @method('DELETE')
-                  <button type="submit" class="btn btn-outline-danger btn-sm">
-                    <i class="bi bi-trash"></i> Hapus
-                  </button>
+                <form action="{{ route('cart.remove', $item) }}" method="POST" style="flex: 1;">
+                    @csrf @method('DELETE')
+                    <button type="submit" class="mobile-btn mobile-btn-danger" style="width: 100%;">
+                        HAPUS
+                    </button>
                 </form>
-              </div>
+            </div>
             </div>
           </div>
           @endforeach
@@ -873,6 +934,15 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    @if(session('cart_success'))
+      swal({
+        title: "Berhasil!",
+        text: "{{ session('cart_success') }}",
+        icon: "success",
+        button: "OK",
+        timer: 3000,
+      });
+    @endif
     document.querySelectorAll('.qty-input').forEach(input => {
       input.addEventListener('change', function () {
         const itemId = this.dataset.id;

@@ -13,7 +13,7 @@
 /* BULLETS (indikator) di dalam hero, bawah tengah */
 #heroCarousel .carousel-indicators {
   position: absolute;
-  bottom: 15px;
+  /*bottom: 15px;*/
   left: 35%;
   transform: translateX(-50%);
   display: flex;

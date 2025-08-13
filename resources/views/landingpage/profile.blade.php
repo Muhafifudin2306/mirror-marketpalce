@@ -366,6 +366,116 @@
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
+            .mobile-order-card {
+                background: #fff;
+                border-radius: 8px;
+                padding: 15px;
+                margin-bottom: 15px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                border: 1px solid #f0f0f0;
+            }
+
+            .mobile-order-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+                padding-bottom: 8px;
+                border-bottom: 1px solid #f0f0f0;
+            }
+
+            .mobile-order-id {
+                font-weight: 600;
+                font-size: 0.85rem;
+                color: #333;
+                font-family: 'Poppins', sans-serif;
+            }
+
+            .mobile-order-date {
+                font-size: 0.7rem;
+                color: #666;
+                font-family: 'Poppins', sans-serif;
+            }
+
+            .mobile-order-info {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+            }
+
+            .mobile-order-total {
+                font-weight: 600;
+                font-size: 0.8rem;
+                color: #333;
+                font-family: 'Poppins', sans-serif;
+            }
+
+            .mobile-order-total small {
+                display: block;
+                font-size: 0.6rem;
+                color: #ff6b6b;
+                font-weight: 400;
+            }
+
+            .mobile-order-status {
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 0.65rem;
+                font-weight: 500;
+                font-family: 'Poppins', sans-serif;
+                text-align: center;
+                min-width: 70px;
+            }
+
+            .mobile-order-estimasi {
+                font-size: 0.7rem;
+                color: #666;
+                margin-bottom: 12px;
+                font-family: 'Poppins', sans-serif;
+            }
+
+            .mobile-order-actions {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            .mobile-btn {
+                flex: 1;
+                min-width: 0;
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-size: 0.7rem;
+                font-weight: 500;
+                font-family: 'Poppins', sans-serif;
+                text-align: center;
+                text-decoration: none;
+                border: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .mobile-btn-primary {
+                background-color: #0258d3;
+                color: #fff;
+            }
+
+            .mobile-btn-secondary {
+                background-color: #f8f9fa;
+                color: #333;
+                border: 1px solid #ddd;
+            }
+
+            .mobile-btn-danger {
+                background-color: #fc2865;
+                color: #fff;
+            }
+
+            .mobile-btn:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
             .login-left h3 {
                 font-size: 2.5rem !important;
             }
@@ -396,6 +506,13 @@
         }
 
         @media (max-width: 768px) {
+            .container.product-card {
+                padding: 0 10px !important;
+            }
+
+            #pane-orders {
+                padding: 0 !important;
+            }
             .container-fluid.px-3 {
                 padding-left: 1rem !important;
                 padding-right: 1rem !important;
@@ -537,6 +654,20 @@
         }
 
         @media (max-width: 576px) {
+            .table tbody td {
+                padding-left: 100px !important;
+                font-size: 0.7rem !important;
+            }
+
+            .table tbody td:before {
+                width: 90px !important;
+                font-size: 0.65rem !important;
+            }
+
+            .table .btn {
+                padding: 6px 10px !important;
+                font-size: 0.65rem !important;
+            }
             .container-fluid.px-3 {
                 padding-left: 0.5rem !important;
                 padding-right: 0.5rem !important;
@@ -804,118 +935,203 @@
                         <div class="tab-content" id="sidebarTabsContent">
                             {{-- Pesanan Saya --}}
                             <div class="tab-pane fade show active" id="pane-orders" role="tabpanel" aria-labelledby="tab-orders">
-                                <div class="table-responsive">
-                                    <table class="table table-borderless">
-                                        <thead>
-                                            <tr class="border-bottom">
-                                                <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Pesanan Saya</th>
-                                                <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Tanggal</th>
-                                                <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Total</th>
-                                                <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Status</th>
-                                                <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Estimasi</th>
-                                                <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($orders as $order)
+                                <!-- Desktop Table -->
+                                <div class="d-none d-md-block">
+                                    <div class="table-responsive">
+                                        <table class="table table-borderless">
+                                            <thead>
                                                 <tr class="border-bottom">
-                                                    <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{{ 'INV' . substr($order->spk, 3, strpos($order->spk, '-') - 3) }}</td>
-                                                    <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{!! $order->created_at->locale('id')->translatedFormat('l, d M') . '<br>' . $order->created_at->translatedFormat('Y') !!}</td>
-                                                    <td>
-                                                        Rp {{ number_format($order->subtotal, 0, ',', '.') }}
-                                                        @if($order->express == 1)
-                                                            <br><small style="color: #ff6b6b; font-size: 0.55rem;">Termasuk express (+50%)</small>
-                                                        @endif
-                                                    </td>
-                                                    <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">
-                                                        @php
-                                                        switch 
-                                                        ($order->order_status) {
-                                                        case 0:
-                                                            $badge = '#ffd782';
-                                                            $foncol= '#444444';
-                                                            $firlabel = 'Menunggu';
-                                                            $seclabel = 'Pembayaran';
-                                                            break;
-                                                        case 1:
-                                                            $badge = '#4CAF50';
-                                                            $foncol= '#ffffff';
-                                                            $firlabel = 'Sudah';
-                                                            $seclabel = 'Dibayar';
-                                                            break;
-                                                        case 2:
-                                                            $badge = '#5ee3e3';
-                                                            $foncol= '#444444';
-                                                            $firlabel = 'Dalam';
-                                                            $seclabel = 'Pengerjaan';
-                                                            break;
-                                                        case 3:
-                                                            $badge = '#abceff';
-                                                            $foncol= '#444444';
-                                                            $firlabel = 'Dalam';
-                                                            $seclabel = 'Pengiriman';
-                                                            break;
-                                                        case 4:
-                                                            $badge = '#0258d3';
-                                                            $foncol= '#fff';
-                                                            $firlabel = 'Pesanan';
-                                                            $seclabel = 'Diterima';
-                                                            break;
-                                                        case 9:
-                                                            $badge = '#fc2865';
-                                                            $foncol = '#fffff';
-                                                            $firlabel = 'Order';
-                                                            $seclabel = 'Dibatalkan';
-                                                            break;
-                                                        default:
-                                                            $badge = '#e9ecef';
-                                                            $foncol = '#444444';
-                                                            $firlabel = 'Status';
-                                                            $seclabel = 'Unknown';
-                                                        } @endphp
-                                                        <span class="badge" style="display: block;width: 100%;text-align: left;font-weight: 450 !important; padding: 8px 20px 8px 8px; font-size: 0.65rem !important; background-color: {{ $badge ?? '#e9ecef' }}; color:{{ $foncol }} !important; font-family: 'Poppins', sans-serif; border-radius:3px;">{{ $firlabel }} <br> {{ $seclabel }}</span>
-                                                    </td>
-                                                    <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{{ $order->estimasi ?? '-' }}</td>
-                                                    <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">
-                                                        @if ($order->order_status == 0)
-                                                            <a href="{{ route('checkout.order', $order->id) }}"
-                                                            class="btn btn-sm rounded-pill mb-1"
-                                                            style="display:block; width:100%; text-align:center;
-                                                                    font-weight:450!important; padding:2px 8px;
-                                                                    font-size:0.65rem!important; background-color:#0258d3;
-                                                                    color:#fff!important; font-family:'Poppins',sans-serif;">
-                                                                BAYAR
-                                                            </a>
-
-                                                            <a href="{{ route('order.show', $order->id) }}" 
-                                                            class="btn btn-sm rounded-pill mb-1" 
-                                                            style="border-color:#8888;display: block;width: 100%;text-align: center;
-                                                                    font-weight: 450 !important; padding: 2px 8px; font-size: 0.65rem !important; 
-                                                                    background-color:none; color:#000 !important; font-family: 'Poppins', sans-serif;">
-                                                                LIHAT ORDER
-                                                            </a>
-                                                            
-                                                            <button onclick="cancelOrder({{ $order->id }})" 
-                                                                    class="btn btn-sm rounded-pill" 
-                                                                    style="display: block;width: 100%;text-align: center;font-weight: 450 !important; 
-                                                                        padding: 2px 8px; font-size: 0.65rem !important; background-color:#fc2865; 
-                                                                        color:#fff !important; font-family: 'Poppins', sans-serif;">
-                                                                BATALKAN
-                                                            </button>
-                                                        @else
-                                                            <a href="{{ route('order.show', $order->id) }}" 
-                                                            class="btn btn-sm rounded-pill" 
-                                                            style="border-color:#8888;display: block;width: 100%;text-align: center;
-                                                                    font-weight: 450 !important; padding: 2px 8px; font-size: 0.65rem !important; 
-                                                                    background-color:none; color:#000 !important; font-family: 'Poppins', sans-serif;">
-                                                                LIHAT ORDER
-                                                            </a>
-                                                        @endif
-                                                    </td>
+                                                    <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Pesanan Saya</th>
+                                                    <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Tanggal</th>
+                                                    <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Total</th>
+                                                    <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Status</th>
+                                                    <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Estimasi</th>
+                                                    <th style="font-weight: 450 !important; width:104px; font-size: 0.75rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">Aksi</th>
                                                 </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($orders as $order)
+                                                    <tr class="border-bottom">
+                                                        <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{{ 'INV' . substr($order->spk, 3, strpos($order->spk, '-') - 3) }}</td>
+                                                        <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{!! $order->created_at->locale('id')->translatedFormat('l, d M') . '<br>' . $order->created_at->translatedFormat('Y') !!}</td>
+                                                        <td>
+                                                            Rp {{ number_format($order->subtotal, 0, ',', '.') }}
+                                                            @if($order->express == 1)
+                                                                <br><small style="color: #ff6b6b; font-size: 0.55rem;">Termasuk express (+50%)</small>
+                                                            @endif
+                                                        </td>
+                                                        <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">
+                                                            @php
+                                                            switch ($order->order_status) {
+                                                            case 0:
+                                                                $badge = '#ffd782';
+                                                                $foncol= '#444444';
+                                                                $firlabel = 'Menunggu';
+                                                                $seclabel = 'Pembayaran';
+                                                                break;
+                                                            case 1:
+                                                                $badge = '#4CAF50';
+                                                                $foncol= '#ffffff';
+                                                                $firlabel = 'Sudah';
+                                                                $seclabel = 'Dibayar';
+                                                                break;
+                                                            case 2:
+                                                                $badge = '#5ee3e3';
+                                                                $foncol= '#444444';
+                                                                $firlabel = 'Dalam';
+                                                                $seclabel = 'Pengerjaan';
+                                                                break;
+                                                            case 3:
+                                                                $badge = '#abceff';
+                                                                $foncol= '#444444';
+                                                                $firlabel = 'Dalam';
+                                                                $seclabel = 'Pengiriman';
+                                                                break;
+                                                            case 4:
+                                                                $badge = '#0258d3';
+                                                                $foncol= '#fff';
+                                                                $firlabel = 'Pesanan';
+                                                                $seclabel = 'Diterima';
+                                                                break;
+                                                            case 9:
+                                                                $badge = '#fc2865';
+                                                                $foncol = '#fffff';
+                                                                $firlabel = 'Order';
+                                                                $seclabel = 'Dibatalkan';
+                                                                break;
+                                                            default:
+                                                                $badge = '#e9ecef';
+                                                                $foncol = '#444444';
+                                                                $firlabel = 'Status';
+                                                                $seclabel = 'Unknown';
+                                                            } @endphp
+                                                            <span class="badge" style="display: block;width: 100%;text-align: left;font-weight: 450 !important; padding: 8px 20px 8px 8px; font-size: 0.65rem !important; background-color: {{ $badge ?? '#e9ecef' }}; color:{{ $foncol }} !important; font-family: 'Poppins', sans-serif; border-radius:3px;">{{ $firlabel }} <br> {{ $seclabel }}</span>
+                                                        </td>
+                                                        <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">{{ $order->estimasi ?? '-' }}</td>
+                                                        <td style="font-weight: 400 !important; padding: 16px 8px; font-size: 0.7rem !important; color:#000 !important; font-family: 'Poppins', sans-serif;">
+                                                            @if ($order->order_status == 0)
+                                                                <a href="{{ route('checkout.order', $order->id) }}"
+                                                                class="btn btn-sm rounded-pill mb-1"
+                                                                style="display:block; width:100%; text-align:center;
+                                                                        font-weight:450!important; padding:2px 8px;
+                                                                        font-size:0.65rem!important; background-color:#0258d3;
+                                                                        color:#fff!important; font-family:'Poppins',sans-serif;">
+                                                                    BAYAR
+                                                                </a>
+
+                                                                <a href="{{ route('order.show', $order->id) }}" 
+                                                                class="btn btn-sm rounded-pill mb-1" 
+                                                                style="border-color:#8888;display: block;width: 100%;text-align: center;
+                                                                        font-weight: 450 !important; padding: 2px 8px; font-size: 0.65rem !important; 
+                                                                        background-color:none; color:#000 !important; font-family: 'Poppins', sans-serif;">
+                                                                    LIHAT ORDER
+                                                                </a>
+                                                                
+                                                                <button onclick="cancelOrder({{ $order->id }})" 
+                                                                        class="btn btn-sm rounded-pill" 
+                                                                        style="display: block;width: 100%;text-align: center;font-weight: 450 !important; 
+                                                                            padding: 2px 8px; font-size: 0.65rem !important; background-color:#fc2865; 
+                                                                            color:#fff !important; font-family: 'Poppins', sans-serif;">
+                                                                    BATALKAN
+                                                                </button>
+                                                            @else
+                                                                <a href="{{ route('order.show', $order->id) }}" 
+                                                                class="btn btn-sm rounded-pill" 
+                                                                style="border-color:#8888;display: block;width: 100%;text-align: center;
+                                                                        font-weight: 450 !important; padding: 2px 8px; font-size: 0.65rem !important; 
+                                                                        background-color:none; color:#000 !important; font-family: 'Poppins', sans-serif;">
+                                                                    LIHAT ORDER
+                                                                </a>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- Mobile Cards -->
+                                <div class="d-block d-md-none">
+                                    @foreach ($orders as $order)
+                                        @php
+                                        switch ($order->order_status) {
+                                        case 0:
+                                            $badge = '#ffd782';
+                                            $foncol= '#444444';
+                                            $firlabel = 'Menunggu';
+                                            $seclabel = 'Pembayaran';
+                                            break;
+                                        case 1:
+                                            $badge = '#4CAF50';
+                                            $foncol= '#ffffff';
+                                            $firlabel = 'Sudah';
+                                            $seclabel = 'Dibayar';
+                                            break;
+                                        case 2:
+                                            $badge = '#5ee3e3';
+                                            $foncol= '#444444';
+                                            $firlabel = 'Dalam';
+                                            $seclabel = 'Pengerjaan';
+                                            break;
+                                        case 3:
+                                            $badge = '#abceff';
+                                            $foncol= '#444444';
+                                            $firlabel = 'Dalam';
+                                            $seclabel = 'Pengiriman';
+                                            break;
+                                        case 4:
+                                            $badge = '#0258d3';
+                                            $foncol= '#fff';
+                                            $firlabel = 'Pesanan';
+                                            $seclabel = 'Diterima';
+                                            break;
+                                        case 9:
+                                            $badge = '#fc2865';
+                                            $foncol = '#fffff';
+                                            $firlabel = 'Order';
+                                            $seclabel = 'Dibatalkan';
+                                            break;
+                                        default:
+                                            $badge = '#e9ecef';
+                                            $foncol = '#444444';
+                                            $firlabel = 'Status';
+                                            $seclabel = 'Unknown';
+                                        } @endphp
+                                        
+                                        <div class="mobile-order-card">
+                                            <div class="mobile-order-header">
+                                                <div class="mobile-order-id">{{ 'INV' . substr($order->spk, 3, strpos($order->spk, '-') - 3) }}</div>
+                                                <div class="mobile-order-date">{{ $order->created_at->locale('id')->translatedFormat('d M Y') }}</div>
+                                            </div>
+                                            
+                                            <div class="mobile-order-info">
+                                                <div class="mobile-order-total">
+                                                    Rp {{ number_format($order->subtotal, 0, ',', '.') }}
+                                                    @if($order->express == 1)
+                                                        <small>+express</small>
+                                                    @endif
+                                                </div>
+                                                <div class="mobile-order-status" style="background-color: {{ $badge }}; color: {{ $foncol }};">
+                                                    {{ $firlabel }} {{ $seclabel }}
+                                                </div>
+                                            </div>
+                                            
+                                            @if($order->estimasi)
+                                                <div class="mobile-order-estimasi">Estimasi: {{ $order->estimasi }}</div>
+                                            @endif
+                                            
+                                            <div class="mobile-order-actions">
+                                                @if ($order->order_status == 0)
+                                                    <a href="{{ route('checkout.order', $order->id) }}" class="mobile-btn mobile-btn-primary">BAYAR</a>
+                                                    <a href="{{ route('order.show', $order->id) }}" class="mobile-btn mobile-btn-secondary">LIHAT</a>
+                                                    <button onclick="cancelOrder({{ $order->id }})" class="mobile-btn mobile-btn-danger">BATAL</button>
+                                                @else
+                                                    <a href="{{ route('order.show', $order->id) }}" class="mobile-btn mobile-btn-secondary">LIHAT ORDER</a>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
 

@@ -90,6 +90,70 @@
             max-width: 90% !important;
         }
     }
+
+    #password.form-control {
+        padding-right: 45px !important;
+    }
+
+    #password.form-control.is-invalid {
+        padding-right: 45px !important;
+        background-image: none !important;
+        background-position: initial !important;
+        background-repeat: initial !important;
+        background-size: initial !important;
+        padding: 0.6rem 45px 0.6rem 1rem !important;
+        height: 44px !important;
+        line-height: normal !important;
+        box-sizing: border-box !important;
+    }
+
+    .password-container {
+        position: relative;
+        height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
+    .btn-password-toggle {
+        position: absolute;
+        right: 12px;
+        top: 0;
+        bottom: 0;
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        color: #c3c3c3;
+        font-size: 1rem;
+        z-index: 15;
+        transition: color 0.3s ease;
+        width: 20px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+    }
+
+    .btn-password-toggle:hover {
+        color: #0439a0;
+    }
+
+    .btn-password-toggle:focus {
+        outline: none;
+        color: #0439a0;
+    }
+
+    .password-container .btn-password-toggle {
+        position: absolute !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        right: 12px !important;
+        height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
 </style>
 <div class="container-fluid overlay-bg d-flex align-items-center">
     <div class="row w-100">
@@ -120,10 +184,15 @@
 
                         <div class="mb-3">
                             <label for="password" class="form-label text-start w-100">PASSWORD</label>
-                            <input id="password" type="password"
-                                   placeholder="masukkan password anda"
-                                   class="form-control @error('password') is-invalid @enderror"
-                                   name="password" required>
+                            <div class="password-container">
+                                <input id="password" type="password"
+                                    placeholder="masukkan password anda"
+                                    class="form-control @error('password') is-invalid @enderror"
+                                    name="password" required>
+                                <button type="button" class="btn-password-toggle" onclick="togglePassword()">
+                                    <i class="bi bi-eye" id="eye-icon"></i>
+                                </button>
+                            </div>
                             @error('password')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -153,4 +222,18 @@
         </div>
     </div>
 </div>
+<script>
+function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    const eyeIcon = document.getElementById('eye-icon');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.className = 'bi bi-eye-slash';
+    } else {
+        passwordInput.type = 'password';
+        eyeIcon.className = 'bi bi-eye';
+    }
+}
+</script>
 @endsection

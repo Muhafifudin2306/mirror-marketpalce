@@ -67,7 +67,7 @@
             type="file"
             id="photo"
             name="photo"
-            accept="image/*"
+            accept="image/jpeg,image/jpg,image/png,image/webp"
           />
           @error('photo')
             <div class="invalid-feedback">{{ $message }}</div>

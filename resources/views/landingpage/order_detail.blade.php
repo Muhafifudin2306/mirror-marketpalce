@@ -310,6 +310,214 @@
           display: block !important;
       }
   }
+  .clickable-image {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+  }
+
+  .clickable-image:hover {
+    transform: scale(1.02);
+    opacity: 0.9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .marketplace-modal {
+    background: #000;
+    border: none;
+    border-radius: 0;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+  }
+
+  .marketplace-body {
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: #000;
+  }
+
+  .image-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 80px;
+    box-sizing: border-box;
+  }
+
+  .marketplace-image {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    transition: all 0.3s ease;
+    cursor: zoom-in;
+  }
+
+  .marketplace-close-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1070;
+    backdrop-filter: blur(10px);
+  }
+
+  .marketplace-close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+  }
+
+  .marketplace-close-btn:active {
+    transform: scale(0.95);
+  }
+
+  .image-nav-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+  }
+
+  .nav-btn {
+    width: 50px;
+    height: 50px;
+    background: rgba(0, 0, 0, 0.6);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    pointer-events: auto;
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  .marketplace-modal:hover .nav-btn {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .nav-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+  }
+
+  .nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .image-counter {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .marketplace-image.zoomed {
+    cursor: zoom-out;
+    transform: scale(2);
+  }
+
+  @media (max-width: 768px) {
+    .image-wrapper {
+      padding: 80px 20px 20px;
+    }
+    
+    .marketplace-close-btn {
+      top: 15px;
+      right: 15px;
+      width: 40px;
+      height: 40px;
+      font-size: 16px;
+    }
+    
+    .nav-btn {
+      width: 44px;
+      height: 44px;
+      font-size: 16px;
+    }
+    
+    .image-nav-overlay {
+      padding: 0 10px;
+    }
+    
+    .image-counter {
+      bottom: 20px;
+      font-size: 12px;
+      padding: 6px 12px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .image-wrapper {
+      padding: 70px 15px 15px;
+    }
+    
+    .marketplace-close-btn {
+      width: 36px;
+      height: 36px;
+      font-size: 14px;
+      top: 10px;
+      right: 10px;
+    }
+    
+    .nav-btn {
+      width: 40px;
+      height: 40px;
+      font-size: 14px;
+    }
+  }
+
+  .modal.fade .modal-dialog {
+    transition: opacity 0.3s ease-out;
+    opacity: 0;
+  }
+
+  .modal.show .modal-dialog {
+    opacity: 1;
+  }
+
+  .modal-open {
+    overflow: hidden !important;
+  }
 </style>
 
 <br><br>
@@ -351,9 +559,10 @@
                   @for($i = 0; $i < 4; $i++)
                     <div class="carousel-item {{ $i === 0 ? 'active' : '' }}">
                       <img src="{{ asset('landingpage/img/nophoto.png') }}"
-                          class="d-block w-100"
+                          class="d-block w-100 clickable-image"
                           style="max-height:360px; object-fit:contain;"
-                          alt="">
+                          alt=""
+                          onclick="openImagePreview('{{ asset('landingpage/img/nophoto.png') }}', {{ $i }})">
                     </div>
                   @endfor
                 @else
@@ -366,18 +575,20 @@
                     @endphp
                     <div class="carousel-item {{ $i === 0 ? 'active' : '' }}">
                       <img src="{{ $src }}"
-                          class="d-block w-100"
+                          class="d-block w-100 clickable-image"
                           style="max-height:360px; object-fit:contain;"
-                          alt="">
+                          alt=""
+                          onclick="openImagePreview('{{ $src }}', {{ $i }})">
                     </div>
                   @endforeach
 
                   @for($j = $thumbs->count(); $j < 4; $j++)
                     <div class="carousel-item">
                       <img src="{{ asset('landingpage/img/nophoto.png') }}"
-                          class="d-block w-100"
+                          class="d-block w-100 clickable-image"
                           style="max-height:360px; object-fit:contain;"
-                          alt="">
+                          alt=""
+                          onclick="openImagePreview('{{ asset('landingpage/img/nophoto.png') }}', {{ $j }})">
                     </div>
                   @endfor
                 @endif
@@ -770,6 +981,34 @@
       </div>
     </div>
   </div>
+  <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content marketplace-modal">
+        <button type="button" class="marketplace-close-btn" data-bs-dismiss="modal" aria-label="Close">
+          <i class="fas fa-times"></i>
+        </button>
+        
+        <div class="modal-body marketplace-body">
+          <div class="image-wrapper">
+            <img id="previewImage" src="" alt="Preview" class="marketplace-image">
+          </div>
+          
+          <div class="image-nav-overlay">
+            <button class="nav-btn nav-prev" onclick="navigateImage(-1)">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="nav-btn nav-next" onclick="navigateImage(1)">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+          
+          <div class="image-counter">
+            <span id="imageCounter">1 / 4</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </main>
 
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
@@ -902,6 +1141,108 @@
       }
     });
   }
+  let currentImageIndex = 0;
+  let imageUrls = [];
+
+  function openImagePreview(imageSrc, imageIndex = 0) {
+    imageUrls = [];
+    const carouselImages = document.querySelectorAll('#productCarousel .carousel-item img');
+    carouselImages.forEach(img => {
+      if (img.src && !img.src.includes('nophoto.png')) {
+        imageUrls.push(img.src);
+      }
+    });
+    
+    if (imageUrls.length === 0) {
+      imageUrls.push(imageSrc);
+    }
+    
+    currentImageIndex = imageIndex;
+    
+    const modal = new bootstrap.Modal(document.getElementById('imagePreviewModal'), {
+      backdrop: true,
+      keyboard: true
+    });
+    
+    updateModalImage();
+    modal.show();
+  }
+
+  function updateModalImage() {
+    const previewImage = document.getElementById('previewImage');
+    const counter = document.getElementById('imageCounter');
+    const prevBtn = document.querySelector('.nav-prev');
+    const nextBtn = document.querySelector('.nav-next');
+    
+    if (imageUrls.length > 0) {
+      previewImage.src = imageUrls[currentImageIndex];
+      
+      counter.textContent = `${currentImageIndex + 1} / ${imageUrls.length}`;
+      
+      prevBtn.disabled = currentImageIndex === 0;
+      nextBtn.disabled = currentImageIndex === imageUrls.length - 1;
+      
+      const navOverlay = document.querySelector('.image-nav-overlay');
+      navOverlay.style.display = imageUrls.length > 1 ? 'flex' : 'none';
+      
+      const counterEl = document.querySelector('.image-counter');
+      counterEl.style.display = imageUrls.length > 1 ? 'block' : 'none';
+    }
+  }
+
+  function navigateImage(direction) {
+    const newIndex = currentImageIndex + direction;
+    if (newIndex >= 0 && newIndex < imageUrls.length) {
+      currentImageIndex = newIndex;
+      updateModalImage();
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('imagePreviewModal');
+    const previewImage = document.getElementById('previewImage');
+    
+    document.addEventListener('keydown', function(e) {
+      const modalInstance = bootstrap.Modal.getInstance(modal);
+      if (modalInstance) {
+        if (e.key === 'Escape') {
+          modalInstance.hide();
+        } else if (e.key === 'ArrowLeft') {
+          navigateImage(-1);
+        } else if (e.key === 'ArrowRight') {
+          navigateImage(1);
+        }
+      }
+    });
+    
+    previewImage.addEventListener('click', function() {
+      this.classList.toggle('zoomed');
+    });
+    
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal || e.target.classList.contains('marketplace-body')) {
+        const modalInstance = bootstrap.Modal.getInstance(modal);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
+      }
+    });
+    
+    previewImage.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+    
+    document.querySelector('.image-nav-overlay')?.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+    
+    modal.addEventListener('hidden.bs.modal', function() {
+      previewImage.classList.remove('zoomed');
+      previewImage.src = '';
+      currentImageIndex = 0;
+      imageUrls = [];
+    });
+  });
 </script>
 
 @endsection

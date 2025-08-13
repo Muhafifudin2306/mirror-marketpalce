@@ -1,3 +1,145 @@
+<style>
+@media (max-width: 768px) {
+    .container-fluid.footer {
+        padding-top: 2rem !important;
+        margin-top: 2rem !important;
+    }
+    
+    .container.py-4 {
+        padding-top: 1.5rem !important;
+        padding-bottom: 1.5rem !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    .footer .col-lg-6.col-md-6 {
+        margin-bottom: 2rem !important;
+        text-align: center !important;
+    }
+    
+    .footer .col-lg-6.col-md-6 img {
+        max-width: 70% !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .footer .d-flex.mt-3 {
+        margin-top: 1rem !important;
+        justify-content: center !important;
+        gap: 1rem !important;
+    }
+    
+    .footer .d-flex.mt-3 a {
+        width: 40px !important;
+        height: 40px !important;
+    }
+    
+    .footer .d-flex.mt-3 a i {
+        font-size: 16px !important;
+    }
+    
+    .footer .col-lg-3.col-md-6 {
+        margin-bottom: 1.5rem !important;
+        text-align: center !important;
+    }
+    
+    .footer .col-lg-3.col-md-6 br {
+        display: none !important;
+    }
+    
+    .footer h6 {
+        font-size: 1rem !important;
+        margin-bottom: 1rem !important;
+        margin-top: 0 !important;
+        text-align: center !important;
+    }
+    
+    .footer ul.list-unstyled {
+        text-align: center !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .footer ul.list-unstyled li {
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .footer ul.list-unstyled li a {
+        font-size: 0.9rem !important;
+        display: inline-block !important;
+        padding: 0.25rem 0 !important;
+    }
+    
+    .footer .col-lg-3.col-md-6:last-child p {
+        text-align: center !important;
+        font-size: 0.9rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .footer .col-lg-3.col-md-6:last-child a h6 {
+        text-align: center !important;
+        margin-top: 1rem !important;
+        margin-bottom: 0 !important;
+    }
+    
+    .footer .col-lg-3.col-md-6:last-child {
+        text-align: center !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .container.py-4 {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+    
+    .footer .col-lg-6.col-md-6 img {
+        max-width: 80% !important;
+    }
+    
+    .footer h6 {
+        font-size: 0.95rem !important;
+    }
+    
+    .footer ul.list-unstyled li a {
+        font-size: 0.85rem !important;
+    }
+    
+    .footer .col-lg-3.col-md-6:last-child p {
+        font-size: 0.85rem !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .container-fluid.copyright .container .row {
+        flex-direction: column !important;
+        text-align: center !important;
+        gap: 0.5rem !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    .container-fluid.copyright .col-md-auto {
+        margin-bottom: 0.5rem !important;
+        text-align: center !important;
+        width: 100% !important;
+        max-width: none !important;
+    }
+    
+    .container-fluid.copyright .col-md-auto a {
+        font-size: 0.8rem !important;
+        margin-right: 1rem !important;
+    }
+    
+    .container-fluid.copyright .col-md-auto:last-child {
+        margin-bottom: 0 !important;
+        text-align: center !important;
+    }
+    
+    .container-fluid.copyright .col-md-auto:last-child span {
+        font-size: 0.8rem !important;
+    }
+}
+</style>
+
 <div class="container-fluid footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
     <div class="container py-4">
 

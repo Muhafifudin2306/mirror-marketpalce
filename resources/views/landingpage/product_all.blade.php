@@ -258,20 +258,20 @@
         }
         
         .container-lg.py-5 {
-            padding-top: 2rem !important;
+            padding-top: 1rem !important;
             padding-bottom: 2rem !important;
             padding-left: 1.5rem !important;
             padding-right: 1.5rem !important;
         }
         
         .container-lg .row.g-5 {
-            gap: 1.5rem !important;
+            gap: 0.8rem !important;
             margin: 0 !important;
         }
         
         .mobile-category-wrapper {
             display: block !important;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.5rem;
             margin-left: 0.5rem !important;
             margin-right: 0.5rem !important;
         }
@@ -300,7 +300,7 @@
         .mobile-category-content {
             max-height: 300px;
             overflow-y: auto;
-            margin-top: 0.5rem;
+            margin-top: 0.3rem;
             background: white;
             border-radius: 15px;
             padding: 1rem;
@@ -411,7 +411,7 @@
             flex-direction: row !important;
             gap: 0.8rem !important;
             align-items: center !important;
-            margin-bottom: 1.5rem !important;
+            margin-bottom: 1rem !important;
             margin-left: 0.5rem !important;
             margin-right: 0.5rem !important;
             padding: 0 !important;
@@ -457,7 +457,7 @@
 
     @media (max-width: 576px) {
         .container-lg.py-5 {
-            padding-top: 1.5rem !important;
+            padding-top: 0.8rem !important;
             padding-bottom: 1.5rem !important;
             padding-left: 1rem !important;
             padding-right: 1rem !important;
@@ -466,10 +466,11 @@
         .mobile-category-wrapper {
             margin-left: 0.75rem !important;
             margin-right: 0.75rem !important;
+            margin-bottom: 0.8rem !important;
         }
         
         .container-lg .row.g-4 {
-            gap: 1rem !important;
+            gap: 0.6rem !important;
             margin: 0 !important;
             justify-content: center !important;
         }
@@ -543,6 +544,7 @@
         .container-lg .d-flex.justify-content-between {
             margin-left: 0.75rem !important;
             margin-right: 0.75rem !important;
+            margin-bottom: 0.8rem !important;
         }
         
         .container-lg .sort-select {
@@ -588,59 +590,6 @@
         
         .container-fluid.footer .btn-text {
             font-size: 0.75rem !important;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .container-fluid.footer {
-            margin-top: 3rem !important;
-            padding-top: 2rem !important;
-        }
-        
-        .container-fluid.footer .position-relative {
-            margin-bottom: 2rem !important;
-        }
-        
-        .container-fluid.footer .cta-content {
-            position: absolute !important;
-            top: 50% !important;
-            left: 50% !important;
-            transform: translate(-50%, -50%) !important;
-            width: 90% !important;
-            text-align: center !important;
-            padding: 0 !important;
-            z-index: 2 !important;
-        }
-        
-        .container-fluid.footer .cta-title {
-            font-size: 1.4rem !important;
-            margin-bottom: 0.05rem !important;
-            line-height: 1.1 !important;
-            color: #fff !important;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
-        }
-        
-        .container-fluid.footer .cta-subtitle {
-            font-size: 1.4rem !important;
-            margin-bottom: 0.5rem !important;
-            line-height: 1.1 !important;
-            color: #ffc74c !important;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
-        }
-        
-        .container-fluid.footer .btn-schedule {
-            padding: 12px 24px !important;
-            font-size: 0.8rem !important;
-            border-radius: 25px !important;
-            background: rgba(255, 255, 255, 0.95) !important;
-            border: 2px solid #fff !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
-        }
-        
-        .container-fluid.footer .btn-text {
-            font-size: 0.8rem !important;
-            font-weight: 700 !important;
-            color: #0049a0 !important;
         }
     }
 
@@ -737,10 +686,175 @@
         padding: 8px 12px !important;
         border-radius: 20px !important;
     }
+
+    .search-tag {
+        transition: all 0.3s ease;
+    }
+
+    .search-tag:hover {
+        background: #bbdefb !important;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
+    }
+
+    .search-tag a:hover {
+        color: #d32f2f !important;
+        transform: scale(1.2);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .results-info {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 6px !important;
+        }
+        
+        .search-tag {
+            font-size: 0.75rem !important;
+            padding: 3px 10px !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .search-tag {
+            font-size: 0.7rem !important;
+            padding: 2px 8px !important;
+        }
+    }
+    @media (max-width: 768px) {
+    .container-lg .d-flex.justify-content-between {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 8px !important;
+    }
+    
+    .container-lg .results-info {
+        width: 100% !important;
+        justify-content: space-between !important;
+    }
+    
+    .container-lg .d-flex.align-items-center {
+        width: 100% !important;
+        justify-content: flex-end !important;
+    }
+}
+@media (max-width: 768px) {
+    .container-fluid.footer .cta-content {
+        padding-left: 20px !important;
+        padding-right: 20px;
+        padding-top: 15px !important;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        position: absolute;
+        top: 60% !important;
+        left: 0;
+        right: 0;
+    }
+
+    .container-fluid.footer .cta-title, 
+    .container-fluid.footer .cta-subtitle {
+        font-size: 1.1rem !important;
+        line-height: 1.1;
+        text-align: center;
+        margin-bottom: 0.3rem !important;
+    }
+    
+    .container-fluid.footer .btn-schedule {
+        display: inline-flex;
+        align-items: center;
+        background: none;
+        color: #fff;
+        text-decoration: none;
+        padding: 6px 14px !important;
+        border-radius: 20px !important;
+        font-family: 'Poppins';
+        font-weight: 600;
+        font-size: 0.7rem !important;
+        letter-spacing: 0.3px !important;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        position: relative;
+        margin-top: 6px !important;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .container-fluid.footer .btn-schedule:hover {
+        background: #fff;
+        color: #333;
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+    .container-fluid.footer .btn-arrow {
+        display: none !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .container-fluid.footer .cta-content {
+        padding-left: 15px !important;
+        padding-top: 10px !important;
+        top: 55% !important;
+    }
+
+    .container-fluid.footer .cta-title, 
+    .container-fluid.footer .cta-subtitle {
+        font-size: 0.9rem !important;
+        margin-bottom: 0.2rem !important;
+    }
+    
+    .container-fluid.footer .btn-schedule {
+        padding: 5px 12px !important;
+        font-size: 0.65rem !important;
+        margin-top: 5px !important;
+        border-radius: 18px !important;
+    }
+    
+    .container-fluid.footer .btn-schedule .btn-text {
+        font-size: 0.65rem !important;
+    }
+    .container-fluid.footer .btn-arrow {
+        display: none !important;
+    }
+}
+
+.btn-text {
+    transition: transform 0.3s ease;
+}
+
+.btn-arrow {
+    margin-left: 8px;
+    transition: transform 0.3s ease;
+    position: relative;
+    width: 16px;
+    height: 16px;
+    overflow: hidden;
+}
+
+.btn-arrow .arrow-out {
+    transition: transform 0.3s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.btn-arrow .arrow-in {
+    transition: transform 0.3s ease;
+    position: absolute;
+    top: 0;
+    left: 16px;
+}
+
+.btn-schedule:hover .btn-arrow .arrow-out {
+    transform: translateX(-16px);
+}
+
+.btn-schedule:hover .btn-arrow .arrow-in {
+    transform: translateX(-16px);
+}
 </style>
 <br><br><br><br>
 <div class="container-fluid px-3">
-    <img class="w-100" src="{{ asset('landingpage/img/products_hero.png') }}" alt="Image Produk">
+    <img class="w-100" src="{{ asset('landingpage/img/products_hero.webp') }}" alt="Image Produk">
 </div>
 <div class="container-lg py-5">
     <div class="row g-5 justify-content-center">
@@ -830,11 +944,24 @@
 
         <div class="col-lg-9 col-md-12 wow fadeInUp" data-wow-delay="0.5s">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="results-info">
-                    @if ($products->total() > 0)
-                        Menampilkan {{ $products->total() }} produk
-                    @else
-                        Belum ada produk.
+                <div class="results-info d-flex align-items-center flex-wrap" style="gap: 8px;">
+                    <span>
+                        @if ($products->total() > 0)
+                            Menampilkan {{ $products->total() }} produk
+                        @else
+                            Belum ada produk.
+                        @endif
+                    </span>
+                    
+                    @if($search)
+                        <div class="search-tag d-flex align-items-center" style="background: #e3f2fd; border: 1px solid #2196f3; border-radius: 20px; padding: 4px 12px; font-size: 0.8rem; color: #1976d2;">
+                            <span style="margin-right: 6px;">hasil penelusuran: "{{ $search }}"</span>
+                            <a href="{{ route('landingpage.products', array_merge(request()->except('search', 'page'))) }}" 
+                            class="text-decoration-none" 
+                            style="color: #1976d2; font-weight: bold; font-size: 0.9rem; margin-left: 2px;">
+                                ×
+                            </a>
+                        </div>
                     @endif
                 </div>
                 <form method="GET" class="d-flex align-items-center" style="gap:12px;">

@@ -740,7 +740,7 @@
                                                         <input type="file" 
                                                                name="product_images[{{ $i }}][]" 
                                                                class="form-control image-input" 
-                                                               multiple accept="image/*" data-index="{{ $i }}"
+                                                               multiple accept="image/jpeg,image/png,image/jpg,image/gif,image/webp" data-index="{{ $i }}"
                                                                onchange="handleImagePreview(this, {{ $i }})">
                                                         <div class="image-preview-container" data-index="{{ $i }}">
                                                             @foreach($prod->images as $image)
@@ -902,7 +902,7 @@
                                                     <label class="form-label fw-semibold">Upload Gambar (Max 4)</label>
                                                     <input type="file" name="product_images[0][]" 
                                                            class="form-control image-input" 
-                                                           multiple accept="image/*" data-index="0"
+                                                           multiple accept="image/jpeg,image/png,image/jpg,image/gif,image/webp" data-index="0"
                                                            onchange="handleImagePreview(this, 0)">
                                                     <div class="image-preview-container" data-index="0"></div>
                                                     <small class="text-muted">Format: JPEG, PNG, JPG, GIF. Maksimal 2MB per file.</small>
@@ -1785,7 +1785,7 @@
                                 name="product_images[${productIndex}][]" 
                                 class="form-control image-input" 
                                 multiple 
-                                accept="image/jpeg,image/png,image/jpg,image/gif" 
+                                accept="image/jpeg,image/png,image/jpg,image/gif,image/webp" 
                                 data-index="${productIndex}"
                                 onchange="handleImagePreview(this, ${productIndex})"
                                 data-max-files="4">
@@ -2444,7 +2444,7 @@
         });
 
         function validateImageFile(file) {
-            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
             const maxSize = 2 * 1024 * 1024;
             
             if (!allowedTypes.includes(file.type)) {

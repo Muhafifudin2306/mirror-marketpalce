@@ -11,7 +11,26 @@ class OngkirController extends Controller
     public function cekOngkir(Request $request)
     {
         $user = Auth::user();
-        $destination = Auth::user()->postal_code ?? $request->destination;
+        
+        $addressOption = $request->input('address_option', 'profile');
+        
+        if ($addressOption === 'pickup') {
+            return response()->json([
+                'price' => [],
+                'details' => []
+            ]);
+        }
+        
+        if ($addressOption === 'custom') {
+            $destination = $request->input('custom_postal_code');
+        } else {
+            $destination = $user->postal_code;
+        }
+        
+        if (!$destination) {
+            $destination = $request->destination ?? $user->postal_code;
+        }
+        
         $weight = $request->weight ?? 1000;
 
         $response = Http::withHeaders([
@@ -24,8 +43,6 @@ class OngkirController extends Controller
             'courier' => 'jne:sicepat:ide:sap:jnt:ninja:tiki:lion:anteraja:pos:ncs:rex:rpx:sentral:star:wahana:dse',
             'price' => 'lowest'
         ]);
-
-        // dd($result = $response->json());
 
         if ($response->successful()) {
             $result = $response->json();

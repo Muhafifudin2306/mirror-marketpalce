@@ -39,7 +39,7 @@ class TestimonialController extends Controller
             'name'     => 'required|string|max:255',
             'location' => 'required|string|max:255',
             'feedback' => 'required|string',
-            'photo'    => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'photo'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         if ($request->hasFile('photo')) {
@@ -73,7 +73,7 @@ class TestimonialController extends Controller
             'name' => 'required|string|max:255',
             'location' => 'required|string|max:255',
             'feedback' => 'required|string',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         if ($request->hasFile('photo')) {
@@ -109,5 +109,9 @@ class TestimonialController extends Controller
     public function about() {
         $testimonials = Testimonial::orderBy('created_at', 'desc')->get();
         return view('landingpage.about', compact('testimonials'));
+    }
+
+    public function contact() {
+        return view('landingpage.contact');
     }
 }

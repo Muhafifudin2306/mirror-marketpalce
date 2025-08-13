@@ -47,13 +47,21 @@ class LoginController extends Controller
             'password' => 'required|string',
         ]);
 
+        $user = \App\Models\User::where('email', $request->email)->first();
+        
+        if (!$user) {
+            return back()->withErrors([
+                'email' => 'Akun ini tidak terdaftar.',
+            ])->withInput($request->only('email'));
+        }
+
         if (Auth::attempt($request->only('email', 'password'))) {
             $request->session()->regenerate();
             return redirect()->intended($this->redirectTo);
         }
 
         return back()->withErrors([
-            'email' => 'Email atau password salah.',
+            'password' => 'Email atau password salah.',
         ])->withInput($request->only('email'));
     }
 }

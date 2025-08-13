@@ -218,22 +218,51 @@ class ProductController extends Controller
             $query->where('name', 'like', "%{$search}%");
         }
 
-        if ($sort == 'price-desc' || $sort == 'price-asc') {
-            $direction = $sort == 'price-desc' ? 'desc' : 'asc';
-            $query->orderBy('price', $direction);
+        $allProducts = $query->get();
+        
+        if ($sort == 'price-asc') {
+            $allProducts = $allProducts->sortBy(function($product) {
+                return $product->getDiscountedPrice();
+            });
+        }
+        elseif ($sort == 'price-desc') {
+            $allProducts = $allProducts->sortByDesc(function($product) {
+                return $product->getDiscountedPrice();
+            });
         }
         elseif ($sort == 'best-selling') {
-            $query->withCount('orderProducts')->orderBy('order_products_count', 'desc');
+            $allProducts->load(['orderProducts']);
+            $allProducts = $allProducts->sortByDesc(function($product) {
+                return $product->orderProducts->count();
+            });
         }
         elseif ($sort == 'newest') {
-            $query->orderBy('created_at', 'desc');
+            $allProducts = $allProducts->sortByDesc('created_at');
+        }
+        else {
+            $allProducts = $allProducts->sortBy('name');
         }
 
-        $products = $query->paginate(12)->withQueryString();
-
         $currentPage = $request->query('page', 1);
-        $totalPages = $products->lastPage();
+        $perPage = 12;
+        $offset = ($currentPage - 1) * $perPage;
         
+        $paginatedItems = $allProducts->slice($offset, $perPage)->values();
+        $total = $allProducts->count();
+        
+        $products = new \Illuminate\Pagination\LengthAwarePaginator(
+            $paginatedItems,
+            $total,
+            $perPage,
+            $currentPage,
+            [
+                'path' => $request->url(),
+                'pageName' => 'page',
+            ]
+        );
+        $products->withQueryString();
+
+        $totalPages = $products->lastPage();
         if ($currentPage > $totalPages && $totalPages > 0) {
             $queryParams = $request->except(['page']);
             $queryParams['page'] = 1;
@@ -376,6 +405,7 @@ class ProductController extends Controller
 
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
+            'action' => 'nullable|in:add_to_cart,buy_now',
             'selected_variants' => 'nullable|array',
             'selected_variants.*' => 'exists:product_variants,id',
             'finishing_id' => 'nullable|exists:finishings,id',
@@ -390,6 +420,12 @@ class ProductController extends Controller
             'qty' => 'required|integer|min:1',
             'notes' => 'nullable|string|max:1000',
             'order_status' => 'required|in:0',
+            'address_option' => 'nullable|in:profile,custom',
+            'custom_province' => 'nullable|required_if:address_option,custom|string',
+            'custom_district' => 'nullable|required_if:address_option,custom|string', 
+            'custom_city' => 'nullable|required_if:address_option,custom|string',
+            'custom_postal_code' => 'nullable|required_if:address_option,custom|string',
+            'custom_address' => 'nullable|required_if:address_option,custom|string',
         ]);
 
         DB::beginTransaction();
@@ -484,11 +520,18 @@ class ProductController extends Controller
                 
                 $defaultPanjang = $product->long_product;
                 $defaultLebar = $product->width_product;
-                
-                $finalP = $l <= $defaultPanjang ? 100 : $l;
-                $finalL = $w <= $defaultLebar ? 100 : $w;
-                
-                $area = ($finalP / 100) * ($finalL / 100);
+
+                if($l * $w > $defaultPanjang * $defaultLebar){
+                    $finalP = $l;
+                    $finalL = $w;
+                    
+                    $area = ($finalP / 100) * ($finalL / 100);
+                }else {
+                    $finalP = $defaultPanjang;
+                    $finalL = $defaultLebar;
+                    
+                    $area = ($finalP / 100) * ($finalL / 100);
+                }
             }
 
             $productTotal = ($basePrice + $variantPrice) * $area * $validated['qty'];
@@ -548,6 +591,11 @@ class ProductController extends Controller
                 'waktu' => $today->toTimeString(),
                 'dp' => round($subtotal),
                 'full_payment' => round($subtotal),
+                'alamat' => $request->address_option === 'custom' ? $request->custom_address : ($user->address ?? null),
+                'kode_pos' => $request->address_option === 'custom' ? $request->custom_postal_code : ($user->postal_code ?? null),
+                'provinsi' => $request->address_option === 'custom' ? $request->custom_province : ($user->province ?? null),
+                'kota' => $request->address_option === 'custom' ? $request->custom_district : ($user->district ?? null),
+                'kecamatan' => $request->address_option === 'custom' ? $request->custom_city : ($user->city ?? null),
                 'design_link' => $designFileName ? env('APP_URL') . '/storage/landingpage/img/order_design/' . $designFileName : null,
                 'preview_link' => $previewFileName ? env('APP_URL') . '/storage/landingpage/img/order_design/' . $previewFileName : null,
             ]);
@@ -577,8 +625,16 @@ class ProductController extends Controller
 
             DB::commit();
 
-            return redirect()->route('landingpage.produk_detail', $product->slug)
-                            ->with('success', 'Order berhasil. Silahkan cek keranjang untuk melanjutkan tahap pembayaran');
+            $action = $request->input('action', 'add_to_cart');
+            $orderProduct = $order->orderProducts()->first();
+
+            if ($action === 'buy_now') {
+                return redirect()->route('checkout.item', $orderProduct->id)
+                                ->with('success', 'Order berhasil dibuat, silakan lanjutkan pembayaran');
+            } else {
+                return redirect()->route('cart.index')
+                                ->with('cart_success', 'Produk berhasil ditambahkan ke keranjang!');
+            }
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -622,7 +678,7 @@ class ProductController extends Controller
             'is_live_product.*' => 'nullable|boolean',
             'product_images' => 'nullable|array',
             'product_images.*' => 'nullable|array|max:4',
-            'product_images.*.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'product_images.*.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'variant_categories' => 'nullable|array',
             'variant_categories.*' => 'nullable|array',
             'variant_values' => 'nullable|array',
@@ -712,6 +768,27 @@ class ProductController extends Controller
         }
     }
 
+    public function adminEdit(Label $label)
+    {
+        try {
+            $label->load([
+                'products.images', 
+                'products.variants',
+                'finishings'
+            ]);
+            
+            return response()->json($label);
+        } catch (\Exception $e) {
+            // \Log::error('Error loading label data for edit: ' . $e->getMessage(), [
+            //     'label_id' => $label->id,
+            //     'trace' => $e->getTraceAsString()
+            // ]);            
+            return response()->json([
+                'error' => 'Gagal memuat data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function adminUpdate(Request $request, Label $label)
     {
         $validated = $request->validate([
@@ -727,7 +804,7 @@ class ProductController extends Controller
             'is_live_product.*' => 'nullable|boolean',
             'product_images' => 'nullable|array',
             'product_images.*' => 'nullable|array|max:4',
-            'product_images.*.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'product_images.*.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'existing_images' => 'nullable|array',
             'existing_images.*' => 'nullable|array',
             'existing_images.*.*' => 'nullable|string',

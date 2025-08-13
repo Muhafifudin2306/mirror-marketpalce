@@ -548,7 +548,7 @@
                 <div class="row g-0 h-100">
                     <div class="col-md-5">
                         <div class="products-modal-image">
-                            <img src="{{ asset('landingpage/img/product-modals.png') }}" alt="Hero Products"
+                            <img src="{{ asset('landingpage/img/product-modals.webp') }}" alt="Hero Products"
                                 class="img-fluid w-100 h-100" style="object-fit:cover;">
                         </div>
                     </div>
@@ -595,7 +595,7 @@
                 <div class="row g-0 h-100">
                     <div class="col-md-7">
                         <div class="products-modal-image">
-                            <img src="{{ asset('landingpage/img/about-modals.png') }}" alt="Hero Products"
+                            <img src="{{ asset('landingpage/img/about-modals.webp') }}" alt="Hero Products"
                                 class="img-fluid w-100 h-100" style="object-fit:cover;">
                         </div>
                     </div>
@@ -617,7 +617,7 @@
                                 </ul>
                             </a>
                             <br><br>
-                            <a class="text-decoration-none" href="https://wa.me/6281952764747?text=Halo%20Admin%20Sinau%20Print%21%20Saya%20ingin%20mengajukan%20pertanyaan%20terkait%20produk%20yang%20ada%20di%20sinau%20print" target="_blank">
+                            <a class="text-decoration-none" href="{{ url('/contact') }}">
                                 <ul class="labels-list">
                                     <li>
                                         <h5 style="font-family: 'Poppins' !important; font-size: 0.75rem; color: #888888 !important; text-decoration: none !important;">Kontak Sinau Print</h5>
@@ -774,36 +774,89 @@ document.addEventListener('DOMContentLoaded', function() {
         { id: 'howToTrigger', modalId: 'howToModal' }
     ];
 
-    // Only enable hover modals on desktop
     if (window.innerWidth > 768) {
+        const modalInstances = {};
+        let currentActiveModal = null;
+        let hideTimeout = null;
+        let showTimeout = null;
+
+        modalTriggers.forEach(trigger => {
+            const modalEl = document.getElementById(trigger.modalId);
+            if (modalEl) {
+                modalInstances[trigger.modalId] = new bootstrap.Modal(modalEl, {
+                    backdrop: false,
+                    keyboard: true
+                });
+            }
+        });
+
+        function hideAllModalsExcept(keepOpen = null) {
+            modalTriggers.forEach(trigger => {
+                if (trigger.modalId !== keepOpen && modalInstances[trigger.modalId]) {
+                    modalInstances[trigger.modalId].hide();
+                }
+            });
+        }
+
+        function showModal(modalId) {
+            if (hideTimeout) {
+                clearTimeout(hideTimeout);
+                hideTimeout = null;
+            }
+            if (showTimeout) {
+                clearTimeout(showTimeout);
+                showTimeout = null;
+            }
+
+            if (currentActiveModal === modalId) {
+                return;
+            }
+
+            hideAllModalsExcept(modalId);
+            
+            if (modalInstances[modalId]) {
+                modalInstances[modalId].show();
+                currentActiveModal = modalId;
+            }
+        }
+
+        function hideCurrentModal() {
+            if (currentActiveModal && modalInstances[currentActiveModal]) {
+                modalInstances[currentActiveModal].hide();
+                currentActiveModal = null;
+            }
+        }
+
         modalTriggers.forEach(trigger => {
             const triggerEl = document.getElementById(trigger.id);
             const modalEl = document.getElementById(trigger.modalId);
-            let modalInstance = null;
-            let hideTimeout = null;
 
             if (triggerEl && modalEl) {
                 triggerEl.addEventListener('mouseenter', () => {
-                    if (hideTimeout) {
-                        clearTimeout(hideTimeout);
-                        hideTimeout = null;
+                    if (showTimeout) {
+                        clearTimeout(showTimeout);
                     }
                     
-                    if (!modalInstance) {
-                        modalInstance = new bootstrap.Modal(modalEl, {
-                            backdrop: false,
-                            keyboard: true
-                        });
+                    if (currentActiveModal && currentActiveModal !== trigger.modalId) {
+                        showModal(trigger.modalId);
+                    } else {
+                        showTimeout = setTimeout(() => {
+                            showModal(trigger.modalId);
+                        }, 100);
                     }
-                    modalInstance.show();
                 });
 
                 triggerEl.addEventListener('mouseleave', () => {
+                    if (showTimeout) {
+                        clearTimeout(showTimeout);
+                        showTimeout = null;
+                    }
+                    if (hideTimeout) {
+                        clearTimeout(hideTimeout);
+                    }
                     hideTimeout = setTimeout(() => {
-                        if (modalInstance) {
-                            modalInstance.hide();
-                        }
-                    }, 300);
+                        hideCurrentModal();
+                    }, 600);
                 });
 
                 modalEl.addEventListener('mouseenter', () => {
@@ -811,17 +864,39 @@ document.addEventListener('DOMContentLoaded', function() {
                         clearTimeout(hideTimeout);
                         hideTimeout = null;
                     }
-                });
-
-                modalEl.addEventListener('mouseleave', () => {
-                    if (modalInstance) {
-                        modalInstance.hide();
+                    if (showTimeout) {
+                        clearTimeout(showTimeout);
+                        showTimeout = null;
                     }
                 });
 
-                modalEl.addEventListener('hidden.bs.modal', () => {
-                    modalInstance = null;
+                modalEl.addEventListener('mouseleave', () => {
+                    if (hideTimeout) {
+                        clearTimeout(hideTimeout);
+                    }
+                    hideTimeout = setTimeout(() => {
+                        hideCurrentModal();
+                    }, 400);
                 });
+
+                modalEl.addEventListener('hidden.bs.modal', () => {
+                    if (currentActiveModal === trigger.modalId) {
+                        currentActiveModal = null;
+                    }
+                });
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            const isClickOnTrigger = modalTriggers.some(trigger => {
+                const triggerEl = document.getElementById(trigger.id);
+                return triggerEl && triggerEl.contains(e.target);
+            });
+            
+            const isClickOnModal = currentActiveModal && document.getElementById(currentActiveModal).contains(e.target);
+            
+            if (!isClickOnTrigger && !isClickOnModal) {
+                hideCurrentModal();
             }
         });
     }
@@ -1783,6 +1858,17 @@ document.head.appendChild(style);
         padding: 20px;
         background: white;
         border-bottom: 1px solid #e9ecef;
+    }
+
+    .mobile-quick-actions .row {
+        justify-content: center !important;
+    }
+
+    .mobile-quick-actions .col-5 {
+        flex: 0 0 auto !important;
+        width: auto !important;
+        max-width: 120px !important;
+        margin: 0 8px !important;
     }
 
     .quick-action-card {

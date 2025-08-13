@@ -213,9 +213,6 @@
         .sidebar-filter {
             padding: 1rem;
         }
-        .cta-title, .cta-subtitle {
-            font-size: 2rem;
-        }
         .no-faqs {
             padding: 24px;
         }
@@ -243,9 +240,6 @@
         }
         .sidebar-filter .sub-list span {
             font-size: 0.7rem !important;
-        }
-        .cta-title, .cta-subtitle {
-            font-size: 1.8rem;
         }
     }
     @media (max-width: 768px) {
@@ -441,91 +435,6 @@
     }
 
     @media (max-width: 768px) {
-        .cta-title, .cta-subtitle {
-            font-size: 2rem !important;
-            line-height: 1.2;
-            text-align: center;
-        }
-        
-        .btn-schedule {
-            display: inline-flex;
-            align-items: center;
-            background: none;
-            color: #fff;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-family: 'Poppins';
-            font-weight: 600;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            overflow: hidden;
-            position: relative;
-            margin-top: 15px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-        
-        .btn-schedule:hover {
-            background: #fff;
-            color: #333;
-            transform: translateY(-2px);
-            text-decoration: none;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .cta-title, .cta-subtitle {
-            font-size: 1.5rem !important;
-            line-height: 1.1;
-        }
-        
-        .btn-schedule {
-            padding: 8px 16px;
-            font-size: 0.75rem;
-            margin-top: 12px;
-        }
-        
-        .btn-schedule .btn-text {
-            font-size: 0.7rem;
-        }
-    }
-    .btn-text {
-        transition: transform 0.3s ease;
-    }
-
-    .btn-arrow {
-        margin-left: 10px;
-        transition: transform 0.3s ease;
-        position: relative;
-        width: 20px;
-        height: 20px;
-        overflow: hidden;
-    }
-
-    .btn-arrow .arrow-out {
-        transition: transform 0.3s ease;
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
-
-    .btn-arrow .arrow-in {
-        transition: transform 0.3s ease;
-        position: absolute;
-        top: 0;
-        left: 20px;
-    }
-
-    .btn-schedule:hover .btn-arrow .arrow-out {
-        transform: translateX(-20px);
-    }
-
-    .btn-schedule:hover .btn-arrow .arrow-in {
-        transform: translateX(-20px);
-    }
-
-    @media (max-width: 768px) {
         .faq-item {
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
@@ -566,6 +475,162 @@
         .faq-answer {
             font-size: 0.8rem !important;
             padding: 10px 12px !important;
+        }
+    }
+    @media (max-width: 768px) {
+        .container-fluid.footer .cta-content {
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+            padding-top: 15px !important;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            position: absolute;
+            top: 60% !important;
+            left: 0;
+            right: 0;
+        }
+
+        .container-fluid.footer .cta-title, 
+        .container-fluid.footer .cta-subtitle {
+            font-size: 1.1rem !important;
+            line-height: 1.1;
+            text-align: center;
+            margin-bottom: 0.3rem !important;
+        }
+        
+        .container-fluid.footer .position-relative img {
+            min-height: 180px !important;
+            max-height: 220px !important;
+            object-fit: cover;
+        }
+        
+        .container-fluid.footer .btn-schedule {
+            display: inline-flex;
+            align-items: center;
+            background: none;
+            color: #fff;
+            text-decoration: none;
+            padding: 6px 14px !important;
+            border-radius: 20px !important;
+            font-family: 'Poppins';
+            font-weight: 600;
+            font-size: 0.7rem !important;
+            letter-spacing: 0.3px !important;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+            margin-top: 6px !important;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .container-fluid.footer .btn-schedule:hover {
+            background: #fff;
+            color: #333;
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+        
+        .container-fluid.footer .btn-arrow {
+            display: none !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .container-fluid.footer .cta-content {
+            padding-left: 15px !important;
+            padding-right: 15px !important;
+            padding-top: 10px !important;
+            top: 55% !important;
+        }
+
+        .container-fluid.footer .cta-title, 
+        .container-fluid.footer .cta-subtitle {
+            font-size: 0.9rem !important;
+            line-height: 1.1;
+            margin-bottom: 0.2rem !important;
+        }
+        
+        .container-fluid.footer .position-relative img {
+            min-height: 150px !important;
+            max-height: 180px !important;
+        }
+        
+        .container-fluid.footer .btn-schedule {
+            padding: 5px 12px !important;
+            font-size: 0.65rem !important;
+            margin-top: 5px !important;
+            border-radius: 18px !important;
+        }
+        
+        .container-fluid.footer .btn-schedule .btn-text {
+            font-size: 0.65rem !important;
+        }
+    }
+
+    @media (min-width: 769px) {
+        .container-fluid.footer .btn-schedule {
+            display: inline-flex;
+            align-items: center;
+            background: none;
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-family: 'Poppins';
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+            margin-top: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .container-fluid.footer .btn-schedule:hover {
+            background: #fff;
+            color: #333;
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+        
+        .container-fluid.footer .btn-text {
+            transition: transform 0.3s ease;
+        }
+
+        .container-fluid.footer .btn-arrow {
+            margin-left: 10px;
+            transition: transform 0.3s ease;
+            position: relative;
+            width: 20px;
+            height: 20px;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container-fluid.footer .btn-arrow .arrow-out {
+            transition: transform 0.3s ease;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+        }
+
+        .container-fluid.footer .btn-arrow .arrow-in {
+            transition: transform 0.3s ease;
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+        }
+
+        .container-fluid.footer .btn-schedule:hover .btn-arrow .arrow-out {
+            transform: translateX(-20px) translateY(-50%);
+        }
+
+        .container-fluid.footer .btn-schedule:hover .btn-arrow .arrow-in {
+            transform: translateX(-20px) translateY(-50%);
         }
     }
 </style>
